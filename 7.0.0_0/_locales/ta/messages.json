@@ -1,0 +1,896 @@
+{
+   "action_add_pilgrim": {
+      "message": "பக்தரைச் சேர்"
+   },
+   "action_cancel": {
+      "message": "ரத்து செய்"
+   },
+   "action_edit_pilgrim": {
+      "message": "பக்தரைத் திருத்து"
+   },
+   "action_fill": {
+      "message": "⚡ நிரப்பு"
+   },
+   "action_fill_all": {
+      "message": "⚡ அனைத்து விவரங்களையும் நிரப்பு"
+   },
+   "action_fill_all_locked": {
+      "message": "தயவுசெய்து பாஸ் வாங்குங்கள் — தானியங்கி நிரப்புதலை இயக்க"
+   },
+   "action_fill_locked_title": {
+      "message": "வாராந்திர பாஸ் தேவை"
+   },
+   "action_save": {
+      "message": "சேமி"
+   },
+   "action_update": {
+      "message": "புதுப்பி"
+   },
+   "action_update_pilgrim": {
+      "message": "பக்தரைப் புதுப்பிக்கவும்"
+   },
+   "aruna_abhishekam": {
+      "message": "அபிஷேகம் விவரங்கள்"
+   },
+   "aruna_clear": {
+      "message": "விவரங்களை அழிக்கவும்"
+   },
+   "aruna_contact": {
+      "message": "தொடர்பு"
+   },
+   "aruna_devotee": {
+      "message": "பக்தர்"
+   },
+   "aruna_fill_form": {
+      "message": "அருணாசலம் படிவத்தை நிரப்பவும்"
+   },
+   "aruna_terms": {
+      "message": "விதிமுறைகள் மற்றும் நிபந்தனைகள்"
+   },
+   "contact_gothram": {
+      "message": "கோத்ரம்: {gothram}"
+   },
+   "contact_no_address": {
+      "message": "முகவரி விவரங்கள் இல்லை"
+   },
+   "contact_no_email": {
+      "message": "மின்னஞ்சல் இல்லை"
+   },
+   "education_heading": {
+      "message": "கல்வி"
+   },
+   "empty_no_pilgrims_body": {
+      "message": "கீழே உள்ள படிவத்தைப் பயன்படுத்தி உங்கள் முதல் பக்தரைச் சேர்க்கவும் ↓"
+   },
+   "empty_no_pilgrims_hint": {
+      "message": "சேமிக்கப்பட்ட பக்தர்களின் விவரங்களை ஒரே கிளிக்கில் TTD முன்பதிவு படிவங்களில் தானாக நிரப்ப முடியும்."
+   },
+   "empty_no_pilgrims_title": {
+      "message": "இன்னும் பக்தர்கள் சேர்க்கப்படவில்லை"
+   },
+   "experience_refs_heading": {
+      "message": "அனுபவம் மற்றும் பரிந்துரைகள்"
+   },
+   "extension_description": {
+      "message": "TTD தர்ஷன், சேவா, ஸ்ரீவாணி மற்றும் தங்குமிட முன்பதிவு படிவங்களுக்கு ஒரே கிளிக்கில் தானாக நிரப்பல். பக்தர் தரவு உங்கள் சாதனத்திலேயே இருக்கும்; விருப்பமான கட்டண பாஸுக்கு ஆன்லைன் உரிமச் சரிபார்ப்பு உண்டு. விளம்பரங்கள் அல்லது நடத்தை கண்காணிப்பு இல்லை."
+   },
+   "extension_name": {
+      "message": "TTD Autofill Assistant"
+   },
+   "field_age": {
+      "message": "வயது *"
+   },
+   "field_alt_mobile": {
+      "message": "மாற்று மொபைல்"
+   },
+   "field_blood_group": {
+      "message": "இரத்த வகை"
+   },
+   "field_city": {
+      "message": "நகரம்"
+   },
+   "field_city_required": {
+      "message": "நகரம் *"
+   },
+   "field_commitment": {
+      "message": "உறுதிப்பாடு"
+   },
+   "field_country": {
+      "message": "நாடு"
+   },
+   "field_country_placeholder": {
+      "message": "எ.கா., இந்தியா, USA, UK"
+   },
+   "field_country_placeholder_short": {
+      "message": "எ.கா. இந்தியா"
+   },
+   "field_country_required": {
+      "message": "நாடு *"
+   },
+   "field_date_placeholder": {
+      "message": "DD/MM/YYYY"
+   },
+   "field_designation": {
+      "message": "பதவி / ஓய்வுபெற்றவர் *"
+   },
+   "field_details": {
+      "message": "விவரங்கள்"
+   },
+   "field_district": {
+      "message": "மாவட்டம்"
+   },
+   "field_district_required": {
+      "message": "மாவட்டம் *"
+   },
+   "field_dob": {
+      "message": "பிறந்த தேதி *"
+   },
+   "field_door_no": {
+      "message": "வீட்டு எண் *"
+   },
+   "field_door_no_short": {
+      "message": "வீட்டு எண்."
+   },
+   "field_email": {
+      "message": "மின்னஞ்சல்"
+   },
+   "field_email_id": {
+      "message": "மின்னஞ்சல் ஐடி *"
+   },
+   "field_employee_id": {
+      "message": "பணியாளர் ஐடி *"
+   },
+   "field_employment_status": {
+      "message": "வேலைவாய்ப்பு நிலை"
+   },
+   "field_exp_desc": {
+      "message": "அனுபவ விளக்கம்"
+   },
+   "field_exp_years": {
+      "message": "அனுபவம் (ஆண்டுகள்)"
+   },
+   "field_experience": {
+      "message": "அனுபவம்"
+   },
+   "field_expertise_areas": {
+      "message": "நிபுணத்துவப் பகுதிகள்"
+   },
+   "field_father_husband": {
+      "message": "தந்தை/கணவர் பெயர் *"
+   },
+   "field_father_spouse": {
+      "message": "தந்தை/வாழ்க்கைத் துணை பெயர் *"
+   },
+   "field_fitness": {
+      "message": "தகுதி *"
+   },
+   "field_frequency": {
+      "message": "அதிர்வெண்"
+   },
+   "field_full_name_aadhaar": {
+      "message": "முழு பெயர் (ஆதார் படி) *"
+   },
+   "field_gender": {
+      "message": "பாலினம் *"
+   },
+   "field_gothram": {
+      "message": "கோத்ரம்"
+   },
+   "field_gothram_hint": {
+      "message": "திவ்யானுக்ரஹ ஹோமம் செய்ய மட்டுமே தேவைப்படுகிறது"
+   },
+   "field_id_number": {
+      "message": "அடையாள எண் *"
+   },
+   "field_id_proof": {
+      "message": "அடையாளச் சான்று *"
+   },
+   "field_id_proof_number": {
+      "message": "அடையாளச் சான்று எண் *"
+   },
+   "field_id_proof_type": {
+      "message": "அடையாளச் சான்று வகை *"
+   },
+   "field_institute_name": {
+      "message": "நிறுவனப் பெயர்"
+   },
+   "field_languages": {
+      "message": "தெரிந்த மொழிகள்"
+   },
+   "field_last_2_periods": {
+      "message": "கடைசி 2 காலங்கள்"
+   },
+   "field_location": {
+      "message": "இடம்"
+   },
+   "field_marital_status": {
+      "message": "திருமண நிலை *"
+   },
+   "field_mentally_fit": {
+      "message": "மனரீதியாக தகுதியானவர்"
+   },
+   "field_mobile": {
+      "message": "மொபைல் எண் *"
+   },
+   "field_mobile_short": {
+      "message": "மொபைல்"
+   },
+   "field_nakshatra": {
+      "message": "நட்சத்திரம்"
+   },
+   "field_name": {
+      "message": "பெயர் *"
+   },
+   "field_nearest_temple": {
+      "message": "அருகிலுள்ள TTD கோவில் *"
+   },
+   "field_no_of_times": {
+      "message": "முறை எண்ணிக்கை"
+   },
+   "field_other_org": {
+      "message": "மற்ற அமைப்பின் பெயர்"
+   },
+   "field_photo": {
+      "message": "புகைப்படம்"
+   },
+   "field_physically_fit": {
+      "message": "உடல்ரீதியாக தகுதியானவர்"
+   },
+   "field_pin_code": {
+      "message": "பின் குறியீடு"
+   },
+   "field_pincode": {
+      "message": "பின்கோடு"
+   },
+   "field_place_of_work": {
+      "message": "பணியிடம்/தொடர்புடையது *"
+   },
+   "field_preferred_loc": {
+      "message": "விருப்பமான இடம்"
+   },
+   "field_previously_volunteered": {
+      "message": "முன்பு தன்னார்வம் செய்தீர்களா?"
+   },
+   "field_profession": {
+      "message": "தொழில் *"
+   },
+   "field_profession_category": {
+      "message": "தொழில் வகை"
+   },
+   "field_proof_number": {
+      "message": "சான்று எண்"
+   },
+   "field_proof_type": {
+      "message": "சான்று வகை"
+   },
+   "field_qualification": {
+      "message": "தகுதி *"
+   },
+   "field_qualification_category": {
+      "message": "தகுதி வகை"
+   },
+   "field_ref_1_name": {
+      "message": "1. பரிந்துரை பெயர்"
+   },
+   "field_ref_2_name": {
+      "message": "2. பரிந்துரை பெயர்"
+   },
+   "field_residential_address": {
+      "message": "வசிப்பிட முகவரி *"
+   },
+   "field_role": {
+      "message": "பங்கு"
+   },
+   "field_sector": {
+      "message": "துறை"
+   },
+   "field_specialisation": {
+      "message": "சிறப்பு/திறன் *"
+   },
+   "field_specialization": {
+      "message": "சிறப்புப் பாடம்"
+   },
+   "field_specific_qualification": {
+      "message": "குறிப்பிட்ட தகுதி"
+   },
+   "field_specify_location": {
+      "message": "இடத்தைக் குறிப்பிடவும்"
+   },
+   "field_specify_other_area": {
+      "message": "மற்ற பகுதியைக் குறிப்பிடவும்"
+   },
+   "field_state": {
+      "message": "மாநிலம்"
+   },
+   "field_state_required": {
+      "message": "மாநிலம் *"
+   },
+   "field_street": {
+      "message": "தெரு *"
+   },
+   "field_surname": {
+      "message": "குடும்பப் பெயர்"
+   },
+   "field_synced_leader": {
+      "message": "குழுத் தலைவரிடமிருந்து ஒத்திசைக்கப்பட்டது"
+   },
+   "field_ticket_count": {
+      "message": "டிக்கெட் எண்ணிக்கை"
+   },
+   "field_training_experience": {
+      "message": "பயிற்சி அனுபவம் உள்ளதா?"
+   },
+   "field_university": {
+      "message": "பல்கலைக்கழகம்/கல்லூரி பெயர்"
+   },
+   "field_upload_edu_certificate": {
+      "message": "கல்விச் சான்றிதழைப் பதிவேற்றவும் *"
+   },
+   "field_upload_education": {
+      "message": "ஆவணத்தைப் பதிவேற்றவும் (கல்வி) *"
+   },
+   "field_upload_id_proof": {
+      "message": "அடையாளச் சான்றைப் பதிவேற்றவும் *"
+   },
+   "field_village_town_city": {
+      "message": "கிராமம் / நகரம் / நகரம்"
+   },
+   "field_visa_number": {
+      "message": "விசா/OCI எண்"
+   },
+   "field_visa_type": {
+      "message": "விசா வகை"
+   },
+   "field_visa_type_placeholder": {
+      "message": "எழுத்துக்கள் மற்றும் எண்கள் மட்டும்"
+   },
+   "field_visa_validity": {
+      "message": "விசா செல்லுபடியாகும் தேதி"
+   },
+   "field_year_graduation": {
+      "message": "பட்டப்படிப்பு ஆண்டு"
+   },
+   "field_zodiac": {
+      "message": "ராசி"
+   },
+   "fill_locked_body": {
+      "message": "பில்கிரிம் புக்கிங் படிவத்தை ஒரே கிளிக்கில் நிரப்ப வாராந்திர பாஸ் வாங்குங்கள். ஏற்கனவே கீ இருந்தால், அதை கீழே ஒட்டவும்."
+   },
+   "fill_locked_title": {
+      "message": "தானியங்கி நிரப்புதலுக்கு வாராந்திர பாஸ் தேவை"
+   },
+   "gender_female": {
+      "message": "பெண்"
+   },
+   "gender_male": {
+      "message": "ஆண்"
+   },
+   "gender_transgender": {
+      "message": "திருநங்கை / திருநம்பி"
+   },
+   "general_details_heading": {
+      "message": "பொதுவான விவரங்கள்"
+   },
+   "group_add_member": {
+      "message": "➕ உறுப்பினரைச் சேர்க்கவும்"
+   },
+   "group_autosave_note": {
+      "message": "💾 உறுப்பினர் தகவல் நீங்கள் புலங்களை நிரப்பும்போதே தானாகச் சேமிக்கப்படும்"
+   },
+   "group_copy_from_leader": {
+      "message": "📋 தலைவரிடமிருந்து முகவரியை நகலெடுக்கவும்"
+   },
+   "group_copy_to_all": {
+      "message": "📋 முகவரியை அனைத்து உறுப்பினர்களுக்கும் நகலெடுக்கவும்"
+   },
+   "group_fill_member": {
+      "message": "உறுப்பினர் # நிரப்பவும்"
+   },
+   "group_fill_member_btn": {
+      "message": "⚡ இந்த உறுப்பினரை நிரப்பவும்"
+   },
+   "group_remove_member": {
+      "message": "➖ அகற்று"
+   },
+   "hint_max_1mb": {
+      "message": "அதிகபட்சம் 1 MB • JPEG, PNG"
+   },
+   "idproof_aadhaar": {
+      "message": "ஆதார் கார்டு"
+   },
+   "idproof_passport": {
+      "message": "பாஸ்போர்ட்"
+   },
+   "lang_aria": {
+      "message": "மொழியை மாற்றவும் (தற்போது: {lang})"
+   },
+   "lang_menu_label": {
+      "message": "மொழி"
+   },
+   "lang_title": {
+      "message": "மொழியை மாற்றவும்"
+   },
+   "move_down": {
+      "message": "கீழே நகர்த்து"
+   },
+   "move_up": {
+      "message": "மேலே நகர்த்து"
+   },
+   "msg_add_person_first": {
+      "message": "முதலில் குறைந்தது ஒரு நபரைச் சேர்க்கவும்"
+   },
+   "msg_added_person": {
+      "message": "{name} சேர்க்கப்பட்டார்"
+   },
+   "msg_added_pilgrim": {
+      "message": "{name} சேர்க்கப்பட்டார்"
+   },
+   "msg_address_copied_from": {
+      "message": "குழுத் தலைவரிடமிருந்து முகவரி நகலெடுக்கப்பட்டது"
+   },
+   "msg_address_copied_to_all": {
+      "message": "முகவரி அனைத்து உறுப்பினர்களுக்கும் நகலெடுக்கப்பட்டது"
+   },
+   "msg_all_filled": {
+      "message": "அனைத்தும் நிரப்பப்பட்டன!"
+   },
+   "msg_aruna_cleared": {
+      "message": "அருணாசலம் விவரங்கள் அழிக்கப்பட்டன"
+   },
+   "msg_aruna_filled": {
+      "message": "அருணாசலம் படிவம் நிரப்பப்பட்டது!"
+   },
+   "msg_autofilling_member": {
+      "message": "உறுப்பினர் {n} நிரப்பப்படுகிறார்..."
+   },
+   "msg_contact_saved": {
+      "message": "தொடர்பு விவரங்கள் சேமிக்கப்பட்டன!"
+   },
+   "msg_error_autofilling_member": {
+      "message": "உறுப்பினர் {n} நிரப்புவதில் பிழை."
+   },
+   "msg_error_hrce": {
+      "message": "பிழை: HRCE பக்கத்தைத் திறக்கவும் அல்லது புதுப்பிக்கவும்"
+   },
+   "msg_error_reading_file": {
+      "message": "கோப்பைப் படிக்கும் பிழை"
+   },
+   "msg_error_refresh": {
+      "message": "பிழை: TTD பக்கத்தைப் புதுப்பிக்கவும்"
+   },
+   "msg_error_refresh_page": {
+      "message": "பிழை: பக்கத்தைப் புதுப்பிக்கவும்"
+   },
+   "msg_file_too_large": {
+      "message": "கோப்பு மிகப் பெரியது. அதிகபட்ச அளவு 1 MB"
+   },
+   "msg_file_uploaded": {
+      "message": "{name} வெற்றிகரமாக பதிவேற்றப்பட்டது"
+   },
+   "msg_filled": {
+      "message": "நிரப்பப்பட்டது!"
+   },
+   "msg_filled_member": {
+      "message": "உறுப்பினர் {n} படிவம் நிரப்பப்பட்டது"
+   },
+   "msg_form_filled": {
+      "message": "படிவம் நிரப்பப்பட்டது!"
+   },
+   "msg_invalid_format": {
+      "message": "தவறான வடிவம். {extensions} மட்டுமே அனுமதிக்கப்படும்"
+   },
+   "msg_invalid_format_group": {
+      "message": "தவறான வடிவம். .jpeg, .png, .pdf மட்டுமே அனுமதிக்கப்படும்"
+   },
+   "msg_invalid_member": {
+      "message": "தவறான உறுப்பினர் எண்"
+   },
+   "msg_loaded_first": {
+      "message": "செட்டிலிருந்து {total} இல் முதல் {count} ஏற்றப்பட்டது"
+   },
+   "msg_loaded_first_people": {
+      "message": "செட்டிலிருந்து {total} இல் முதல் {count} ஏற்றப்பட்டது"
+   },
+   "msg_loaded_from_set": {
+      "message": "செட்டிலிருந்து {count} பக்தர்கள் ஏற்றப்பட்டனர்"
+   },
+   "msg_loaded_people": {
+      "message": "செட்டிலிருந்து {count} நபர்கள் ஏற்றப்பட்டனர்"
+   },
+   "msg_max_people": {
+      "message": "அதிகபட்சம் {count} நபர்கள் அனுமதிக்கப்படுவர்!"
+   },
+   "msg_max_pilgrims": {
+      "message": "அதிகபட்சம் 6 பக்தர்கள் மட்டுமே அனுமதிக்கப்படுவர்!"
+   },
+   "msg_pass_required": {
+      "message": "பாஸ் தேவை — பயணி தானியங்கி நிரப்பலுக்கு வாராந்திர பாஸ் தேவை."
+   },
+   "msg_person_added": {
+      "message": "நபர் சேர்க்கப்பட்டார்!"
+   },
+   "msg_person_deleted": {
+      "message": "நபர் நீக்கப்பட்டார்!"
+   },
+   "msg_person_updated": {
+      "message": "நபர் புதுப்பிக்கப்பட்டார்!"
+   },
+   "msg_pilgrim_added": {
+      "message": "பக்தர் சேர்க்கப்பட்டார்!"
+   },
+   "msg_pilgrim_deleted": {
+      "message": "பக்தர் நீக்கப்பட்டார்!"
+   },
+   "msg_pilgrim_updated": {
+      "message": "பக்தர் புதுப்பிக்கப்பட்டார்!"
+   },
+   "msg_required": {
+      "message": "{field} தேவை"
+   },
+   "msg_select_accommodation_date": {
+      "message": "தங்குமிட தேதியைத் தேர்ந்தெடுக்கவும்"
+   },
+   "msg_select_darshan_date": {
+      "message": "முதலில் பிரேக் தரிசன தேதியைத் தேர்ந்தெடுக்கவும்"
+   },
+   "msg_sevak_saved": {
+      "message": "சேவக் தரவு சேமிக்கப்பட்டது!"
+   },
+   "msg_srivani_filled": {
+      "message": "ஸ்ரீவாணி விவரங்கள் நிரப்பப்பட்டன. TTD இல் கைமுறையாகத் தொடரவும்."
+   },
+   "msg_tabs_reset": {
+      "message": "தாவல்கள் இயல்புநிலைக்கு மீட்டமைக்கப்பட்டன"
+   },
+   "msg_unable_fill": {
+      "message": "படிவத்தை நிரப்ப முடியவில்லை"
+   },
+   "msg_uploaded_member": {
+      "message": "{name} உறுப்பினர் {n}க்கு பதிவேற்றப்பட்டது"
+   },
+   "nav_settings": {
+      "message": "அமைப்புகள்"
+   },
+   "no_label": {
+      "message": "இல்லை"
+   },
+   "noun_person": {
+      "message": "நபர்"
+   },
+   "noun_pilgrim": {
+      "message": "பக்தர்"
+   },
+   "open_booking_page": {
+      "message": "முன்பதிவு பக்கத்தைத் திற ↗"
+   },
+   "pass_bar_activate_key": {
+      "message": "செயல்படுத்து"
+   },
+   "pass_bar_active": {
+      "message": "பாஸ் · {time} மீதம்"
+   },
+   "pass_bar_check_failed": {
+      "message": "கீயை சரிபார்க்க முடியவில்லை. உங்கள் இணைப்பைச் சரிபார்க்கவும்."
+   },
+   "pass_bar_collapse_aria": {
+      "message": "பாஸ் டைமரை மறை"
+   },
+   "pass_bar_enter_placeholder": {
+      "message": "உங்கள் பாஸ் கீயை ஒட்டவும்"
+   },
+   "pass_bar_expand_aria": {
+      "message": "பாஸ் டைமரைக் காட்டு"
+   },
+   "pass_bar_expired": {
+      "message": "பாஸ் காலாவதியானது — புதுப்பிக்கவும்"
+   },
+   "pass_bar_get": {
+      "message": "7-நாள் பாஸ் பெறுங்கள் · ₹99"
+   },
+   "pass_bar_have_key": {
+      "message": "பாஸ் கீ உள்ளதா?"
+   },
+   "pass_bar_hide": {
+      "message": "பாஸ் டைமரை மறை"
+   },
+   "pass_bar_invalid_key": {
+      "message": "அந்த கீ சரிபார்க்கப்படவில்லை — சரிபார்த்து மீண்டும் முயற்சிக்கவும்."
+   },
+   "pass_bar_remove": {
+      "message": "பாஸை அகற்று"
+   },
+   "pass_bar_renew": {
+      "message": "புதுப்பிக்கவும் · ₹99 முதல்"
+   },
+   "pass_bar_show_timer": {
+      "message": "பாஸ் டைமரைக் காட்டு"
+   },
+   "pass_disclaimer": {
+      "message": "இந்த பாஸ் பக்தர் முன்பதிவு தானியங்கு நிரப்புதலை மட்டும் திறக்கும். சேவா மற்றும் ஸ்ரீவாணி தானியங்கு நிரப்புதல் இலவசம். டிக்கெட் கிடைப்பது, முன்பதிவு உறுதி அல்லது வெற்றிகரமான பணப்பரிவர்த்தனைக்கு இது உத்தரவாதம் அளிக்காது."
+   },
+   "personal_details_heading": {
+      "message": "தனிப்பட்ட விவரங்கள்"
+   },
+   "pilgrim_details_line": {
+      "message": "{age} வயது • {gender} • {idProof}"
+   },
+   "pilgrim_limit": {
+      "message": "({count}/6 பக்தர்கள்)"
+   },
+   "pilgrims_heading": {
+      "message": "பக்தர்கள் ({count})"
+   },
+   "placeholder_10_digit": {
+      "message": "10 இலக்கங்கள்"
+   },
+   "placeholder_aadhaar_12": {
+      "message": "12 இலக்க ஆதார்"
+   },
+   "placeholder_e_g_bt": {
+      "message": "எ.கா. பி.டெக்"
+   },
+   "placeholder_e_g_engineer": {
+      "message": "எ.கா. பொறியாளர்"
+   },
+   "placeholder_e_g_jan_2024": {
+      "message": "எ.கா. ஜன 2024"
+   },
+   "placeholder_enter_district": {
+      "message": "மாவட்டத்தை உள்ளிடவும்"
+   },
+   "placeholder_full_name_aadhaar": {
+      "message": "ஆதார் படி முழு பெயர்"
+   },
+   "placeholder_optional": {
+      "message": "விருப்பம்"
+   },
+   "placeholder_passport_number": {
+      "message": "பாஸ்போர்ட் எண்"
+   },
+   "placeholder_relation": {
+      "message": "உறவு"
+   },
+   "placeholder_residential_address": {
+      "message": "முழு வசிப்பிட முகவரி"
+   },
+   "profession_heading": {
+      "message": "தொழில்"
+   },
+   "select_category_first": {
+      "message": "முதலில் வகையைத் தேர்ந்தெடுக்கவும்"
+   },
+   "select_district": {
+      "message": "மாவட்டத்தைத் தேர்ந்தெடுக்கவும்"
+   },
+   "select_dots": {
+      "message": "தேர்ந்தெடுக்கவும்..."
+   },
+   "select_placeholder": {
+      "message": "தேர்ந்தெடு"
+   },
+   "select_state": {
+      "message": "மாநிலத்தைத் தேர்ந்தெடுக்கவும்"
+   },
+   "select_temple": {
+      "message": "கோவிலைத் தேர்ந்தெடுக்கவும்"
+   },
+   "select_year": {
+      "message": "ஆண்டைத் தேர்ந்தெடுக்கவும்"
+   },
+   "set_action_load": {
+      "message": "ஏற்று"
+   },
+   "set_load": {
+      "message": "🗂️ சேமித்த செட்டை ஏற்றவும் ({count})"
+   },
+   "set_manage": {
+      "message": "⚙ செட்களை நிர்வகிக்கவும்"
+   },
+   "set_no_pilgrims": {
+      "message": "இந்த செட்டில் இன்னும் பக்தர்கள் இல்லை"
+   },
+   "set_replace_title": {
+      "message": "பட்டியலை இந்த செட்டுடன் மாற்றவும்"
+   },
+   "set_replaces": {
+      "message": "{count} பக்தர்கள் — தற்போதைய பட்டியலை மாற்றும்"
+   },
+   "seva_apply_to_form": {
+      "message": "⚡ படிவத்தில் பயன்படுத்தவும்"
+   },
+   "seva_save_data": {
+      "message": "💾 சேவக் தரவைச் சேமிக்கவும்"
+   },
+   "seva_saved_info": {
+      "message": "சேமித்த தகவல்"
+   },
+   "sidebar_members": {
+      "message": "உறுப்பினர்கள்"
+   },
+   "srivani_accommodation_date": {
+      "message": "தங்குமிடம் தேவைப்படும் தேதி"
+   },
+   "srivani_add_person": {
+      "message": "நபரைச் சேர்க்கவும்"
+   },
+   "srivani_additional_laddus": {
+      "message": "கூடுதல் லட்டுகள்"
+   },
+   "srivani_booking_type": {
+      "message": "முன்பதிவு வகை"
+   },
+   "srivani_break_darshan_date": {
+      "message": "பிரேக் தர்ஷன் தேதி"
+   },
+   "srivani_checkin_slot": {
+      "message": "செக்-இன் நேர ஸ்லாட்"
+   },
+   "srivani_edit_person": {
+      "message": "நபரைத் திருத்தவும்"
+   },
+   "srivani_field_age_placeholder": {
+      "message": "வயது"
+   },
+   "srivani_field_id_number": {
+      "message": "அடையாளச் சான்று எண் *"
+   },
+   "srivani_field_id_number_placeholder": {
+      "message": "ஆதார் / பாஸ்போர்ட் எண்"
+   },
+   "srivani_field_id_type": {
+      "message": "அடையாளச் சான்று வகை *"
+   },
+   "srivani_field_name": {
+      "message": "பெயர் (அடையாள அட்டையில் உள்ளபடி) *"
+   },
+   "srivani_field_name_placeholder": {
+      "message": "பெயரை உள்ளிடவும்"
+   },
+   "srivani_fill_all": {
+      "message": "⚡ ஸ்ரீவாணி விவரங்களை நிரப்பவும்"
+   },
+   "srivani_future_booking": {
+      "message": "எதிர்கால முன்பதிவு"
+   },
+   "srivani_no_people": {
+      "message": "இன்னும் நபர்கள் சேர்க்கப்படவில்லை"
+   },
+   "srivani_optional_placeholder": {
+      "message": "விருப்பத்தின் பேரில்"
+   },
+   "srivani_people_heading": {
+      "message": "நபர்கள் ({count}/{max})"
+   },
+   "srivani_select_accommodation": {
+      "message": "தங்குமிடத்தைத் தேர்ந்தெடுக்கவும்"
+   },
+   "srivani_update_person": {
+      "message": "நபரைப் புதுப்பிக்கவும்"
+   },
+   "tab_dismiss_aria": {
+      "message": "குறிப்பை அகற்று"
+   },
+   "tab_drag_title": {
+      "message": "மறுஒழுங்குபடுத்த இழுக்கவும்"
+   },
+   "tab_hint": {
+      "message": "💡 குறிப்பு: டேப்களை வரிசைப்படுத்த அவற்றை இழுக்கவும் — உங்கள் வரிசை சேமிக்கப்படும்."
+   },
+   "tab_nav_title": {
+      "message": "தாவல்களை இழுத்து வரிசைப்படுத்துங்கள் — உங்கள் வரிசை சேமிக்கப்படும்"
+   },
+   "tab_pilgrim": {
+      "message": "🛕 பக்தர் முன்பதிவு"
+   },
+   "tab_seva": {
+      "message": "🙏 ஸ்ரீவாரி சேவா"
+   },
+   "tab_seva_group": {
+      "message": "👥 சேவா (குழு)"
+   },
+   "tab_srivani": {
+      "message": "🪔 ஸ்ரீவாணி"
+   },
+   "tabmanager_autosaved": {
+      "message": "உங்கள் தேர்வுகள் தானாகவே சேமிக்கப்படும்."
+   },
+   "tabmanager_error_one_visible": {
+      "message": "குறைந்தபட்சம் ஒரு தாவல் தெரியும் நிலையில் இருக்க வேண்டும்"
+   },
+   "tabmanager_hidden": {
+      "message": "🚫 மறைக்கப்பட்டது"
+   },
+   "tabmanager_hide_tab_title": {
+      "message": "இந்த தாவலை மறைக்க கிளிக் செய்யவும்"
+   },
+   "tabmanager_local_note": {
+      "message": "சேமிக்கப்பட்ட பக்தர் தரவு இந்த உலாவியில் மட்டுமே இருக்கும்."
+   },
+   "tabmanager_reset": {
+      "message": "↺ இயல்புநிலைக்கு மீட்டமை"
+   },
+   "tabmanager_reset_title": {
+      "message": "அசல் வரிசையை மீட்டெடுத்து அனைத்து தாவல்களையும் காட்டு"
+   },
+   "tabmanager_settings": {
+      "message": "⚙ சேமிக்கப்பட்ட பக்தர்கள் & அமைப்புகள்"
+   },
+   "tabmanager_settings_title": {
+      "message": "சேமித்த பக்தர்கள், செட்கள், காப்புப்பிரதி மற்றும் அமைப்புகளைத் திறக்கவும்"
+   },
+   "tabmanager_show_hide": {
+      "message": "டேப்களைக் காண்பி அல்லது மறை"
+   },
+   "tabmanager_show_tab_title": {
+      "message": "இந்த தாவலைக் காட்ட கிளிக் செய்யவும்"
+   },
+   "tabmanager_shown": {
+      "message": "👁 காட்டப்பட்டது"
+   },
+   "team_leader": {
+      "message": "குழுத் தலைவர்"
+   },
+   "team_member": {
+      "message": "குழு உறுப்பினர்"
+   },
+   "team_member_n": {
+      "message": "குழு உறுப்பினர் {n}"
+   },
+   "theme_switch_to_dark": {
+      "message": "டார்க் பயன்முறைக்கு மாறவும்"
+   },
+   "theme_switch_to_light": {
+      "message": "லைட் பயன்முறைக்கு மாறவும்"
+   },
+   "trainer_specifics_heading": {
+      "message": "பயிற்சியாளர் சிறப்புகள்"
+   },
+   "unit_years": {
+      "message": "வயது"
+   },
+   "uploads_heading": {
+      "message": "பதிவேற்றங்கள்"
+   },
+   "vault_add": {
+      "message": "＋ சேர்க்கவும்"
+   },
+   "vault_add_from": {
+      "message": "👨‍👩‍👧 சேமித்த பக்தர்களிடமிருந்து சேர்க்கவும் ({count})"
+   },
+   "vault_add_pilgrims": {
+      "message": "பக்தர்களைச் சேர்க்கவும்"
+   },
+   "vault_added": {
+      "message": "✓ சேர்க்கப்பட்டது"
+   },
+   "vault_details_incomplete": {
+      "message": "விவரங்கள் முழுமையடையவில்லை"
+   },
+   "vault_empty": {
+      "message": "👨‍👩‍👧 நீங்கள் இன்னும் பக்தர்களைச் சேமிக்கவில்லை. சேமித்த விவரங்கள் இந்த உலாவியில் மட்டுமே இருக்கும்."
+   },
+   "vault_manage": {
+      "message": "⚙ சேமித்த பக்தர்களை நிர்வகிக்கவும்"
+   },
+   "vault_privacy": {
+      "message": "இந்த உலாவியில் உள்ளூரில் சேமிக்கப்பட்டு விரைவான அணுகலுக்குத் தயாராக உள்ளது."
+   },
+   "vault_title_add": {
+      "message": "இந்த முன்பதிவில் சேர்க்கவும்"
+   },
+   "vault_title_added": {
+      "message": "ஏற்கனவே சேர்க்கப்பட்டது"
+   },
+   "vault_title_full": {
+      "message": "பட்டியல் நிரம்பியது"
+   },
+   "vault_unnamed": {
+      "message": "பெயரிடப்படாத பக்தர்"
+   },
+   "volunteer_details_heading": {
+      "message": "தன்னார்வலர் விவரங்கள்"
+   },
+   "yes_label": {
+      "message": "ஆம்"
+   }
+}

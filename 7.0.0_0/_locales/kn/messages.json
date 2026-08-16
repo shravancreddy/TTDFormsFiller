@@ -1,0 +1,896 @@
+{
+   "action_add_pilgrim": {
+      "message": "ಭಕ್ತರನ್ನು ಸೇರಿಸಿ"
+   },
+   "action_cancel": {
+      "message": "ರದ್ದುಮಾಡಿ"
+   },
+   "action_edit_pilgrim": {
+      "message": "ಭಕ್ತರ ವಿವರ ತಿದ್ದುಪಡಿ"
+   },
+   "action_fill": {
+      "message": "⚡ ಭರ್ತಿ ಮಾಡಿ"
+   },
+   "action_fill_all": {
+      "message": "⚡ ಎಲ್ಲಾ ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ"
+   },
+   "action_fill_all_locked": {
+      "message": "ದಯವಿಟ್ಟು ಪಾಸ್ ಖರೀದಿಸಿ — ಆಟೋಫಿಲ್ ಸಕ್ರಿಯಗೊಳಿಸಲು"
+   },
+   "action_fill_locked_title": {
+      "message": "ವಾರದ ಪಾಸ್ ಅಗತ್ಯವಿದೆ"
+   },
+   "action_save": {
+      "message": "ಉಳಿಸಿ"
+   },
+   "action_update": {
+      "message": "ಅಪ್‌ಡೇಟ್ ಮಾಡಿ"
+   },
+   "action_update_pilgrim": {
+      "message": "ಭಕ್ತರನ್ನು ನವೀಕರಿಸಿ"
+   },
+   "aruna_abhishekam": {
+      "message": "ಅಭಿಷೇಕ ವಿವರಗಳು"
+   },
+   "aruna_clear": {
+      "message": "ವಿವರಗಳನ್ನು ಅಳಿಸಿ"
+   },
+   "aruna_contact": {
+      "message": "ಸಂಪರ್ಕ"
+   },
+   "aruna_devotee": {
+      "message": "ಭಕ್ತ"
+   },
+   "aruna_fill_form": {
+      "message": "ಅರುಣಾಚಲ ಫಾರ್ಮ್ ಭರ್ತಿ ಮಾಡಿ"
+   },
+   "aruna_terms": {
+      "message": "ನಿಯಮಗಳು ಮತ್ತು ಷರತ್ತುಗಳು"
+   },
+   "contact_gothram": {
+      "message": "ಗೋತ್ರ: {gothram}"
+   },
+   "contact_no_address": {
+      "message": "ವಿಳಾಸ ವಿವರಗಳಿಲ್ಲ"
+   },
+   "contact_no_email": {
+      "message": "ಇಮೇಲ್ ಇಲ್ಲ"
+   },
+   "education_heading": {
+      "message": "ಶಿಕ್ಷಣ"
+   },
+   "empty_no_pilgrims_body": {
+      "message": "ಕೆಳಗಿನ ಫಾರ್ಮ್ ಬಳಸಿ ನಿಮ್ಮ ಮೊದಲ ಭಕ್ತರನ್ನು ಸೇರಿಸಿ ↓"
+   },
+   "empty_no_pilgrims_hint": {
+      "message": "ಉಳಿಸಿದ ಭಕ್ತರ ವಿವರಗಳನ್ನು ಒಂದೇ ಕ್ಲಿಕ್‌ನಲ್ಲಿ TTD ಬುಕಿಂಗ್ ಫಾರ್ಮ್‌ಗಳಲ್ಲಿ ಆಟೋಫಿಲ್ ಮಾಡಬಹುದು."
+   },
+   "empty_no_pilgrims_title": {
+      "message": "ಇನ್ನೂ ಯಾವುದೇ ಭಕ್ತರನ್ನು ಸೇರಿಸಲಾಗಿಲ್ಲ"
+   },
+   "experience_refs_heading": {
+      "message": "ಅನುಭವ ಮತ್ತು ಉಲ್ಲೇಖಗಳು"
+   },
+   "extension_description": {
+      "message": "TTD ದರ್ಶನ, ಸೇವಾ, ಶ್ರೀವಾಣಿ ಮತ್ತು ವಸತಿ ಬುಕಿಂಗ್ ಫಾರ್ಮ್‌ಗಳಿಗಾಗಿ ಒಂದೇ ಕ್ಲಿಕ್‌ನಲ್ಲಿ ಆಟೋಫಿಲ್. ಭಕ್ತರ ಡೇಟಾ ನಿಮ್ಮ ಸಾಧನದಲ್ಲೇ ಇರುತ್ತದೆ; ಐಚ್ಛಿಕ ಪಾವತಿ ಪಾಸ್‌ಗೆ ಆನ್‌ಲೈನ್ ಪರವಾನಗಿ ಪರಿಶೀಲನೆ ಇರುತ್ತದೆ. ಜಾಹೀರಾತುಗಳು ಅಥವಾ ವರ್ತನೆ ಟ್ರ್ಯಾಕಿಂಗ್ ಇಲ್ಲ."
+   },
+   "extension_name": {
+      "message": "TTD Autofill Assistant"
+   },
+   "field_age": {
+      "message": "ವಯಸ್ಸು *"
+   },
+   "field_alt_mobile": {
+      "message": "ಪರ್ಯಾಯ ಮೊಬೈಲ್"
+   },
+   "field_blood_group": {
+      "message": "ರಕ್ತದ ಗುಂಪು"
+   },
+   "field_city": {
+      "message": "ನಗರ"
+   },
+   "field_city_required": {
+      "message": "ನಗರ *"
+   },
+   "field_commitment": {
+      "message": "ಬದ್ಧತೆ"
+   },
+   "field_country": {
+      "message": "ದೇಶ"
+   },
+   "field_country_placeholder": {
+      "message": "ಉದಾ., ಭಾರತ, USA, UK"
+   },
+   "field_country_placeholder_short": {
+      "message": "ಉದಾ. ಭಾರತ"
+   },
+   "field_country_required": {
+      "message": "ದೇಶ *"
+   },
+   "field_date_placeholder": {
+      "message": "DD/MM/YYYY"
+   },
+   "field_designation": {
+      "message": "ಹುದ್ದೆ / ನಿವೃತ್ತರಾದಂತೆ *"
+   },
+   "field_details": {
+      "message": "ವಿವರಗಳು"
+   },
+   "field_district": {
+      "message": "ಜಿಲ್ಲೆ"
+   },
+   "field_district_required": {
+      "message": "ಜಿಲ್ಲೆ *"
+   },
+   "field_dob": {
+      "message": "ಜನ್ಮ ದಿನಾಂಕ *"
+   },
+   "field_door_no": {
+      "message": "ಮನೆ ಸಂಖ್ಯೆ *"
+   },
+   "field_door_no_short": {
+      "message": "ಮನೆ ನಂ."
+   },
+   "field_email": {
+      "message": "ಇಮೇಲ್"
+   },
+   "field_email_id": {
+      "message": "ಇಮೇಲ್ ಐಡಿ *"
+   },
+   "field_employee_id": {
+      "message": "ಉದ್ಯೋಗಿ ಐಡಿ *"
+   },
+   "field_employment_status": {
+      "message": "ಉದ್ಯೋಗ ಸ್ಥಿತಿ"
+   },
+   "field_exp_desc": {
+      "message": "ಅನುಭವ ವಿವರಣೆ"
+   },
+   "field_exp_years": {
+      "message": "ಅನುಭವ (ವರ್ಷಗಳು)"
+   },
+   "field_experience": {
+      "message": "ಅನುಭವ"
+   },
+   "field_expertise_areas": {
+      "message": "ಪರಿಣತಿ ಕ್ಷೇತ್ರಗಳು"
+   },
+   "field_father_husband": {
+      "message": "ತಂದೆ/ಪತಿ ಹೆಸರು *"
+   },
+   "field_father_spouse": {
+      "message": "ತಂದೆ/ಸಂಗಾತಿ ಹೆಸರು *"
+   },
+   "field_fitness": {
+      "message": "ಸದೃಢತೆ *"
+   },
+   "field_frequency": {
+      "message": "ಆವರ್ತನೆ"
+   },
+   "field_full_name_aadhaar": {
+      "message": "ಪೂರ್ಣ ಹೆಸರು (ಆಧಾರ್ ಪ್ರಕಾರ) *"
+   },
+   "field_gender": {
+      "message": "ಲಿಂಗ *"
+   },
+   "field_gothram": {
+      "message": "ಗೋತ್ರಮ್"
+   },
+   "field_gothram_hint": {
+      "message": "ದಿವ್ಯಾನುಗ್ರಹ ಹೋಮಕ್ಕೆ ಮಾತ್ರ ಅಗತ್ಯವಿದೆ"
+   },
+   "field_id_number": {
+      "message": "ಗುರುತಿನ ಸಂಖ್ಯೆ *"
+   },
+   "field_id_proof": {
+      "message": "ಗುರುತಿನ ಚೀಟಿ *"
+   },
+   "field_id_proof_number": {
+      "message": "ಗುರುತಿನ ಚೀಟಿ ಸಂಖ್ಯೆ *"
+   },
+   "field_id_proof_type": {
+      "message": "ಗುರುತಿನ ಚೀಟಿ ಪ್ರಕಾರ *"
+   },
+   "field_institute_name": {
+      "message": "ಸಂಸ್ಥೆಯ ಹೆಸರು"
+   },
+   "field_languages": {
+      "message": "ತಿಳಿದಿರುವ ಭಾಷೆಗಳು"
+   },
+   "field_last_2_periods": {
+      "message": "ಕೊನೆಯ 2 ಅವಧಿಗಳು"
+   },
+   "field_location": {
+      "message": "ಸ್ಥಳ"
+   },
+   "field_marital_status": {
+      "message": "ವೈವಾಹಿಕ ಸ್ಥಿತಿ *"
+   },
+   "field_mentally_fit": {
+      "message": "ಮಾನಸಿಕವಾಗಿ ಸದೃಢರು"
+   },
+   "field_mobile": {
+      "message": "ಮೊಬೈಲ್ ಸಂಖ್ಯೆ *"
+   },
+   "field_mobile_short": {
+      "message": "ಮೊಬೈಲ್"
+   },
+   "field_nakshatra": {
+      "message": "ನಕ್ಷತ್ರ"
+   },
+   "field_name": {
+      "message": "ಹೆಸರು *"
+   },
+   "field_nearest_temple": {
+      "message": "ಹತ್ತಿರದ TTD ದೇವಸ್ಥಾನ *"
+   },
+   "field_no_of_times": {
+      "message": "ಬಾರಿ ಸಂಖ್ಯೆ"
+   },
+   "field_other_org": {
+      "message": "ಇತರ ಸಂಸ್ಥೆಯ ಹೆಸರು"
+   },
+   "field_photo": {
+      "message": "ಫೋಟೋ"
+   },
+   "field_physically_fit": {
+      "message": "ದೈಹಿಕವಾಗಿ ಸದೃಢರು"
+   },
+   "field_pin_code": {
+      "message": "ಪಿನ್ ಕೋಡ್"
+   },
+   "field_pincode": {
+      "message": "ಪಿನ್‌ಕೋಡ್"
+   },
+   "field_place_of_work": {
+      "message": "ಕೆಲಸದ ಸ್ಥಳ/ಸಂಬಂಧಿತ *"
+   },
+   "field_preferred_loc": {
+      "message": "ಆದ್ಯತೆಯ ಸ್ಥಳ"
+   },
+   "field_previously_volunteered": {
+      "message": "ಹಿಂದೆ ಸ್ವಯಂಸೇವೆ ಮಾಡಿದ್ದೀರಾ?"
+   },
+   "field_profession": {
+      "message": "ವೃತ್ತಿ *"
+   },
+   "field_profession_category": {
+      "message": "ವೃತ್ತಿ ವರ್ಗ"
+   },
+   "field_proof_number": {
+      "message": "ಪುರಾವೆ ಸಂಖ್ಯೆ"
+   },
+   "field_proof_type": {
+      "message": "ಪುರಾವೆ ಪ್ರಕಾರ"
+   },
+   "field_qualification": {
+      "message": "ಅರ್ಹತೆ *"
+   },
+   "field_qualification_category": {
+      "message": "ಅರ್ಹತಾ ವರ್ಗ"
+   },
+   "field_ref_1_name": {
+      "message": "1. ಉಲ್ಲೇಖ ಹೆಸರು"
+   },
+   "field_ref_2_name": {
+      "message": "2. ಉಲ್ಲೇಖ ಹೆಸರು"
+   },
+   "field_residential_address": {
+      "message": "ವಸತಿ ವಿಳಾಸ *"
+   },
+   "field_role": {
+      "message": "ಪಾತ್ರ"
+   },
+   "field_sector": {
+      "message": "ಕ್ಷೇತ್ರ"
+   },
+   "field_specialisation": {
+      "message": "ವಿಶೇಷತೆ/ಕೌಶಲ್ಯ *"
+   },
+   "field_specialization": {
+      "message": "ವಿಶೇಷತೆ"
+   },
+   "field_specific_qualification": {
+      "message": "ನಿರ್ದಿಷ್ಟ ಅರ್ಹತೆ"
+   },
+   "field_specify_location": {
+      "message": "ಸ್ಥಳವನ್ನು ಸೂಚಿಸಿ"
+   },
+   "field_specify_other_area": {
+      "message": "ಇತರ ಕ್ಷೇತ್ರವನ್ನು ಸೂಚಿಸಿ"
+   },
+   "field_state": {
+      "message": "ರಾಜ್ಯ"
+   },
+   "field_state_required": {
+      "message": "ರಾಜ್ಯ *"
+   },
+   "field_street": {
+      "message": "ಬೀದಿ *"
+   },
+   "field_surname": {
+      "message": "ಉಪನಾಮ"
+   },
+   "field_synced_leader": {
+      "message": "ಟೀಮ್ ಲೀಡರ್ನಿಂದ ಸಿಂಕ್ ಮಾಡಲಾಗಿದೆ"
+   },
+   "field_ticket_count": {
+      "message": "ಟಿಕೆಟ್ ಸಂಖ್ಯೆ"
+   },
+   "field_training_experience": {
+      "message": "ತರಬೇತಿ ಅನುಭವ ಇದೆಯೇ?"
+   },
+   "field_university": {
+      "message": "ವಿಶ್ವವಿದ್ಯಾಲಯ/ಕಾಲೇಜು ಹೆಸರು"
+   },
+   "field_upload_edu_certificate": {
+      "message": "ಶೈಕ್ಷಣಿಕ ಪ್ರಮಾಣಪತ್ರ ಅಪ್ಲೋಡ್ ಮಾಡಿ *"
+   },
+   "field_upload_education": {
+      "message": "ಡಾಕ್ಯುಮೆಂಟ್ ಅಪ್ಲೋಡ್ ಮಾಡಿ (ಶಿಕ್ಷಣ) *"
+   },
+   "field_upload_id_proof": {
+      "message": "ಗುರುತಿನ ಚೀಟಿ ಅಪ್ಲೋಡ್ ಮಾಡಿ *"
+   },
+   "field_village_town_city": {
+      "message": "ಗ್ರಾಮ / ಪಟ್ಟಣ / ನಗರ"
+   },
+   "field_visa_number": {
+      "message": "ವೀಸಾ/OCI ಸಂಖ್ಯೆ"
+   },
+   "field_visa_type": {
+      "message": "ವೀಸಾದ ಪ್ರಕಾರ"
+   },
+   "field_visa_type_placeholder": {
+      "message": "ಆಲ್ಫಾನ್ಯೂಮರಿಕ್ ಮಾತ್ರ"
+   },
+   "field_visa_validity": {
+      "message": "ವೀಸಾ ಮಾನ್ಯತೆಯ ದಿನಾಂಕ"
+   },
+   "field_year_graduation": {
+      "message": "ಪದವಿ ವರ್ಷ"
+   },
+   "field_zodiac": {
+      "message": "ರಾಶಿ"
+   },
+   "fill_locked_body": {
+      "message": "ಪಿಲ್ಗ್ರಿಮ್ ಬುಕಿಂಗ್ ಫಾರ್ಮ್ ಅನ್ನು ಒಂದೇ ಕ್ಲಿಕ್ನಲ್ಲಿ ಭರ್ತಿ ಮಾಡಲು ವಾರದ ಪಾಸ್ ಪಡೆಯಿರಿ. ಈಗಾಗಲೇ ಕೀ ಇದ್ದರೆ, ಅದನ್ನು ಕೆಳಗೆ ಅಂಟಿಸಿ."
+   },
+   "fill_locked_title": {
+      "message": "ಆಟೋಫಿಲ್ಗೆ ವಾರದ ಪಾಸ್ ಅಗತ್ಯ"
+   },
+   "gender_female": {
+      "message": "ಮಹಿಳೆ"
+   },
+   "gender_male": {
+      "message": "ಪುರುಷ"
+   },
+   "gender_transgender": {
+      "message": "ತೃತೀಯ ಲಿಂಗಿ"
+   },
+   "general_details_heading": {
+      "message": "ಸಾಮಾನ್ಯ ವಿವರಗಳು"
+   },
+   "group_add_member": {
+      "message": "➕ ಸದಸ್ಯರನ್ನು ಸೇರಿಸಿ"
+   },
+   "group_autosave_note": {
+      "message": "💾 ನೀವು ಕ್ಷೇತ್ರಗಳನ್ನು ಭರ್ತಿ ಮಾಡುತ್ತಿದ್ದಂತೆ ಸದಸ್ಯರ ಮಾಹಿತಿ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಉಳಿಯುತ್ತದೆ"
+   },
+   "group_copy_from_leader": {
+      "message": "📋 ಲೀಡರ್ನಿಂದ ವಿಳಾಸವನ್ನು ನಕಲಿಸಿ"
+   },
+   "group_copy_to_all": {
+      "message": "📋 ವಿಳಾಸವನ್ನು ಎಲ್ಲಾ ಸದಸ್ಯರಿಗೆ ನಕಲಿಸಿ"
+   },
+   "group_fill_member": {
+      "message": "ಸದಸ್ಯ # ಭರ್ತಿ ಮಾಡಿ"
+   },
+   "group_fill_member_btn": {
+      "message": "⚡ ಈ ಸದಸ್ಯರನ್ನು ಭರ್ತಿ ಮಾಡಿ"
+   },
+   "group_remove_member": {
+      "message": "➖ ತೆಗೆದುಹಾಕಿ"
+   },
+   "hint_max_1mb": {
+      "message": "ಗರಿಷ್ಠ 1 MB • JPEG, PNG"
+   },
+   "idproof_aadhaar": {
+      "message": "ಆಧಾರ್ ಕಾರ್ಡ್"
+   },
+   "idproof_passport": {
+      "message": "ಪಾಸ್‌ಪೋರ್ಟ್"
+   },
+   "lang_aria": {
+      "message": "ಭಾಷೆ ಬದಲಾಯಿಸಿ (ಪ್ರಸ್ತುತ: {lang})"
+   },
+   "lang_menu_label": {
+      "message": "ಭಾಷೆ"
+   },
+   "lang_title": {
+      "message": "ಭಾಷೆ ಬದಲಾಯಿಸಿ"
+   },
+   "move_down": {
+      "message": "ಕೆಳಗೆ ಸರಿಸಿ"
+   },
+   "move_up": {
+      "message": "ಮೇಲಕ್ಕೆ ಸರಿಸಿ"
+   },
+   "msg_add_person_first": {
+      "message": "ಮೊದಲು ಕನಿಷ್ಠ ಒಬ್ಬ ವ್ಯಕ್ತಿಯನ್ನು ಸೇರಿಸಿ"
+   },
+   "msg_added_person": {
+      "message": "{name} ಸೇರಿಸಲಾಗಿದೆ"
+   },
+   "msg_added_pilgrim": {
+      "message": "{name} ಸೇರಿಸಲಾಗಿದೆ"
+   },
+   "msg_address_copied_from": {
+      "message": "ಟೀಮ್ ಲೀಡರ್ನಿಂದ ವಿಳಾಸವನ್ನು ನಕಲಿಸಲಾಗಿದೆ"
+   },
+   "msg_address_copied_to_all": {
+      "message": "ವಿಳಾಸವನ್ನು ಎಲ್ಲಾ ಸದಸ್ಯರಿಗೆ ನಕಲಿಸಲಾಗಿದೆ"
+   },
+   "msg_all_filled": {
+      "message": "ಎಲ್ಲವೂ ಭರ್ತಿಯಾದವು!"
+   },
+   "msg_aruna_cleared": {
+      "message": "ಅರುಣಾಚಲ ವಿವರಗಳನ್ನು ಅಳಿಸಲಾಗಿದೆ"
+   },
+   "msg_aruna_filled": {
+      "message": "ಅರುಣಾಚಲ ಫಾರ್ಮ್ ಭರ್ತಿಯಾಗಿದೆ!"
+   },
+   "msg_autofilling_member": {
+      "message": "ಸದಸ್ಯ {n} ಭರ್ತಿಯಾಗುತ್ತಿದೆ..."
+   },
+   "msg_contact_saved": {
+      "message": "ಸಂಪರ್ಕ ವಿವರಗಳನ್ನು ಉಳಿಸಲಾಗಿದೆ!"
+   },
+   "msg_error_autofilling_member": {
+      "message": "ಸದಸ್ಯ {n} ಭರ್ತಿ ಮಾಡುವಲ್ಲಿ ದೋಷ."
+   },
+   "msg_error_hrce": {
+      "message": "ದೋಷ: HRCE ಪುಟವನ್ನು ತೆರೆಯಿರಿ ಅಥವಾ ರಿಫ್ರೆಶ್ ಮಾಡಿ"
+   },
+   "msg_error_reading_file": {
+      "message": "ಫೈಲ್ ಓದುವಲ್ಲಿ ದೋಷ"
+   },
+   "msg_error_refresh": {
+      "message": "ದೋಷ: TTD ಪುಟವನ್ನು ರಿಫ್ರೆಶ್ ಮಾಡಿ"
+   },
+   "msg_error_refresh_page": {
+      "message": "ದೋಷ: ಪುಟವನ್ನು ರಿಫ್ರೆಶ್ ಮಾಡಿ"
+   },
+   "msg_file_too_large": {
+      "message": "ಫೈಲ್ ತುಂಬಾ ದೊಡ್ಡದಾಗಿದೆ. ಗರಿಷ್ಠ ಗಾತ್ರ 1 MB"
+   },
+   "msg_file_uploaded": {
+      "message": "{name} ಯಶಸ್ವಿಯಾಗಿ ಅಪ್ಲೋಡ್ ಆಗಿದೆ"
+   },
+   "msg_filled": {
+      "message": "ಭರ್ತಿ ಮಾಡಲಾಗಿದೆ!"
+   },
+   "msg_filled_member": {
+      "message": "ಸದಸ್ಯ {n} ಫಾರ್ಮ್ ಭರ್ತಿಯಾಗಿದೆ"
+   },
+   "msg_form_filled": {
+      "message": "ಫಾರ್ಮ್ ಭರ್ತಿಯಾಗಿದೆ!"
+   },
+   "msg_invalid_format": {
+      "message": "ಅಮಾನ್ಯ ಸ್ವರೂಪ. {extensions} ಮಾತ್ರ ಅನುಮತಿಸಲಾಗಿದೆ"
+   },
+   "msg_invalid_format_group": {
+      "message": "ಅಮಾನ್ಯ ಸ್ವರೂಪ. .jpeg, .png, .pdf ಮಾತ್ರ ಅನುಮತಿಸಲಾಗಿದೆ"
+   },
+   "msg_invalid_member": {
+      "message": "ಅಮಾನ್ಯ ಸದಸ್ಯ ಸಂಖ್ಯೆ"
+   },
+   "msg_loaded_first": {
+      "message": "ಸೆಟ್ನಿಂದ {total} ರಲ್ಲಿ ಮೊದಲ {count} ಲೋಡ್ ಆಗಿದೆ"
+   },
+   "msg_loaded_first_people": {
+      "message": "ಸೆಟ್ನಿಂದ {total} ರಲ್ಲಿ ಮೊದಲ {count} ಲೋಡ್ ಆಗಿದೆ"
+   },
+   "msg_loaded_from_set": {
+      "message": "ಸೆಟ್ನಿಂದ {count} ಭಕ್ತರು ಲೋಡ್ ಆಗಿದ್ದಾರೆ"
+   },
+   "msg_loaded_people": {
+      "message": "ಸೆಟ್ನಿಂದ {count} ಜನರು ಲೋಡ್ ಆಗಿದ್ದಾರೆ"
+   },
+   "msg_max_people": {
+      "message": "ಗರಿಷ್ಠ {count} ಜನರಿಗೆ ಅನುಮತಿ ಇದೆ!"
+   },
+   "msg_max_pilgrims": {
+      "message": "ಗರಿಷ್ಠ 6 ಭಕ್ತರಿಗೆ ಮಾತ್ರ ಅನುಮತಿ ಇದೆ!"
+   },
+   "msg_pass_required": {
+      "message": "ಪಾಸ್ ಅಗತ್ಯವಿದೆ — ಯಾತ್ರಿ ಆಟೋಫಿಲ್ಗೆ ಸಾಪ್ತಾಹಿಕ ಪಾಸ್ ಅಗತ್ಯವಿದೆ."
+   },
+   "msg_person_added": {
+      "message": "ವ್ಯಕ್ತಿಯನ್ನು ಸೇರಿಸಲಾಗಿದೆ!"
+   },
+   "msg_person_deleted": {
+      "message": "ವ್ಯಕ್ತಿಯನ್ನು ಅಳಿಸಲಾಗಿದೆ!"
+   },
+   "msg_person_updated": {
+      "message": "ವ್ಯಕ್ತಿಯನ್ನು ನವೀಕರಿಸಲಾಗಿದೆ!"
+   },
+   "msg_pilgrim_added": {
+      "message": "ಭಕ್ತರನ್ನು ಸೇರಿಸಲಾಗಿದೆ!"
+   },
+   "msg_pilgrim_deleted": {
+      "message": "ಭಕ್ತರನ್ನು ಅಳಿಸಲಾಗಿದೆ!"
+   },
+   "msg_pilgrim_updated": {
+      "message": "ಭಕ್ತರನ್ನು ನವೀಕರಿಸಲಾಗಿದೆ!"
+   },
+   "msg_required": {
+      "message": "{field} ಅಗತ್ಯವಿದೆ"
+   },
+   "msg_select_accommodation_date": {
+      "message": "ವಸತಿ ದಿನಾಂಕವನ್ನು ಆಯ್ಕೆಮಾಡಿ"
+   },
+   "msg_select_darshan_date": {
+      "message": "ಮೊದಲು ಬ್ರೇಕ್ ದರ್ಶನ ದಿನಾಂಕವನ್ನು ಆಯ್ಕೆಮಾಡಿ"
+   },
+   "msg_sevak_saved": {
+      "message": "ಸೇವಕ್ ಡೇಟಾ ಉಳಿಸಲಾಗಿದೆ!"
+   },
+   "msg_srivani_filled": {
+      "message": "ಶ್ರೀವಾಣಿ ವಿವರಗಳು ಭರ್ತಿಯಾದವು. TTD ಯಲ್ಲಿ ಹಸ್ತಚಾಲಿತವಾಗಿ ಮುಂದುವರಿಸಿ."
+   },
+   "msg_tabs_reset": {
+      "message": "ಟ್ಯಾಬ್ಗಳನ್ನು ಡೀಫಾಲ್ಟ್ಗೆ ಮರುಹೊಂದಿಸಲಾಗಿದೆ"
+   },
+   "msg_unable_fill": {
+      "message": "ಫಾರ್ಮ್ ಭರ್ತಿ ಮಾಡಲು ಸಾಧ್ಯವಾಗುತ್ತಿಲ್ಲ"
+   },
+   "msg_uploaded_member": {
+      "message": "{name} ಸದಸ್ಯ {n} ಗಾಗಿ ಅಪ್ಲೋಡ್ ಆಗಿದೆ"
+   },
+   "nav_settings": {
+      "message": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು"
+   },
+   "no_label": {
+      "message": "ಇಲ್ಲ"
+   },
+   "noun_person": {
+      "message": "ವ್ಯಕ್ತಿ"
+   },
+   "noun_pilgrim": {
+      "message": "ಭಕ್ತ"
+   },
+   "open_booking_page": {
+      "message": "ಬುಕಿಂಗ್ ಪುಟವನ್ನು ತೆರೆಯಿರಿ ↗"
+   },
+   "pass_bar_activate_key": {
+      "message": "ಸಕ್ರಿಯಗೊಳಿಸಿ"
+   },
+   "pass_bar_active": {
+      "message": "ಪಾಸ್ · {time} ಉಳಿದಿದೆ"
+   },
+   "pass_bar_check_failed": {
+      "message": "ಕೀ ಪರಿಶೀಲಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ನಿಮ್ಮ ಸಂಪರ್ಕವನ್ನು ಪರಿಶೀಲಿಸಿ."
+   },
+   "pass_bar_collapse_aria": {
+      "message": "ಪಾಸ್ ಟೈಮರ್ ಮರೆಮಾಡಿ"
+   },
+   "pass_bar_enter_placeholder": {
+      "message": "ನಿಮ್ಮ ಪಾಸ್ ಕೀ ಅನ್ನು ಅಂಟಿಸಿ"
+   },
+   "pass_bar_expand_aria": {
+      "message": "ಪಾಸ್ ಟೈಮರ್ ತೋರಿಸಿ"
+   },
+   "pass_bar_expired": {
+      "message": "ಪಾಸ್ ಅವಧಿ ಮುಗಿದಿದೆ — ನವೀಕರಿಸಿ"
+   },
+   "pass_bar_get": {
+      "message": "7-ದಿನಗಳ ಪಾಸ್ ಪಡೆಯಿರಿ · ₹99"
+   },
+   "pass_bar_have_key": {
+      "message": "ಪಾಸ್ ಕೀ ಇದೆಯೇ?"
+   },
+   "pass_bar_hide": {
+      "message": "ಪಾಸ್ ಟೈಮರ್ ಮರೆಮಾಡಿ"
+   },
+   "pass_bar_invalid_key": {
+      "message": "ಆ ಕೀ ಮಾನ್ಯವಾಗಲಿಲ್ಲ — ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+   },
+   "pass_bar_remove": {
+      "message": "ಪಾಸ್ ತೆಗೆದುಹಾಕಿ"
+   },
+   "pass_bar_renew": {
+      "message": "ನವೀಕರಿಸಿ · ₹99 ರಿಂದ"
+   },
+   "pass_bar_show_timer": {
+      "message": "ಪಾಸ್ ಟೈಮರ್ ತೋರಿಸಿ"
+   },
+   "pass_disclaimer": {
+      "message": "ಈ ಪಾಸ್ ಭಕ್ತರ ಬುಕಿಂಗ್ ಆಟೋಫಿಲ್ ಅನ್ನು ಮಾತ್ರ ಅನ್‌ಲಾಕ್ ಮಾಡುತ್ತದೆ. ಸೇವಾ ಮತ್ತು ಶ್ರೀವಾಣಿ ಆಟೋಫಿಲ್ ಉಚಿತ. ಇದು ಟಿಕೆಟ್ ಲಭ್ಯತೆ, ಬುಕಿಂಗ್ ದೃಢೀಕರಣ ಅಥವಾ ಯಶಸ್ವಿ ಪಾವತಿಯನ್ನು ಖಚಿತಪಡಿಸುವುದಿಲ್ಲ."
+   },
+   "personal_details_heading": {
+      "message": "ವೈಯಕ್ತಿಕ ವಿವರಗಳು"
+   },
+   "pilgrim_details_line": {
+      "message": "{age} ವರ್ಷಗಳು • {gender} • {idProof}"
+   },
+   "pilgrim_limit": {
+      "message": "({count}/6 ಭಕ್ತರು)"
+   },
+   "pilgrims_heading": {
+      "message": "ಭಕ್ತರು ({count})"
+   },
+   "placeholder_10_digit": {
+      "message": "10 ಅಂಕಿಗಳು"
+   },
+   "placeholder_aadhaar_12": {
+      "message": "12 ಅಂಕಿಯ ಆಧಾರ್"
+   },
+   "placeholder_e_g_bt": {
+      "message": "ಉದಾ. ಬಿ.ಟೆಕ್"
+   },
+   "placeholder_e_g_engineer": {
+      "message": "ಉದಾ. ಇಂಜಿನಿಯರ್"
+   },
+   "placeholder_e_g_jan_2024": {
+      "message": "ಉದಾ. ಜನವರಿ 2024"
+   },
+   "placeholder_enter_district": {
+      "message": "ಜಿಲ್ಲೆಯನ್ನು ನಮೂದಿಸಿ"
+   },
+   "placeholder_full_name_aadhaar": {
+      "message": "ಆಧಾರ್ ಪ್ರಕಾರ ಪೂರ್ಣ ಹೆಸರು"
+   },
+   "placeholder_optional": {
+      "message": "ಐಚ್ಛಿಕ"
+   },
+   "placeholder_passport_number": {
+      "message": "ಪಾಸ್ಪೋರ್ಟ್ ಸಂಖ್ಯೆ"
+   },
+   "placeholder_relation": {
+      "message": "ಸಂಬಂಧ"
+   },
+   "placeholder_residential_address": {
+      "message": "ಪೂರ್ಣ ವಸತಿ ವಿಳಾಸ"
+   },
+   "profession_heading": {
+      "message": "ವೃತ್ತಿ"
+   },
+   "select_category_first": {
+      "message": "ಮೊದಲು ವರ್ಗ ಆಯ್ಕೆಮಾಡಿ"
+   },
+   "select_district": {
+      "message": "ಜಿಲ್ಲೆ ಆಯ್ಕೆಮಾಡಿ"
+   },
+   "select_dots": {
+      "message": "ಆಯ್ಕೆಮಾಡಿ..."
+   },
+   "select_placeholder": {
+      "message": "ಆಯ್ಕೆಮಾಡಿ"
+   },
+   "select_state": {
+      "message": "ರಾಜ್ಯ ಆಯ್ಕೆಮಾಡಿ"
+   },
+   "select_temple": {
+      "message": "ದೇವಸ್ಥಾನ ಆಯ್ಕೆಮಾಡಿ"
+   },
+   "select_year": {
+      "message": "ವರ್ಷ ಆಯ್ಕೆಮಾಡಿ"
+   },
+   "set_action_load": {
+      "message": "ಲೋಡ್"
+   },
+   "set_load": {
+      "message": "🗂️ ಉಳಿಸಿದ ಸೆಟ್ ಲೋಡ್ ಮಾಡಿ ({count})"
+   },
+   "set_manage": {
+      "message": "⚙ ಸೆಟ್ಗಳನ್ನು ನಿರ್ವಹಿಸಿ"
+   },
+   "set_no_pilgrims": {
+      "message": "ಈ ಸೆಟ್ನಲ್ಲಿ ಇನ್ನೂ ಭಕ್ತರಿಲ್ಲ"
+   },
+   "set_replace_title": {
+      "message": "ಪಟ್ಟಿಯನ್ನು ಈ ಸೆಟ್ನೊಂದಿಗೆ ಬದಲಿಸಿ"
+   },
+   "set_replaces": {
+      "message": "{count} ಭಕ್ತರು — ಪ್ರಸ್ತುತ ಪಟ್ಟಿಯನ್ನು ಬದಲಿಸುತ್ತದೆ"
+   },
+   "seva_apply_to_form": {
+      "message": "⚡ ಫಾರ್ಮ್ಗೆ ಅನ್ವಯಿಸಿ"
+   },
+   "seva_save_data": {
+      "message": "💾 ಸೇವಕ್ ಡೇಟಾವನ್ನು ಉಳಿಸಿ"
+   },
+   "seva_saved_info": {
+      "message": "ಉಳಿಸಿದ ಮಾಹಿತಿ"
+   },
+   "sidebar_members": {
+      "message": "ಸದಸ್ಯರು"
+   },
+   "srivani_accommodation_date": {
+      "message": "ವಸತಿ ದಿನಾಂಕ"
+   },
+   "srivani_add_person": {
+      "message": "ವ್ಯಕ್ತಿಯನ್ನು ಸೇರಿಸಿ"
+   },
+   "srivani_additional_laddus": {
+      "message": "ಹೆಚ್ಚುವರಿ ಲಡ್ಡುಗಳು"
+   },
+   "srivani_booking_type": {
+      "message": "ಬುಕಿಂಗ್ ಪ್ರಕಾರ"
+   },
+   "srivani_break_darshan_date": {
+      "message": "ಬ್ರೇಕ್ ದರ್ಶನ ದಿನಾಂಕ"
+   },
+   "srivani_checkin_slot": {
+      "message": "ಚೆಕ್-ಇನ್ ಸಮಯದ ಸ್ಲಾಟ್"
+   },
+   "srivani_edit_person": {
+      "message": "ವ್ಯಕ್ತಿಯನ್ನು ಸಂಪಾದಿಸಿ"
+   },
+   "srivani_field_age_placeholder": {
+      "message": "ವಯಸ್ಸು"
+   },
+   "srivani_field_id_number": {
+      "message": "ಗುರುತಿನ ಚೀಟಿ ಸಂಖ್ಯೆ *"
+   },
+   "srivani_field_id_number_placeholder": {
+      "message": "ಆಧಾರ್ / ಪಾಸ್‌ಪೋರ್ಟ್ ಸಂಖ್ಯೆ"
+   },
+   "srivani_field_id_type": {
+      "message": "ಗುರುತಿನ ಚೀಟಿಯ ಪ್ರಕಾರ *"
+   },
+   "srivani_field_name": {
+      "message": "ಹೆಸರು (ಐಡಿ ಪ್ರಕಾರ) *"
+   },
+   "srivani_field_name_placeholder": {
+      "message": "ಹೆಸರನ್ನು ನಮೂದಿಸಿ"
+   },
+   "srivani_fill_all": {
+      "message": "⚡ ಶ್ರೀವಾಣಿ ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ"
+   },
+   "srivani_future_booking": {
+      "message": "ಭವಿಷ್ಯದ ಬುಕಿಂಗ್"
+   },
+   "srivani_no_people": {
+      "message": "ಇನ್ನೂ ಯಾರನ್ನೂ ಸೇರಿಸಲಾಗಿಲ್ಲ"
+   },
+   "srivani_optional_placeholder": {
+      "message": "ಐಚ್ಛಿಕ"
+   },
+   "srivani_people_heading": {
+      "message": "ಜನರು ({count}/{max})"
+   },
+   "srivani_select_accommodation": {
+      "message": "ವಸತಿ ಆಯ್ಕೆಮಾಡಿ"
+   },
+   "srivani_update_person": {
+      "message": "ವ್ಯಕ್ತಿಯನ್ನು ನವೀಕರಿಸಿ"
+   },
+   "tab_dismiss_aria": {
+      "message": "ಸುಳಿವನ್ನು ತೆಗೆದುಹಾಕಿ"
+   },
+   "tab_drag_title": {
+      "message": "ಮರುಜೋಡಣೆಗಾಗಿ ಎಳೆಯಿರಿ"
+   },
+   "tab_hint": {
+      "message": "💡 ಸಲಹೆ: ಟ್ಯಾಬ್‌ಗಳನ್ನು ಮರುಕ್ರಮಗೊಳಿಸಲು ಅವುಗಳನ್ನು ಡ್ರ್ಯಾಗ್ ಮಾಡಿ — ನಿಮ್ಮ ಕ್ರಮವನ್ನು ಉಳಿಸಲಾಗುತ್ತದೆ."
+   },
+   "tab_nav_title": {
+      "message": "ಟ್ಯಾಬ್ಗಳನ್ನು ಎಳೆದು ಕ್ರಮಗೊಳಿಸಿ — ನಿಮ್ಮ ಕ್ರಮ ಉಳಿಸಲಾಗುತ್ತದೆ"
+   },
+   "tab_pilgrim": {
+      "message": "🛕 ಭಕ್ತರ ಬುಕಿಂಗ್"
+   },
+   "tab_seva": {
+      "message": "🙏 ಶ್ರೀವಾರಿ ಸೇವಾ"
+   },
+   "tab_seva_group": {
+      "message": "👥 ಸೇವಾ (ಗುಂಪು)"
+   },
+   "tab_srivani": {
+      "message": "🪔 ಶ್ರೀವಾಣಿ"
+   },
+   "tabmanager_autosaved": {
+      "message": "ನಿಮ್ಮ ಆಯ್ಕೆಗಳು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಉಳಿಸಲ್ಪಡುತ್ತವೆ."
+   },
+   "tabmanager_error_one_visible": {
+      "message": "ಕನಿಷ್ಠ ಒಂದು ಟ್ಯಾಬ್ ಗೋಚರವಾಗಿರಬೇಕು"
+   },
+   "tabmanager_hidden": {
+      "message": "🚫 ಮರೆಮಾಡಲಾಗಿದೆ"
+   },
+   "tabmanager_hide_tab_title": {
+      "message": "ಈ ಟ್ಯಾಬ್ ಮರೆಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ"
+   },
+   "tabmanager_local_note": {
+      "message": "ಉಳಿಸಿದ ಭಕ್ತರ ಡೇಟಾ ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮಾತ್ರ ಇರುತ್ತದೆ."
+   },
+   "tabmanager_reset": {
+      "message": "↺ ಡಿಫಾಲ್ಟ್‌ಗೆ ಮರುಹೊಂದಿಸಿ"
+   },
+   "tabmanager_reset_title": {
+      "message": "ಮೂಲ ಕ್ರಮವನ್ನು ಮರುಸ್ಥಾಪಿಸಿ ಮತ್ತು ಎಲ್ಲಾ ಟ್ಯಾಬ್ಗಳನ್ನು ತೋರಿಸಿ"
+   },
+   "tabmanager_settings": {
+      "message": "⚙ ಉಳಿಸಿದ ಭಕ್ತರು & ಸೆಟ್ಟಿಂಗ್‌ಗಳು"
+   },
+   "tabmanager_settings_title": {
+      "message": "ಉಳಿಸಿದ ಭಕ್ತರು, ಸೆಟ್ಗಳು, ಬ್ಯಾಕಪ್ ಮತ್ತು ಸೆಟ್ಟಿಂಗ್ಗಳನ್ನು ತೆರೆಯಿರಿ"
+   },
+   "tabmanager_show_hide": {
+      "message": "ಟ್ಯಾಬ್‌ಗಳನ್ನು ತೋರಿಸಿ ಅಥವಾ ಮರೆಮಾಡಿ"
+   },
+   "tabmanager_show_tab_title": {
+      "message": "ಈ ಟ್ಯಾಬ್ ತೋರಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ"
+   },
+   "tabmanager_shown": {
+      "message": "👁 ತೋರಿಸಲಾಗಿದೆ"
+   },
+   "team_leader": {
+      "message": "ಟೀಮ್ ಲೀಡರ್"
+   },
+   "team_member": {
+      "message": "ಟೀಮ್ ಸದಸ್ಯ"
+   },
+   "team_member_n": {
+      "message": "ಟೀಮ್ ಸದಸ್ಯ {n}"
+   },
+   "theme_switch_to_dark": {
+      "message": "ಡಾರ್ಕ್ ಮೋಡ್ಗೆ ಬದಲಿಸಿ"
+   },
+   "theme_switch_to_light": {
+      "message": "ಲೈಟ್ ಮೋಡ್ಗೆ ಬದಲಿಸಿ"
+   },
+   "trainer_specifics_heading": {
+      "message": "ತರಬೇತುದಾರರ ವಿಶೇಷತೆಗಳು"
+   },
+   "unit_years": {
+      "message": "ವರ್ಷ"
+   },
+   "uploads_heading": {
+      "message": "ಅಪ್ಲೋಡ್ಗಳು"
+   },
+   "vault_add": {
+      "message": "＋ ಸೇರಿಸಿ"
+   },
+   "vault_add_from": {
+      "message": "👨‍👩‍👧 ಉಳಿಸಿದ ಭಕ್ತರಿಂದ ಸೇರಿಸಿ ({count})"
+   },
+   "vault_add_pilgrims": {
+      "message": "ಭಕ್ತರನ್ನು ಸೇರಿಸಿ"
+   },
+   "vault_added": {
+      "message": "✓ ಸೇರಿಸಲಾಗಿದೆ"
+   },
+   "vault_details_incomplete": {
+      "message": "ವಿವರಗಳು ಅಪೂರ್ಣ"
+   },
+   "vault_empty": {
+      "message": "👨‍👩‍👧 ನೀವು ಇನ್ನೂ ಭಕ್ತರನ್ನು ಉಳಿಸಿಲ್ಲ. ಉಳಿಸಿದ ವಿವರಗಳು ಈ ಬ್ರೌಸರ್ನಲ್ಲಿ ಮಾತ್ರ ಇರುತ್ತವೆ."
+   },
+   "vault_manage": {
+      "message": "⚙ ಉಳಿಸಿದ ಭಕ್ತರನ್ನು ನಿರ್ವಹಿಸಿ"
+   },
+   "vault_privacy": {
+      "message": "ಈ ಬ್ರೌಸರ್ನಲ್ಲಿ ಸ್ಥಳೀಯವಾಗಿ ಉಳಿಸಲಾಗಿದೆ ಮತ್ತು ತ್ವರಿತ ಪ್ರವೇಶಕ್ಕೆ ಸಿದ್ಧವಾಗಿದೆ."
+   },
+   "vault_title_add": {
+      "message": "ಈ ಬುಕಿಂಗ್ಗೆ ಸೇರಿಸಿ"
+   },
+   "vault_title_added": {
+      "message": "ಈಗಾಗಲೇ ಸೇರಿಸಲಾಗಿದೆ"
+   },
+   "vault_title_full": {
+      "message": "ಪಟ್ಟಿ ತುಂಬಿದೆ"
+   },
+   "vault_unnamed": {
+      "message": "ಹೆಸರಿಲ್ಲದ ಭಕ್ತ"
+   },
+   "volunteer_details_heading": {
+      "message": "ಸ್ವಯಂಸೇವಕರ ವಿವರಗಳು"
+   },
+   "yes_label": {
+      "message": "ಹೌದು"
+   }
+}

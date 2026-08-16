@@ -1,0 +1,896 @@
+{
+   "action_add_pilgrim": {
+      "message": "భక్తుడిని జోడించండి"
+   },
+   "action_cancel": {
+      "message": "రద్దు చేయండి"
+   },
+   "action_edit_pilgrim": {
+      "message": "భక్తుడి వివరాలను సవరించండి"
+   },
+   "action_fill": {
+      "message": "⚡ పూరించండి"
+   },
+   "action_fill_all": {
+      "message": "⚡ అన్ని వివరాలను పూరించండి"
+   },
+   "action_fill_all_locked": {
+      "message": "దయచేసి పాస్ కొనండి — ఆటోఫిల్ ప్రారంభించడానికి"
+   },
+   "action_fill_locked_title": {
+      "message": "వీక్లీ పాస్ అవసరం"
+   },
+   "action_save": {
+      "message": "సేవ్ చేయండి"
+   },
+   "action_update": {
+      "message": "నవీకరించండి"
+   },
+   "action_update_pilgrim": {
+      "message": "భక్తుడిని నవీకరించండి"
+   },
+   "aruna_abhishekam": {
+      "message": "అభిషేకం వివరాలు"
+   },
+   "aruna_clear": {
+      "message": "వివరాలను క్లియర్ చేయండి"
+   },
+   "aruna_contact": {
+      "message": "సంప్రదింపు"
+   },
+   "aruna_devotee": {
+      "message": "భక్తుడు"
+   },
+   "aruna_fill_form": {
+      "message": "అరుణాచలం ఫారమ్ను భర్తీ చేయండి"
+   },
+   "aruna_terms": {
+      "message": "నిబంధనలు మరియు షరతులు"
+   },
+   "contact_gothram": {
+      "message": "గోత్రం: {gothram}"
+   },
+   "contact_no_address": {
+      "message": "చిరునామా వివరాలు లేవు"
+   },
+   "contact_no_email": {
+      "message": "ఇమెయిల్ లేదు"
+   },
+   "education_heading": {
+      "message": "విద్య"
+   },
+   "empty_no_pilgrims_body": {
+      "message": "దిగువ ఉన్న ఫారమ్‌ను ఉపయోగించి మీ మొదటి భక్తుడిని జోడించండి ↓"
+   },
+   "empty_no_pilgrims_hint": {
+      "message": "సేవ్ చేసిన భక్తుల వివరాలను ఒకే క్లిక్‌తో TTD బుకింగ్ ఫారమ్‌లలో ఆటోఫిల్ చేయవచ్చు."
+   },
+   "empty_no_pilgrims_title": {
+      "message": "ఇంకా భక్తులెవరూ లేరు"
+   },
+   "experience_refs_heading": {
+      "message": "అనుభవం మరియు సిఫార్సులు"
+   },
+   "extension_description": {
+      "message": "TTD దర్శనం, సేవ, శ్రీవాణి మరియు వసతి బుకింగ్ ఫారమ్‌ల కోసం ఒకే క్లిక్‌తో ఆటోఫిల్. భక్తుల డేటా మీ పరికరంలోనే ఉంటుంది; ఐచ్ఛిక చెల్లింపు పాస్‌కు ఆన్‌లైన్ లైసెన్స్ ధృవీకరణ ఉంటుంది. ప్రకటనలు లేదా ప్రవర్తనా ట్రాకింగ్ లేదు."
+   },
+   "extension_name": {
+      "message": "TTD Autofill Assistant"
+   },
+   "field_age": {
+      "message": "వయస్సు *"
+   },
+   "field_alt_mobile": {
+      "message": "ప్రత్యామ్నాయ మొబైల్"
+   },
+   "field_blood_group": {
+      "message": "రక్త వర్గం"
+   },
+   "field_city": {
+      "message": "నగరం"
+   },
+   "field_city_required": {
+      "message": "నగరం *"
+   },
+   "field_commitment": {
+      "message": "నిబద్ధత"
+   },
+   "field_country": {
+      "message": "దేశం"
+   },
+   "field_country_placeholder": {
+      "message": "ఉదా., ఇండియా, USA, UK"
+   },
+   "field_country_placeholder_short": {
+      "message": "ఉదా. భారతదేశం"
+   },
+   "field_country_required": {
+      "message": "దేశం *"
+   },
+   "field_date_placeholder": {
+      "message": "DD/MM/YYYY"
+   },
+   "field_designation": {
+      "message": "హోదా / పదవీ విరమణ *"
+   },
+   "field_details": {
+      "message": "వివరాలు"
+   },
+   "field_district": {
+      "message": "జిల్లా"
+   },
+   "field_district_required": {
+      "message": "జిల్లా *"
+   },
+   "field_dob": {
+      "message": "పుట్టిన తేదీ *"
+   },
+   "field_door_no": {
+      "message": "ఇంటి నంబర్ *"
+   },
+   "field_door_no_short": {
+      "message": "ఇంటి నం."
+   },
+   "field_email": {
+      "message": "ఈమెయిల్"
+   },
+   "field_email_id": {
+      "message": "ఇమెయిల్ ఐడి *"
+   },
+   "field_employee_id": {
+      "message": "ఉద్యోగి ఐడి *"
+   },
+   "field_employment_status": {
+      "message": "ఉపాధి స్థితి"
+   },
+   "field_exp_desc": {
+      "message": "అనుభవ వివరణ"
+   },
+   "field_exp_years": {
+      "message": "అనుభవం (సంవత్సరాలు)"
+   },
+   "field_experience": {
+      "message": "అనుభవం"
+   },
+   "field_expertise_areas": {
+      "message": "నైపుణ్య ప్రాంతాలు"
+   },
+   "field_father_husband": {
+      "message": "తండ్రి/భర్త పేరు *"
+   },
+   "field_father_spouse": {
+      "message": "తండ్రి/జీవిత భాగస్వామి పేరు *"
+   },
+   "field_fitness": {
+      "message": "దృఢత్వం *"
+   },
+   "field_frequency": {
+      "message": "ఫ్రీక్వెన్సీ"
+   },
+   "field_full_name_aadhaar": {
+      "message": "పూర్తి పేరు (ఆధార్ ప్రకారం) *"
+   },
+   "field_gender": {
+      "message": "లింగం *"
+   },
+   "field_gothram": {
+      "message": "గోత్రం"
+   },
+   "field_gothram_hint": {
+      "message": "దివ్యానుగ్రహ హోమం కోసం మాత్రమే అవసరం"
+   },
+   "field_id_number": {
+      "message": "ఐడీ నంబర్ *"
+   },
+   "field_id_proof": {
+      "message": "గుర్తింపు కార్డు *"
+   },
+   "field_id_proof_number": {
+      "message": "గుర్తింపు పత్రం సంఖ్య *"
+   },
+   "field_id_proof_type": {
+      "message": "గుర్తింపు పత్రం రకం *"
+   },
+   "field_institute_name": {
+      "message": "సంస్థ పేరు"
+   },
+   "field_languages": {
+      "message": "తెలిసిన భాషలు"
+   },
+   "field_last_2_periods": {
+      "message": "చివరి 2 కాలాలు"
+   },
+   "field_location": {
+      "message": "స్థానం"
+   },
+   "field_marital_status": {
+      "message": "వైవాహిక స్థితి *"
+   },
+   "field_mentally_fit": {
+      "message": "మానసికంగా దృఢంగా ఉన్నారు"
+   },
+   "field_mobile": {
+      "message": "మొబైల్ నంబర్ *"
+   },
+   "field_mobile_short": {
+      "message": "మొబైల్"
+   },
+   "field_nakshatra": {
+      "message": "నక్షత్రం"
+   },
+   "field_name": {
+      "message": "పేరు *"
+   },
+   "field_nearest_temple": {
+      "message": "సమీప TTD దేవాలయం *"
+   },
+   "field_no_of_times": {
+      "message": "సార్ల సంఖ్య"
+   },
+   "field_other_org": {
+      "message": "ఇతర సంస్థ పేరు"
+   },
+   "field_photo": {
+      "message": "ఫోటో"
+   },
+   "field_physically_fit": {
+      "message": "శారీరకంగా దృఢంగా ఉన్నారు"
+   },
+   "field_pin_code": {
+      "message": "పిన్ కోడ్"
+   },
+   "field_pincode": {
+      "message": "పిన్‌కోడ్"
+   },
+   "field_place_of_work": {
+      "message": "పని ప్రదేశం/సంబంధిత *"
+   },
+   "field_preferred_loc": {
+      "message": "ప్రాధాన్య స్థానం"
+   },
+   "field_previously_volunteered": {
+      "message": "గతంలో స్వచ్ఛంద సేవ చేశారా?"
+   },
+   "field_profession": {
+      "message": "వృత్తి *"
+   },
+   "field_profession_category": {
+      "message": "వృత్తి వర్గం"
+   },
+   "field_proof_number": {
+      "message": "ప్రూఫ్ నంబర్"
+   },
+   "field_proof_type": {
+      "message": "ప్రూఫ్ రకం"
+   },
+   "field_qualification": {
+      "message": "అర్హత *"
+   },
+   "field_qualification_category": {
+      "message": "అర్హత వర్గం"
+   },
+   "field_ref_1_name": {
+      "message": "1. సిఫార్సు పేరు"
+   },
+   "field_ref_2_name": {
+      "message": "2. సిఫార్సు పేరు"
+   },
+   "field_residential_address": {
+      "message": "నివాస చిరునామా *"
+   },
+   "field_role": {
+      "message": "పాత్ర"
+   },
+   "field_sector": {
+      "message": "రంగం"
+   },
+   "field_specialisation": {
+      "message": "ప్రత్యేకత/నైపుణ్యం *"
+   },
+   "field_specialization": {
+      "message": "ప్రత్యేకత"
+   },
+   "field_specific_qualification": {
+      "message": "నిర్దిష్ట అర్హత"
+   },
+   "field_specify_location": {
+      "message": "స్థలాన్ని పేర్కొనండి"
+   },
+   "field_specify_other_area": {
+      "message": "ఇతర ప్రాంతాన్ని పేర్కొనండి"
+   },
+   "field_state": {
+      "message": "రాష్ట్రం"
+   },
+   "field_state_required": {
+      "message": "రాష్ట్రం *"
+   },
+   "field_street": {
+      "message": "వీధి *"
+   },
+   "field_surname": {
+      "message": "ఇంటి పేరు"
+   },
+   "field_synced_leader": {
+      "message": "టీమ్ లీడర్ నుండి సమకాలీకరించబడింది"
+   },
+   "field_ticket_count": {
+      "message": "టికెట్ల సంఖ్య"
+   },
+   "field_training_experience": {
+      "message": "శిక్షణ అనుభవం ఉందా?"
+   },
+   "field_university": {
+      "message": "విశ్వవిద్యాలయం/కళాశాల పేరు"
+   },
+   "field_upload_edu_certificate": {
+      "message": "విద్యా ధృవీకరణ పత్రం అప్లోడ్ చేయండి *"
+   },
+   "field_upload_education": {
+      "message": "డాక్యుమెంట్ అప్లోడ్ చేయండి (విద్య) *"
+   },
+   "field_upload_id_proof": {
+      "message": "గుర్తింపు పత్రం అప్లోడ్ చేయండి *"
+   },
+   "field_village_town_city": {
+      "message": "గ్రామం / పట్టణం / నగరం"
+   },
+   "field_visa_number": {
+      "message": "వీసా/OCI నంబర్"
+   },
+   "field_visa_type": {
+      "message": "వీసా రకం"
+   },
+   "field_visa_type_placeholder": {
+      "message": "ఆల్ఫాన్యూమరిక్ మాత్రమే"
+   },
+   "field_visa_validity": {
+      "message": "వీసా చెల్లుబాటు తేదీ"
+   },
+   "field_year_graduation": {
+      "message": "పట్టభద్రత సంవత్సరం"
+   },
+   "field_zodiac": {
+      "message": "రాశి"
+   },
+   "fill_locked_body": {
+      "message": "పిల్గ్రిమ్ బుకింగ్ ఫారమ్ను ఒకే క్లిక్లో నింపడానికి వీక్లీ పాస్ పొందండి. ఇప్పటికే కీ ఉంటే, దాన్ని క్రింద అతికించండి."
+   },
+   "fill_locked_title": {
+      "message": "ఆటోఫిల్ కోసం వీక్లీ పాస్ అవసరం"
+   },
+   "gender_female": {
+      "message": "స్త్రీ"
+   },
+   "gender_male": {
+      "message": "పురుషుడు"
+   },
+   "gender_transgender": {
+      "message": "ట్రాన్స్‌జెండర్"
+   },
+   "general_details_heading": {
+      "message": "సాధారణ వివరాలు"
+   },
+   "group_add_member": {
+      "message": "➕ సభ్యుడిని జోడించండి"
+   },
+   "group_autosave_note": {
+      "message": "💾 సభ్యుని సమాచారం మీరు ఫీల్డ్లను భర్తీ చేస్తుండగానే స్వయంచాలకంగా సేవ్ అవుతుంది"
+   },
+   "group_copy_from_leader": {
+      "message": "📋 లీడర్ నుండి చిరునామాను కాపీ చేయండి"
+   },
+   "group_copy_to_all": {
+      "message": "📋 చిరునామాను అందరికీ కాపీ చేయండి"
+   },
+   "group_fill_member": {
+      "message": "సభ్యుడు # భర్తీ చేయండి"
+   },
+   "group_fill_member_btn": {
+      "message": "⚡ ఈ సభ్యుడిని భర్తీ చేయండి"
+   },
+   "group_remove_member": {
+      "message": "➖ తీసివేయండి"
+   },
+   "hint_max_1mb": {
+      "message": "గరిష్టం 1 MB • JPEG, PNG"
+   },
+   "idproof_aadhaar": {
+      "message": "ఆధార్ కార్డ్"
+   },
+   "idproof_passport": {
+      "message": "పాస్‌పోర్ట్"
+   },
+   "lang_aria": {
+      "message": "భాష మార్చండి (ప్రస్తుతం: {lang})"
+   },
+   "lang_menu_label": {
+      "message": "భాష"
+   },
+   "lang_title": {
+      "message": "భాష మార్చండి"
+   },
+   "move_down": {
+      "message": "కిందికి తరలించండి"
+   },
+   "move_up": {
+      "message": "పైకి తరలించండి"
+   },
+   "msg_add_person_first": {
+      "message": "ముందుగా కనీసం ఒక వ్యక్తిని జోడించండి"
+   },
+   "msg_added_person": {
+      "message": "{name} జోడించబడ్డారు"
+   },
+   "msg_added_pilgrim": {
+      "message": "{name} జోడించబడ్డారు"
+   },
+   "msg_address_copied_from": {
+      "message": "టీమ్ లీడర్ నుండి చిరునామా కాపీ అయింది"
+   },
+   "msg_address_copied_to_all": {
+      "message": "చిరునామా అందరికీ కాపీ అయింది"
+   },
+   "msg_all_filled": {
+      "message": "అన్నీ భర్తీ అయ్యాయి!"
+   },
+   "msg_aruna_cleared": {
+      "message": "అరుణాచలం వివరాలు క్లియర్ అయ్యాయి"
+   },
+   "msg_aruna_filled": {
+      "message": "అరుణాచలం ఫారమ్ భర్తీ అయింది!"
+   },
+   "msg_autofilling_member": {
+      "message": "సభ్యుడు {n} భర్తీ అవుతున్నాడు..."
+   },
+   "msg_contact_saved": {
+      "message": "సంప్రదింపు వివరాలు సేవ్ అయ్యాయి!"
+   },
+   "msg_error_autofilling_member": {
+      "message": "సభ్యుడు {n} భర్తీ చేయడంలో లోపం."
+   },
+   "msg_error_hrce": {
+      "message": "లోపం: HRCE పేజీని తెరవండి లేదా రిఫ్రెష్ చేయండి"
+   },
+   "msg_error_reading_file": {
+      "message": "ఫైల్ చదవడంలో లోపం"
+   },
+   "msg_error_refresh": {
+      "message": "లోపం: TTD పేజీని రిఫ్రెష్ చేయండి"
+   },
+   "msg_error_refresh_page": {
+      "message": "లోపం: పేజీని రిఫ్రెష్ చేయండి"
+   },
+   "msg_file_too_large": {
+      "message": "ఫైల్ చాలా పెద్దది. గరిష్ట పరిమాణం 1 MB"
+   },
+   "msg_file_uploaded": {
+      "message": "{name} విజయవంతంగా అప్లోడ్ అయింది"
+   },
+   "msg_filled": {
+      "message": "భర్తీ చేయబడింది!"
+   },
+   "msg_filled_member": {
+      "message": "సభ్యుడు {n} ఫారమ్ భర్తీ అయింది"
+   },
+   "msg_form_filled": {
+      "message": "ఫారమ్ భర్తీ అయింది!"
+   },
+   "msg_invalid_format": {
+      "message": "చెల్లని ఫార్మాట్. {extensions} మాత్రమే అనుమతించబడతాయి"
+   },
+   "msg_invalid_format_group": {
+      "message": "చెల్లని ఫార్మాట్. .jpeg, .png, .pdf మాత్రమే అనుమతించబడతాయి"
+   },
+   "msg_invalid_member": {
+      "message": "చెల్లని సభ్యుని సంఖ్య"
+   },
+   "msg_loaded_first": {
+      "message": "సెట్ నుండి {total} లో మొదటి {count} లోడ్ అయ్యాయి"
+   },
+   "msg_loaded_first_people": {
+      "message": "సెట్ నుండి {total} లో మొదటి {count} లోడ్ అయ్యారు"
+   },
+   "msg_loaded_from_set": {
+      "message": "సెట్ నుండి {count} మంది భక్తులు లోడ్ అయ్యారు"
+   },
+   "msg_loaded_people": {
+      "message": "సెట్ నుండి {count} మంది లోడ్ అయ్యారు"
+   },
+   "msg_max_people": {
+      "message": "గరిష్టంగా {count} మంది అనుమతించబడతారు!"
+   },
+   "msg_max_pilgrims": {
+      "message": "గరిష్టంగా 6 మంది భక్తులు మాత్రమే అనుమతించబడతారు!"
+   },
+   "msg_pass_required": {
+      "message": "పాస్ అవసరం — పిల్గ్రిం ఆటోఫిల్కు వీక్లీ పాస్ అవసరం."
+   },
+   "msg_person_added": {
+      "message": "వ్యక్తి జోడించబడ్డారు!"
+   },
+   "msg_person_deleted": {
+      "message": "వ్యక్తి తొలగించబడ్డారు!"
+   },
+   "msg_person_updated": {
+      "message": "వ్యక్తి నవీకరించబడ్డారు!"
+   },
+   "msg_pilgrim_added": {
+      "message": "భక్తుడు జోడించబడ్డాడు!"
+   },
+   "msg_pilgrim_deleted": {
+      "message": "భక్తుడు తొలగించబడ్డాడు!"
+   },
+   "msg_pilgrim_updated": {
+      "message": "భక్తుడు నవీకరించబడ్డాడు!"
+   },
+   "msg_required": {
+      "message": "{field} అవసరం"
+   },
+   "msg_select_accommodation_date": {
+      "message": "వసతి తేదీని ఎంచుకోండి"
+   },
+   "msg_select_darshan_date": {
+      "message": "ముందుగా బ్రేక్ దర్శనం తేదీని ఎంచుకోండి"
+   },
+   "msg_sevak_saved": {
+      "message": "సేవక్ డేటా సేవ్ అయింది!"
+   },
+   "msg_srivani_filled": {
+      "message": "శ్రీవాణి వివరాలు భర్తీ అయ్యాయి. TTDలో మాన్యువల్గా కొనసాగించండి."
+   },
+   "msg_tabs_reset": {
+      "message": "టాబ్లు డిఫాల్ట్కు రీసెట్ అయ్యాయి"
+   },
+   "msg_unable_fill": {
+      "message": "ఫారమ్ను భర్తీ చేయలేకపోయాము"
+   },
+   "msg_uploaded_member": {
+      "message": "{name} సభ్యుడు {n} కోసం అప్లోడ్ అయింది"
+   },
+   "nav_settings": {
+      "message": "సెట్టింగ్‌లు"
+   },
+   "no_label": {
+      "message": "కాదు"
+   },
+   "noun_person": {
+      "message": "వ్యక్తి"
+   },
+   "noun_pilgrim": {
+      "message": "భక్తుడు"
+   },
+   "open_booking_page": {
+      "message": "బుకింగ్ పేజీని తెరువండి ↗"
+   },
+   "pass_bar_activate_key": {
+      "message": "యాక్టివేట్ చేయండి"
+   },
+   "pass_bar_active": {
+      "message": "పాస్ · {time} మిగిలి ఉంది"
+   },
+   "pass_bar_check_failed": {
+      "message": "కీని ధృవీకరించలేకపోయాము. మీ కనెక్షన్ తనిఖీ చేయండి."
+   },
+   "pass_bar_collapse_aria": {
+      "message": "పాస్ టైమర్ దాచండి"
+   },
+   "pass_bar_enter_placeholder": {
+      "message": "మీ పాస్ కీని అతికించండి"
+   },
+   "pass_bar_expand_aria": {
+      "message": "పాస్ టైమర్ చూపించండి"
+   },
+   "pass_bar_expired": {
+      "message": "పాస్ గడువు ముగిసింది — పునరుద్ధరించండి"
+   },
+   "pass_bar_get": {
+      "message": "7-రోజుల పాస్ పొందండి · ₹99"
+   },
+   "pass_bar_have_key": {
+      "message": "పాస్ కీ ఉందా?"
+   },
+   "pass_bar_hide": {
+      "message": "పాస్ టైమర్ దాచండి"
+   },
+   "pass_bar_invalid_key": {
+      "message": "ఆ కీ చెల్లలేదు — సరిచూసి మళ్లీ ప్రయత్నించండి."
+   },
+   "pass_bar_remove": {
+      "message": "పాస్ తీసివేయండి"
+   },
+   "pass_bar_renew": {
+      "message": "పునరుద్ధరించండి · ₹99 నుండి"
+   },
+   "pass_bar_show_timer": {
+      "message": "పాస్ టైమర్ చూపించండి"
+   },
+   "pass_disclaimer": {
+      "message": "ఈ పాస్ భక్తుల బుకింగ్ ఆటోఫిల్‌ను మాత్రమే అన్‌లాక్ చేస్తుంది. సేవ మరియు శ్రీవాణి ఆటోఫిల్ ఉచితం. టికెట్ లభ్యత, బుకింగ్ నిర్ధారణ లేదా చెల్లింపు విజయాన్ని ఇది హామీ ఇవ్వదు."
+   },
+   "personal_details_heading": {
+      "message": "వ్యక్తిగత వివరాలు"
+   },
+   "pilgrim_details_line": {
+      "message": "{age} సం. • {gender} • {idProof}"
+   },
+   "pilgrim_limit": {
+      "message": "({count}/6 మంది భక్తులు)"
+   },
+   "pilgrims_heading": {
+      "message": "భక్తులు ({count})"
+   },
+   "placeholder_10_digit": {
+      "message": "10 అంకెలు"
+   },
+   "placeholder_aadhaar_12": {
+      "message": "12 అంకెల ఆధార్"
+   },
+   "placeholder_e_g_bt": {
+      "message": "ఉదా. బి.టెక్"
+   },
+   "placeholder_e_g_engineer": {
+      "message": "ఉదా. ఇంజనీర్"
+   },
+   "placeholder_e_g_jan_2024": {
+      "message": "ఉదా. జనవరి 2024"
+   },
+   "placeholder_enter_district": {
+      "message": "జిల్లాను నమోదు చేయండి"
+   },
+   "placeholder_full_name_aadhaar": {
+      "message": "ఆధార్ ప్రకారం పూర్తి పేరు"
+   },
+   "placeholder_optional": {
+      "message": "ఐచ్ఛికం"
+   },
+   "placeholder_passport_number": {
+      "message": "పాస్పోర్ట్ నంబర్"
+   },
+   "placeholder_relation": {
+      "message": "సంబంధం"
+   },
+   "placeholder_residential_address": {
+      "message": "పూర్తి నివాస చిరునామా"
+   },
+   "profession_heading": {
+      "message": "వృత్తి"
+   },
+   "select_category_first": {
+      "message": "ముందుగా వర్గాన్ని ఎంచుకోండి"
+   },
+   "select_district": {
+      "message": "జిల్లాను ఎంచుకోండి"
+   },
+   "select_dots": {
+      "message": "ఎంచుకోండి..."
+   },
+   "select_placeholder": {
+      "message": "ఎంచుకోండి"
+   },
+   "select_state": {
+      "message": "రాష్ట్రాన్ని ఎంచుకోండి"
+   },
+   "select_temple": {
+      "message": "దేవాలయాన్ని ఎంచుకోండి"
+   },
+   "select_year": {
+      "message": "సంవత్సరాన్ని ఎంచుకోండి"
+   },
+   "set_action_load": {
+      "message": "లోడ్"
+   },
+   "set_load": {
+      "message": "🗂️ సేవ్ చేసిన సెట్ను లోడ్ చేయండి ({count})"
+   },
+   "set_manage": {
+      "message": "⚙ సెట్లను నిర్వహించండి"
+   },
+   "set_no_pilgrims": {
+      "message": "ఈ సెట్లో ఇంకా భక్తులు లేరు"
+   },
+   "set_replace_title": {
+      "message": "జాబితాను ఈ సెట్తో భర్తీ చేయండి"
+   },
+   "set_replaces": {
+      "message": "{count} మంది భక్తులు — ప్రస్తుత జాబితాను భర్తీ చేస్తుంది"
+   },
+   "seva_apply_to_form": {
+      "message": "⚡ ఫారమ్కు వర్తించండి"
+   },
+   "seva_save_data": {
+      "message": "💾 సేవక్ డేటాను సేవ్ చేయండి"
+   },
+   "seva_saved_info": {
+      "message": "సేవ్ చేసిన సమాచారం"
+   },
+   "sidebar_members": {
+      "message": "సభ్యులు"
+   },
+   "srivani_accommodation_date": {
+      "message": "వసతి తేదీ"
+   },
+   "srivani_add_person": {
+      "message": "వ్యక్తిని జోడించండి"
+   },
+   "srivani_additional_laddus": {
+      "message": "అదనపు లడ్డూలు"
+   },
+   "srivani_booking_type": {
+      "message": "బుకింగ్ రకం"
+   },
+   "srivani_break_darshan_date": {
+      "message": "బ్రేక్ దర్శనం తేదీ"
+   },
+   "srivani_checkin_slot": {
+      "message": "చెకిన్ సమయం స్లాట్"
+   },
+   "srivani_edit_person": {
+      "message": "వ్యక్తిని సవరించండి"
+   },
+   "srivani_field_age_placeholder": {
+      "message": "వయస్సు"
+   },
+   "srivani_field_id_number": {
+      "message": "ఐడీ ప్రూఫ్ నంబర్ *"
+   },
+   "srivani_field_id_number_placeholder": {
+      "message": "ఆధార్ / పాస్‌పోర్ట్ నంబర్"
+   },
+   "srivani_field_id_type": {
+      "message": "ఐడీ ప్రూఫ్ రకం *"
+   },
+   "srivani_field_name": {
+      "message": "పేరు (ఐడీ ప్రకారం) *"
+   },
+   "srivani_field_name_placeholder": {
+      "message": "పేరును ఎంటర్ చేయండి"
+   },
+   "srivani_fill_all": {
+      "message": "⚡ శ్రీవాణి వివరాలు భర్తీ చేయండి"
+   },
+   "srivani_future_booking": {
+      "message": "భవిష్యత్ బుకింగ్"
+   },
+   "srivani_no_people": {
+      "message": "ఇంకా ఎవరినీ జోడించలేదు"
+   },
+   "srivani_optional_placeholder": {
+      "message": "ఐచ్ఛికం"
+   },
+   "srivani_people_heading": {
+      "message": "వ్యక్తులు ({count}/{max})"
+   },
+   "srivani_select_accommodation": {
+      "message": "వసతి ఎంచుకోండి"
+   },
+   "srivani_update_person": {
+      "message": "వ్యక్తిని నవీకరించండి"
+   },
+   "tab_dismiss_aria": {
+      "message": "టిప్ను తీసివేయండి"
+   },
+   "tab_drag_title": {
+      "message": "పునర్వ్యవస్థీకరించడానికి లాగండి"
+   },
+   "tab_hint": {
+      "message": "💡 చిట్కా: ట్యాబ్‌లను క్రమబద్ధకరించడానికి వాటిని లాగండి (drag) — మీ క్రమం సేవ్ చేయబడుతుంది."
+   },
+   "tab_nav_title": {
+      "message": "టాబ్లను లాగి క్రమం మార్చండి — మీ క్రమం సేవ్ అవుతుంది"
+   },
+   "tab_pilgrim": {
+      "message": "🛕 భక్తుల బుకింగ్"
+   },
+   "tab_seva": {
+      "message": "🙏 శ్రీవారి సేవ"
+   },
+   "tab_seva_group": {
+      "message": "👥 సేవ (గ్రూప్)"
+   },
+   "tab_srivani": {
+      "message": "🪔 శ్రీవాణి"
+   },
+   "tabmanager_autosaved": {
+      "message": "మీ ఎంపికలు స్వయంచాలకంగా సేవ్ చేయబడతాయి."
+   },
+   "tabmanager_error_one_visible": {
+      "message": "కనీసం ఒక టాబ్ కనిపించేలా ఉండాలి"
+   },
+   "tabmanager_hidden": {
+      "message": "🚫 దాచబడింది"
+   },
+   "tabmanager_hide_tab_title": {
+      "message": "ఈ టాబ్ దాచడానికి క్లిక్ చేయండి"
+   },
+   "tabmanager_local_note": {
+      "message": "సేవ్ చేసిన భక్తుల డేటా ఈ బ్రౌజర్‌లో మాత్రమే ఉంటుంది."
+   },
+   "tabmanager_reset": {
+      "message": "↺ డిఫాల్ట్‌కి రీసెట్ చేయండి"
+   },
+   "tabmanager_reset_title": {
+      "message": "అసలు క్రమాన్ని పునరుద్ధరించండి మరియు అన్ని టాబ్లను చూపించండి"
+   },
+   "tabmanager_settings": {
+      "message": "⚙ సేవ్ చేసిన భక్తులు & సెట్టింగ్‌లు"
+   },
+   "tabmanager_settings_title": {
+      "message": "సేవ్ చేసిన భక్తులు, సెట్లు, బ్యాకప్ మరియు సెట్టింగ్లను తెరవండి"
+   },
+   "tabmanager_show_hide": {
+      "message": "ట్యాబ్‌లను చూపించు లేదా దాచు"
+   },
+   "tabmanager_show_tab_title": {
+      "message": "ఈ టాబ్ చూపించడానికి క్లిక్ చేయండి"
+   },
+   "tabmanager_shown": {
+      "message": "👁 చూపబడింది"
+   },
+   "team_leader": {
+      "message": "టీమ్ లీడర్"
+   },
+   "team_member": {
+      "message": "టీమ్ సభ్యుడు"
+   },
+   "team_member_n": {
+      "message": "టీమ్ సభ్యుడు {n}"
+   },
+   "theme_switch_to_dark": {
+      "message": "డార్క్ మోడ్కు మారండి"
+   },
+   "theme_switch_to_light": {
+      "message": "లైట్ మోడ్కు మారండి"
+   },
+   "trainer_specifics_heading": {
+      "message": "శిక్షకుల ప్రత్యేకతలు"
+   },
+   "unit_years": {
+      "message": "సంవత్సరాలు"
+   },
+   "uploads_heading": {
+      "message": "అప్లోడ్లు"
+   },
+   "vault_add": {
+      "message": "＋ జోడించండి"
+   },
+   "vault_add_from": {
+      "message": "👨‍👩‍👧 సేవ్ చేసిన భక్తుల నుండి జోడించండి ({count})"
+   },
+   "vault_add_pilgrims": {
+      "message": "భక్తులను జోడించండి"
+   },
+   "vault_added": {
+      "message": "✓ జోడించబడింది"
+   },
+   "vault_details_incomplete": {
+      "message": "వివరాలు అసంపూర్ణం"
+   },
+   "vault_empty": {
+      "message": "👨‍👩‍👧 మీరు ఇంకా భక్తులను సేవ్ చేయలేదు. సేవ్ చేసిన వివరాలు ఈ బ్రౌజర్లో మాత్రమే ఉంటాయి."
+   },
+   "vault_manage": {
+      "message": "⚙ సేవ్ చేసిన భక్తులను నిర్వహించండి"
+   },
+   "vault_privacy": {
+      "message": "ఈ బ్రౌజర్లో స్థానికంగా సేవ్ అవుతుంది మరియు త్వరిత ప్రాప్యతకు సిద్ధంగా ఉంటుంది."
+   },
+   "vault_title_add": {
+      "message": "ఈ బుకింగ్కు జోడించండి"
+   },
+   "vault_title_added": {
+      "message": "ఇప్పటికే జోడించబడింది"
+   },
+   "vault_title_full": {
+      "message": "జాబితా నిండిపోయింది"
+   },
+   "vault_unnamed": {
+      "message": "పేరు లేని భక్తుడు"
+   },
+   "volunteer_details_heading": {
+      "message": "స్వచ్ఛంద సేవకుల వివరాలు"
+   },
+   "yes_label": {
+      "message": "అవును"
+   }
+}
