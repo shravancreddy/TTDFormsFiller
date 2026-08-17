@@ -1,0 +1,6 @@
+# Build output from ttd-form-helper/package.py
+ttd-form-helper/dist/
+
+# Python bytecode from the icon generator
+__pycache__/
+*.pyc

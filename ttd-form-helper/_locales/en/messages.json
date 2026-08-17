@@ -1,0 +1,1238 @@
+{
+   "action_add_pilgrim": {
+      "message": "Add Pilgrim"
+   },
+   "action_cancel": {
+      "message": "Cancel"
+   },
+   "action_edit_pilgrim": {
+      "message": "Edit Pilgrim"
+   },
+   "action_fill": {
+      "message": "⚡ Fill"
+   },
+   "action_fill_all": {
+      "message": "⚡ Fill All Details"
+   },
+   "action_fill_one": {
+      "message": "Fill only this pilgrim into the form"
+   },
+   "action_save": {
+      "message": "Save"
+   },
+   "action_update": {
+      "message": "Update"
+   },
+   "action_update_pilgrim": {
+      "message": "Update Pilgrim"
+   },
+   "contact_gothram": {
+      "message": "Gothram: {gothram}"
+   },
+   "contact_heading": {
+      "message": "Contact"
+   },
+   "contact_no_address": {
+      "message": "No address details"
+   },
+   "contact_no_email": {
+      "message": "No email"
+   },
+   "education_heading": {
+      "message": "Education"
+   },
+   "empty_no_pilgrims_body": {
+      "message": "Add your first pilgrim using the form below ↓"
+   },
+   "empty_no_pilgrims_hint": {
+      "message": "Saved pilgrims can be autofilled into TTD booking forms with one click."
+   },
+   "empty_no_pilgrims_title": {
+      "message": "No pilgrims yet"
+   },
+   "experience_refs_heading": {
+      "message": "Experience & References"
+   },
+   "extension_description": {
+      "message": "Free one-click autofill for TTD Darshan, Seva and Srivani booking forms. Your details stay on this device."
+   },
+   "extension_name": {
+      "message": "TTD Form Helper"
+   },
+   "field_age": {
+      "message": "Age *"
+   },
+   "field_alt_mobile": {
+      "message": "Alternate Mobile"
+   },
+   "field_blood_group": {
+      "message": "Blood Group"
+   },
+   "field_city": {
+      "message": "City"
+   },
+   "field_city_required": {
+      "message": "City *"
+   },
+   "field_commitment": {
+      "message": "Commitment"
+   },
+   "field_country": {
+      "message": "Country"
+   },
+   "field_country_placeholder": {
+      "message": "e.g., India, USA, UK"
+   },
+   "field_country_placeholder_short": {
+      "message": "e.g. India"
+   },
+   "field_country_required": {
+      "message": "Country *"
+   },
+   "field_date_placeholder": {
+      "message": "DD/MM/YYYY"
+   },
+   "field_designation": {
+      "message": "Designation / Retired as *"
+   },
+   "field_details": {
+      "message": "Details"
+   },
+   "field_district": {
+      "message": "District"
+   },
+   "field_district_required": {
+      "message": "District *"
+   },
+   "field_dob": {
+      "message": "Date of Birth *"
+   },
+   "field_door_no": {
+      "message": "Door No *"
+   },
+   "field_door_no_short": {
+      "message": "Door No."
+   },
+   "field_email": {
+      "message": "Email"
+   },
+   "field_email_id": {
+      "message": "Email Id *"
+   },
+   "field_employee_id": {
+      "message": "Employee ID *"
+   },
+   "field_employment_status": {
+      "message": "Employment Status"
+   },
+   "field_exp_desc": {
+      "message": "Experience Desc"
+   },
+   "field_exp_years": {
+      "message": "Exp (Years)"
+   },
+   "field_experience": {
+      "message": "Experience"
+   },
+   "field_expertise_areas": {
+      "message": "Expertise Areas"
+   },
+   "field_father_husband": {
+      "message": "Father's/Husband's Name *"
+   },
+   "field_father_spouse": {
+      "message": "Father/Spouse Name *"
+   },
+   "field_fitness": {
+      "message": "Fitness *"
+   },
+   "field_frequency": {
+      "message": "Frequency"
+   },
+   "field_full_name_aadhaar": {
+      "message": "Full Name (as per Aadhaar) *"
+   },
+   "field_gender": {
+      "message": "Gender *"
+   },
+   "field_gothram": {
+      "message": "Gothram"
+   },
+   "field_gothram_hint": {
+      "message": "Only needed for Divyanugraha Homam"
+   },
+   "field_id_number": {
+      "message": "ID Number *"
+   },
+   "field_id_proof": {
+      "message": "ID Proof *"
+   },
+   "field_id_proof_number": {
+      "message": "ID Proof Number *"
+   },
+   "field_id_proof_type": {
+      "message": "ID Proof Type *"
+   },
+   "field_institute_name": {
+      "message": "Institute Name"
+   },
+   "field_languages": {
+      "message": "Languages Known"
+   },
+   "field_last_2_periods": {
+      "message": "Last 2 periods"
+   },
+   "field_location": {
+      "message": "Location"
+   },
+   "field_marital_status": {
+      "message": "Marital Status *"
+   },
+   "field_mentally_fit": {
+      "message": "Mentally Fit"
+   },
+   "field_mobile": {
+      "message": "Mobile Number *"
+   },
+   "field_mobile_short": {
+      "message": "Mobile"
+   },
+   "field_nakshatra": {
+      "message": "Nakshatra"
+   },
+   "field_name": {
+      "message": "Name *"
+   },
+   "field_nearest_temple": {
+      "message": "Nearest TTD Temple *"
+   },
+   "field_no_of_times": {
+      "message": "No. of times"
+   },
+   "field_other_org": {
+      "message": "Other Org Name"
+   },
+   "field_photo": {
+      "message": "Photo"
+   },
+   "field_physically_fit": {
+      "message": "Physically Fit"
+   },
+   "field_pin_code": {
+      "message": "PIN Code"
+   },
+   "field_pincode": {
+      "message": "Pincode"
+   },
+   "field_place_of_work": {
+      "message": "Place of Working/Related *"
+   },
+   "field_preferred_loc": {
+      "message": "Preferred Loc"
+   },
+   "field_previously_volunteered": {
+      "message": "Previously Volunteered?"
+   },
+   "field_profession": {
+      "message": "Profession *"
+   },
+   "field_profession_category": {
+      "message": "Profession Category"
+   },
+   "field_proof_number": {
+      "message": "Proof Number"
+   },
+   "field_proof_type": {
+      "message": "Proof Type"
+   },
+   "field_qualification": {
+      "message": "Qualification *"
+   },
+   "field_qualification_category": {
+      "message": "Qualification Category"
+   },
+   "field_ref_1_name": {
+      "message": "1. Reference Name"
+   },
+   "field_ref_2_name": {
+      "message": "2. Reference Name"
+   },
+   "field_residential_address": {
+      "message": "Residential Address *"
+   },
+   "field_role": {
+      "message": "Role"
+   },
+   "field_sector": {
+      "message": "Sector"
+   },
+   "field_specialisation": {
+      "message": "Specialisation/Skill *"
+   },
+   "field_specialization": {
+      "message": "Specialization"
+   },
+   "field_specific_qualification": {
+      "message": "Specific Qualification"
+   },
+   "field_specify_location": {
+      "message": "Specify Location"
+   },
+   "field_specify_other_area": {
+      "message": "Specify Other Area"
+   },
+   "field_state": {
+      "message": "State"
+   },
+   "field_state_required": {
+      "message": "State *"
+   },
+   "field_street": {
+      "message": "Street *"
+   },
+   "field_surname": {
+      "message": "Surname"
+   },
+   "field_synced_leader": {
+      "message": "Synced from Team Leader"
+   },
+   "field_ticket_count": {
+      "message": "No. of Tickets"
+   },
+   "field_training_experience": {
+      "message": "Training Experience?"
+   },
+   "field_university": {
+      "message": "University/College Name"
+   },
+   "field_upload_edu_certificate": {
+      "message": "Upload Educational Certificate *"
+   },
+   "field_upload_education": {
+      "message": "Upload Document (Education) *"
+   },
+   "field_upload_id_proof": {
+      "message": "Upload ID Proof *"
+   },
+   "field_village_town_city": {
+      "message": "Village / Town / City"
+   },
+   "field_visa_number": {
+      "message": "Visa/OCI Number"
+   },
+   "field_visa_type": {
+      "message": "Type of Visa"
+   },
+   "field_visa_type_placeholder": {
+      "message": "Alphanumeric only"
+   },
+   "field_visa_validity": {
+      "message": "Visa Validity Date"
+   },
+   "field_year_graduation": {
+      "message": "Year of Graduation"
+   },
+   "field_zodiac": {
+      "message": "Zodiac"
+   },
+   "gender_female": {
+      "message": "Female"
+   },
+   "gender_male": {
+      "message": "Male"
+   },
+   "gender_transgender": {
+      "message": "Transgender"
+   },
+   "general_details_heading": {
+      "message": "General Details"
+   },
+   "group_add_member": {
+      "message": "➕ Add Member"
+   },
+   "group_autosave_note": {
+      "message": "💾 Member information is auto-saved as you fill out the fields"
+   },
+   "group_copy_from_leader": {
+      "message": "📋 Copy Address from Leader"
+   },
+   "group_copy_to_all": {
+      "message": "📋 Copy Address to All Members"
+   },
+   "group_fill_member": {
+      "message": "Fill Member #"
+   },
+   "group_fill_member_btn": {
+      "message": "⚡ Fill This Member"
+   },
+   "group_remove_member": {
+      "message": "➖ Remove"
+   },
+   "hint_max_1mb": {
+      "message": "Max 1 MB • JPEG, PNG"
+   },
+   "idproof_aadhaar": {
+      "message": "Aadhaar Card"
+   },
+   "idproof_passport": {
+      "message": "Passport"
+   },
+   "lang_aria": {
+      "message": "Change language (current: {lang})"
+   },
+   "lang_menu_label": {
+      "message": "Language"
+   },
+   "lang_title": {
+      "message": "Change language"
+   },
+   "lock_body": {
+      "message": "Enter your passphrase to unlock it for this browser session."
+   },
+   "lock_locked_toast": {
+      "message": "Locked. Your data is encrypted again."
+   },
+   "lock_note": {
+      "message": "The passphrase is never stored. If you lose it, the saved data cannot be recovered — only removed."
+   },
+   "lock_now": {
+      "message": "Lock now"
+   },
+   "lock_passphrase_placeholder": {
+      "message": "Passphrase"
+   },
+   "lock_title": {
+      "message": "Your saved data is locked"
+   },
+   "lock_unlock": {
+      "message": "Unlock"
+   },
+   "lock_unlocking": {
+      "message": "Unlocking…"
+   },
+   "lock_wrong_passphrase": {
+      "message": "Wrong passphrase — try again."
+   },
+   "move_down": {
+      "message": "Move down"
+   },
+   "move_up": {
+      "message": "Move up"
+   },
+   "msg_add_person_first": {
+      "message": "Add at least one person first"
+   },
+   "msg_added_person": {
+      "message": "Added {name}"
+   },
+   "msg_added_pilgrim": {
+      "message": "Added {name}"
+   },
+   "msg_address_copied_from": {
+      "message": "Address copied from Team Leader"
+   },
+   "msg_address_copied_to_all": {
+      "message": "Address copied to all members"
+   },
+   "msg_all_filled": {
+      "message": "All filled!"
+   },
+   "msg_aruna_cleared": {
+      "message": "Arunachalam details cleared"
+   },
+   "msg_aruna_filled": {
+      "message": "Arunachalam form filled!"
+   },
+   "msg_autofill_failed_reason": {
+      "message": "Autofill failed: {reason}"
+   },
+   "msg_autofill_failed_unknown": {
+      "message": "Autofill failed. Open the correct booking form and try again."
+   },
+   "msg_autofilling_member": {
+      "message": "Autofilling Member {n}..."
+   },
+   "msg_booking_form_not_found": {
+      "message": "Booking form fields were not found. Open the correct booking step and try again."
+   },
+   "msg_contact_saved": {
+      "message": "Contact details saved!"
+   },
+   "msg_error_autofilling_member": {
+      "message": "Error autofilling Member {n}."
+   },
+   "msg_error_hrce": {
+      "message": "Error: open or refresh HRCE page"
+   },
+   "msg_error_reading_file": {
+      "message": "Error reading file"
+   },
+   "msg_error_refresh": {
+      "message": "Error: Refresh TTD page"
+   },
+   "msg_error_refresh_page": {
+      "message": "Error: Refresh the page"
+   },
+   "msg_file_too_large": {
+      "message": "File too large. Max size is 1 MB"
+   },
+   "msg_file_uploaded": {
+      "message": "{name} uploaded successfully"
+   },
+   "msg_filled": {
+      "message": "Filled!"
+   },
+   "msg_filled_member": {
+      "message": "Filled form for Member {n}"
+   },
+   "msg_form_filled": {
+      "message": "Form filled!"
+   },
+   "msg_invalid_format": {
+      "message": "Invalid format. Only {extensions} allowed"
+   },
+   "msg_invalid_format_group": {
+      "message": "Invalid format. Only .jpeg, .png, .pdf allowed"
+   },
+   "msg_invalid_member": {
+      "message": "Invalid member number"
+   },
+   "msg_loaded_first": {
+      "message": "Loaded first {count} of {total} from set"
+   },
+   "msg_loaded_first_people": {
+      "message": "Loaded first {count} of {total} from set"
+   },
+   "msg_loaded_from_set": {
+      "message": "Loaded {count} pilgrims from set"
+   },
+   "msg_loaded_people": {
+      "message": "Loaded {count} people from set"
+   },
+   "msg_max_people": {
+      "message": "Maximum {count} people allowed!"
+   },
+   "msg_max_pilgrims": {
+      "message": "Maximum 6 pilgrims allowed!"
+   },
+   "msg_open_supported_booking_page": {
+      "message": "Open a supported TTD booking page, then try again."
+   },
+   "msg_person_added": {
+      "message": "Person added!"
+   },
+   "msg_person_deleted": {
+      "message": "Person deleted!"
+   },
+   "msg_person_updated": {
+      "message": "Person updated!"
+   },
+   "msg_pilgrim_added": {
+      "message": "Pilgrim added!"
+   },
+   "msg_pilgrim_deleted": {
+      "message": "Pilgrim deleted!"
+   },
+   "msg_pilgrim_updated": {
+      "message": "Pilgrim updated!"
+   },
+   "msg_refresh_updated_ttd_page": {
+      "message": "Extension updated — refresh this open TTD page, then try again."
+   },
+   "msg_required": {
+      "message": "{field} required"
+   },
+   "msg_select_accommodation_date": {
+      "message": "Select Accommodation date"
+   },
+   "msg_select_darshan_date": {
+      "message": "Select Break Darshan date first"
+   },
+   "msg_sevak_saved": {
+      "message": "Sevak data saved!"
+   },
+   "msg_srivani_filled": {
+      "message": "Srivani details filled. Continue manually on TTD."
+   },
+   "msg_tabs_reset": {
+      "message": "Tabs reset to default"
+   },
+   "msg_unable_fill": {
+      "message": "Unable to fill form"
+   },
+   "msg_uploaded_member": {
+      "message": "{name} uploaded for Member {n}"
+   },
+   "nav_settings": {
+      "message": "Settings"
+   },
+   "no_label": {
+      "message": "No"
+   },
+   "noun_person": {
+      "message": "person"
+   },
+   "noun_pilgrim": {
+      "message": "pilgrim"
+   },
+   "open_booking_page": {
+      "message": "Open Booking Page ↗"
+   },
+   "opt_about_body": {
+      "message": "TTD Form Helper is a free, independent tool and is not affiliated with or endorsed by TTD. It never bypasses CAPTCHA, OTP or payment steps, and never submits a booking on its own — it only fills the fields you've saved, and only when you click Fill. All data is stored locally in this browser; nothing is sent to any server."
+   },
+   "opt_about_danger_body": {
+      "message": "Permanently erase every saved pilgrim, set, draft and preference from this browser."
+   },
+   "opt_about_danger_button": {
+      "message": "Delete all extension data"
+   },
+   "opt_about_danger_confirm_type": {
+      "message": "Type DELETE to confirm"
+   },
+   "opt_about_danger_done": {
+      "message": "All data deleted."
+   },
+   "opt_about_danger_title": {
+      "message": "Danger zone"
+   },
+   "opt_about_permission_activetab": {
+      "message": "Site access: tirupatibalaji.ap.gov.in and ttdevasthanams.ap.gov.in only — needed to type your details into the booking form. The extension does not load on any other website."
+   },
+   "opt_about_permission_storage": {
+      "message": "storage — saves your pilgrims, sevak details and preferences on this device. Nothing else."
+   },
+   "opt_about_permissions_title": {
+      "message": "Why these permissions"
+   },
+   "opt_about_title": {
+      "message": "Privacy & About"
+   },
+   "opt_backup_confirm_replace": {
+      "message": "This replaces all saved pilgrims, sets and preferences on this device with the backup. Continue?"
+   },
+   "opt_backup_encrypt_hint": {
+      "message": "Recommended. The file is encrypted with AES-GCM-256 and can only be opened with this passphrase."
+   },
+   "opt_backup_encrypt_label": {
+      "message": "Protect this backup with a passphrase"
+   },
+   "opt_backup_encrypted_note": {
+      "message": "🔐 Encrypted backup"
+   },
+   "opt_backup_export": {
+      "message": "⬇ Export backup"
+   },
+   "opt_backup_export_hint": {
+      "message": "Downloads a JSON file with your saved pilgrims, sets and preferences. It contains personal ID numbers — keep it private."
+   },
+   "opt_backup_exported": {
+      "message": "Backup downloaded."
+   },
+   "opt_backup_import": {
+      "message": "⬆ Import backup"
+   },
+   "opt_backup_import_hint": {
+      "message": "Choose a backup file exported from TTD Form Helper."
+   },
+   "opt_backup_import_passphrase": {
+      "message": "This backup is encrypted. Enter its passphrase:"
+   },
+   "opt_backup_imported": {
+      "message": "Backup imported."
+   },
+   "opt_backup_invalid": {
+      "message": "This doesn't look like a TTD Form Helper backup file."
+   },
+   "opt_backup_mode_merge": {
+      "message": "Merge with what I have"
+   },
+   "opt_backup_mode_replace": {
+      "message": "Replace everything"
+   },
+   "opt_backup_passphrase": {
+      "message": "Backup passphrase"
+   },
+   "opt_backup_passphrase_confirm": {
+      "message": "Confirm passphrase"
+   },
+   "opt_backup_plain_note": {
+      "message": "⚠ Unencrypted — this file contains Aadhaar/passport numbers in plain text."
+   },
+   "opt_backup_preview": {
+      "message": "This backup contains {pilgrims} saved pilgrim(s) and {sets} set(s)."
+   },
+   "opt_backup_subtitle": {
+      "message": "Everything is stored only in this browser. Export a backup before switching computers or reinstalling."
+   },
+   "opt_backup_title": {
+      "message": "Backup & Restore"
+   },
+   "opt_backup_wrong_passphrase": {
+      "message": "Wrong passphrase, or the file has been modified."
+   },
+   "opt_lang_subtitle": {
+      "message": "Changes the popup and settings page language."
+   },
+   "opt_lang_title": {
+      "message": "Language"
+   },
+   "opt_nav_about": {
+      "message": "🛡️ Privacy & About"
+   },
+   "opt_nav_backup": {
+      "message": "💾 Backup & Restore"
+   },
+   "opt_nav_security": {
+      "message": "🔐 Security"
+   },
+   "opt_nav_sets": {
+      "message": "🗂️ Pilgrim Sets"
+   },
+   "opt_nav_tabs": {
+      "message": "🧭 Tabs"
+   },
+   "opt_nav_vault": {
+      "message": "👨‍👩‍👧 Saved Pilgrims"
+   },
+   "opt_page_title": {
+      "message": "TTD Form Helper — Settings"
+   },
+   "opt_safety_action_body": {
+      "message": "Nothing is filled automatically. The extension types your saved details into the page only when you press a Fill button, and it never submits a booking, never touches payment, and never fills or bypasses CAPTCHA or OTP fields."
+   },
+   "opt_safety_action_title": {
+      "message": "It only acts when you click"
+   },
+   "opt_safety_code_body": {
+      "message": "Zero third-party libraries, no analytics SDK, no code loaded from a CDN, and no eval() or remote scripts — all blocked by script-src 'self'. Everything that runs is in the extension folder and can be read in a text editor. That also removes the supply-chain risk of a compromised npm package."
+   },
+   "opt_safety_code_title": {
+      "message": "It runs no outside code"
+   },
+   "opt_safety_intro": {
+      "message": "Most browser extensions are risky because of what they are *allowed* to do, not because of what they currently do — a harmless extension can be sold or hijacked and silently pushed a malicious update that abuses permissions you already granted. TTD Form Helper is built so that there is nothing useful to hijack:"
+   },
+   "opt_safety_network_body": {
+      "message": "The extension makes no network requests. Its pages run under a Content-Security-Policy of connect-src 'self', which means the browser itself blocks any attempt to contact an outside server — even if the code tried. There is no server, no API, no analytics and no telemetry to send anything to."
+   },
+   "opt_safety_network_title": {
+      "message": "It cannot send data anywhere"
+   },
+   "opt_safety_permissions_body": {
+      "message": "Only \"storage\". It does not request tabs, cookies, webRequest, scripting, downloads, history or clipboard — the permissions that data-stealing extensions rely on. It cannot read your cookies or sessions, and cannot see what other tabs you have open."
+   },
+   "opt_safety_permissions_title": {
+      "message": "It asks for almost no permissions"
+   },
+   "opt_safety_sites_body": {
+      "message": "Site access is restricted to tirupatibalaji.ap.gov.in and ttdevasthanams.ap.gov.in. On every other site — your bank, email, work apps — the extension is not loaded at all and cannot read a single character. You can confirm this on your browser's extension details page under \"Site access\"."
+   },
+   "opt_safety_sites_title": {
+      "message": "It can only touch two websites"
+   },
+   "opt_safety_title": {
+      "message": "Why this extension is safe to use"
+   },
+   "opt_safety_verify_body": {
+      "message": "Open your browser's extension details page to see the permissions and site access listed above. Open DevTools → Network while using the extension and you will see no outbound requests. The full source is unminified and readable."
+   },
+   "opt_safety_verify_title": {
+      "message": "You can verify all of this yourself"
+   },
+   "opt_security_change": {
+      "message": "Change passphrase"
+   },
+   "opt_security_changed_toast": {
+      "message": "Passphrase changed."
+   },
+   "opt_security_disable": {
+      "message": "Turn off encryption"
+   },
+   "opt_security_disable_confirm": {
+      "message": "Turn off encryption and store your data as plain text again?"
+   },
+   "opt_security_disabled_toast": {
+      "message": "Encryption is off. Your data is stored as plain text again."
+   },
+   "opt_security_enable": {
+      "message": "Turn on encryption"
+   },
+   "opt_security_enabled_toast": {
+      "message": "Encryption is on. Your data is now encrypted."
+   },
+   "opt_security_how_body": {
+      "message": "Your passphrase is stretched with PBKDF2-SHA256 (210,000 rounds) into an AES-GCM-256 key. Only the key — never the passphrase — is held in memory while unlocked, and it is wiped when the browser closes."
+   },
+   "opt_security_how_title": {
+      "message": "How it works"
+   },
+   "opt_security_mismatch": {
+      "message": "The two passphrases don't match."
+   },
+   "opt_security_passphrase": {
+      "message": "Passphrase"
+   },
+   "opt_security_passphrase_confirm": {
+      "message": "Confirm passphrase"
+   },
+   "opt_security_passphrase_current": {
+      "message": "Current passphrase"
+   },
+   "opt_security_passphrase_new": {
+      "message": "New passphrase"
+   },
+   "opt_security_status_off": {
+      "message": "Encryption is off"
+   },
+   "opt_security_status_off_body": {
+      "message": "Saved data is stored as plain text in this browser's extension storage. Anyone with access to this computer profile could read it."
+   },
+   "opt_security_status_on": {
+      "message": "Encryption is on"
+   },
+   "opt_security_status_on_body": {
+      "message": "Saved data is encrypted with AES-GCM-256. You'll be asked for your passphrase once per browser session."
+   },
+   "opt_security_subtitle": {
+      "message": "By default your data is stored unencrypted in this browser — fast and nothing to remember. Turn on encryption if this device is shared and you want a passphrase in front of it."
+   },
+   "opt_security_title": {
+      "message": "Security"
+   },
+   "opt_security_too_short": {
+      "message": "Use at least 8 characters."
+   },
+   "opt_security_unsupported": {
+      "message": "This browser doesn't support the session storage needed to stay unlocked, so you'd have to re-enter the passphrase constantly. Encryption is unavailable here."
+   },
+   "opt_security_warning": {
+      "message": "There is no way to reset this passphrase. If you forget it, your saved data is gone for good — keep a backup file somewhere safe."
+   },
+   "opt_security_wrong_current": {
+      "message": "That's not your current passphrase."
+   },
+   "opt_sets_add_pilgrims_first": {
+      "message": "Add saved pilgrims first, then come back to build a set."
+   },
+   "opt_sets_create": {
+      "message": "＋ Create a set"
+   },
+   "opt_sets_created": {
+      "message": "Set created."
+   },
+   "opt_sets_delete_confirm": {
+      "message": "Delete this set? Its pilgrims stay saved — only the group is removed."
+   },
+   "opt_sets_deleted": {
+      "message": "Set deleted."
+   },
+   "opt_sets_empty": {
+      "message": "No sets yet. Create one and add saved pilgrims to it."
+   },
+   "opt_sets_members": {
+      "message": "Members"
+   },
+   "opt_sets_name_placeholder": {
+      "message": "Set name, e.g. Family"
+   },
+   "opt_sets_rename": {
+      "message": "Rename"
+   },
+   "opt_sets_subtitle": {
+      "message": "Group saved pilgrims into named sets (e.g. \"Family\", \"Office Trip\") you can load in one click from the Pilgrim Booking tab."
+   },
+   "opt_sets_title": {
+      "message": "Pilgrim Sets"
+   },
+   "opt_sets_updated": {
+      "message": "Set updated."
+   },
+   "opt_tabs_hide": {
+      "message": "Hide"
+   },
+   "opt_tabs_min_visible": {
+      "message": "At least one tab must stay visible."
+   },
+   "opt_tabs_reset": {
+      "message": "↺ Reset to default"
+   },
+   "opt_tabs_show": {
+      "message": "Show"
+   },
+   "opt_tabs_subtitle": {
+      "message": "Choose which tabs appear in the popup and the order they appear in."
+   },
+   "opt_tabs_title": {
+      "message": "Tabs"
+   },
+   "opt_theme_dark": {
+      "message": "🌙 Dark"
+   },
+   "opt_theme_light": {
+      "message": "☀️ Light"
+   },
+   "opt_theme_subtitle": {
+      "message": "Light or dark — applies to the popup and this settings page."
+   },
+   "opt_theme_title": {
+      "message": "Appearance"
+   },
+   "opt_vault_add": {
+      "message": "＋ Add a saved pilgrim"
+   },
+   "opt_vault_delete_confirm": {
+      "message": "Remove this saved pilgrim? This won't affect any set that references them."
+   },
+   "opt_vault_deleted": {
+      "message": "Saved pilgrim removed."
+   },
+   "opt_vault_edit": {
+      "message": "Edit saved pilgrim"
+   },
+   "opt_vault_empty": {
+      "message": "No saved pilgrims yet. Add one to reuse their details across bookings."
+   },
+   "opt_vault_notes": {
+      "message": "Notes"
+   },
+   "opt_vault_notes_placeholder": {
+      "message": "Optional — anything you want to remember"
+   },
+   "opt_vault_relationship": {
+      "message": "Relationship"
+   },
+   "opt_vault_relationship_placeholder": {
+      "message": "e.g., Self, Spouse, Father"
+   },
+   "opt_vault_saved": {
+      "message": "Saved pilgrim saved."
+   },
+   "opt_vault_subtitle": {
+      "message": "A reusable address book of people you often book for. Add them here once, then pull them into any tab with one click."
+   },
+   "opt_vault_title": {
+      "message": "Saved Pilgrims"
+   },
+   "personal_details_heading": {
+      "message": "Personal Details"
+   },
+   "pilgrim_details_line": {
+      "message": "{age} yrs • {gender} • {idProof}"
+   },
+   "pilgrim_limit": {
+      "message": "({count}/6 pilgrims)"
+   },
+   "pilgrims_heading": {
+      "message": "Pilgrims ({count})"
+   },
+   "placeholder_10_digit": {
+      "message": "10-digit"
+   },
+   "placeholder_aadhaar_12": {
+      "message": "12-digit Aadhaar"
+   },
+   "placeholder_e_g_bt": {
+      "message": "e.g., B.Tech"
+   },
+   "placeholder_e_g_engineer": {
+      "message": "e.g., Engineer"
+   },
+   "placeholder_e_g_jan_2024": {
+      "message": "e.g., Jan 2024"
+   },
+   "placeholder_enter_district": {
+      "message": "Enter district"
+   },
+   "placeholder_full_name_aadhaar": {
+      "message": "Full name as per Aadhaar"
+   },
+   "placeholder_optional": {
+      "message": "Optional"
+   },
+   "placeholder_passport_number": {
+      "message": "Passport Number"
+   },
+   "placeholder_relation": {
+      "message": "Relation"
+   },
+   "placeholder_residential_address": {
+      "message": "Full residential address"
+   },
+   "popup_tagline": {
+      "message": "Free · No account needed"
+   },
+   "privacy_badge": {
+      "message": "100% Local"
+   },
+   "privacy_banner_short": {
+      "message": "Your details never leave this browser. No server, no account, no tracking."
+   },
+   "privacy_callout_body": {
+      "message": "Every pilgrim, sevak and contact detail is saved only in this browser's local extension storage. TTD Form Helper has no server, no account and no analytics — nothing is uploaded, synced or shared. Data is typed into the TTD page only at the moment you click Fill."
+   },
+   "privacy_callout_title": {
+      "message": "Your data never leaves this browser"
+   },
+   "profession_heading": {
+      "message": "Profession"
+   },
+   "select_category_first": {
+      "message": "Select Category First"
+   },
+   "select_district": {
+      "message": "Select District"
+   },
+   "select_dots": {
+      "message": "Select..."
+   },
+   "select_placeholder": {
+      "message": "Select"
+   },
+   "select_state": {
+      "message": "Select State"
+   },
+   "select_temple": {
+      "message": "Select Temple"
+   },
+   "select_year": {
+      "message": "Select Year"
+   },
+   "set_action_load": {
+      "message": "Load"
+   },
+   "set_load": {
+      "message": "🗂️ Load a saved set ({count})"
+   },
+   "set_manage": {
+      "message": "⚙ Manage sets"
+   },
+   "set_no_pilgrims": {
+      "message": "This set has no pilgrims yet"
+   },
+   "set_replace_title": {
+      "message": "Replace the list with this set"
+   },
+   "set_replaces": {
+      "message": "{count} pilgrims — replaces the current list"
+   },
+   "seva_apply_to_form": {
+      "message": "⚡ Apply to Form"
+   },
+   "seva_save_data": {
+      "message": "💾 Save Sevak Data"
+   },
+   "seva_saved_info": {
+      "message": "Saved Info"
+   },
+   "sidebar_members": {
+      "message": "Members"
+   },
+   "srivani_accommodation_date": {
+      "message": "Accommodation Date"
+   },
+   "srivani_add_person": {
+      "message": "Add Person"
+   },
+   "srivani_additional_laddus": {
+      "message": "Additional Laddus"
+   },
+   "srivani_booking_type": {
+      "message": "Booking Type"
+   },
+   "srivani_break_darshan_date": {
+      "message": "Break Darshan Date"
+   },
+   "srivani_checkin_slot": {
+      "message": "Check-in Time Slot"
+   },
+   "srivani_edit_person": {
+      "message": "Edit Person"
+   },
+   "srivani_field_age_placeholder": {
+      "message": "Age"
+   },
+   "srivani_field_id_number": {
+      "message": "ID Proof Number *"
+   },
+   "srivani_field_id_number_placeholder": {
+      "message": "Aadhaar / Passport Number"
+   },
+   "srivani_field_id_type": {
+      "message": "ID Proof Type *"
+   },
+   "srivani_field_name": {
+      "message": "Name (as per ID) *"
+   },
+   "srivani_field_name_placeholder": {
+      "message": "Enter Name"
+   },
+   "srivani_fill_all": {
+      "message": "⚡ Fill Srivani Details"
+   },
+   "srivani_future_booking": {
+      "message": "Future Booking"
+   },
+   "srivani_no_people": {
+      "message": "No people added yet"
+   },
+   "srivani_optional_placeholder": {
+      "message": "Optional"
+   },
+   "srivani_people_heading": {
+      "message": "People ({count}/{max})"
+   },
+   "srivani_select_accommodation": {
+      "message": "Select Accommodation"
+   },
+   "srivani_update_person": {
+      "message": "Update Person"
+   },
+   "tab_dismiss_aria": {
+      "message": "Dismiss tip"
+   },
+   "tab_drag_title": {
+      "message": "Drag to rearrange"
+   },
+   "tab_hint": {
+      "message": "💡 Tip: drag the tabs to rearrange them — your order is saved."
+   },
+   "tab_nav_title": {
+      "message": "Drag tabs to rearrange — your order is saved"
+   },
+   "tab_pilgrim": {
+      "message": "🛕 Pilgrim Booking"
+   },
+   "tab_seva": {
+      "message": "🙏 Srivari Seva"
+   },
+   "tab_seva_group": {
+      "message": "👥 Seva (Group)"
+   },
+   "tab_srivani": {
+      "message": "🪔 Srivani"
+   },
+   "tabmanager_autosaved": {
+      "message": "Your choices are saved automatically."
+   },
+   "tabmanager_error_one_visible": {
+      "message": "At least one tab must stay visible"
+   },
+   "tabmanager_hidden": {
+      "message": "🚫 Hidden"
+   },
+   "tabmanager_hide_tab_title": {
+      "message": "Click to hide this tab"
+   },
+   "tabmanager_local_note": {
+      "message": "Saved pilgrim data stays only in this browser."
+   },
+   "tabmanager_reset": {
+      "message": "↺ Reset to default"
+   },
+   "tabmanager_reset_title": {
+      "message": "Restore the original order and show all tabs"
+   },
+   "tabmanager_settings": {
+      "message": "⚙ Saved Pilgrims & settings"
+   },
+   "tabmanager_settings_title": {
+      "message": "Open Saved Pilgrims, sets, backup and settings"
+   },
+   "tabmanager_show_hide": {
+      "message": "Show or hide tabs"
+   },
+   "tabmanager_show_tab_title": {
+      "message": "Click to show this tab"
+   },
+   "tabmanager_shown": {
+      "message": "👁 Shown"
+   },
+   "team_leader": {
+      "message": "Team Leader"
+   },
+   "team_member": {
+      "message": "Team Member"
+   },
+   "team_member_n": {
+      "message": "Team Member {n}"
+   },
+   "theme_switch_to_dark": {
+      "message": "Switch to dark mode"
+   },
+   "theme_switch_to_light": {
+      "message": "Switch to light mode"
+   },
+   "trainer_specifics_heading": {
+      "message": "Trainer Specifics"
+   },
+   "unit_years": {
+      "message": "yrs"
+   },
+   "uploads_heading": {
+      "message": "Uploads"
+   },
+   "validation_blocked_toast": {
+      "message": "Some details need fixing first."
+   },
+   "validation_check_before_fill": {
+      "message": "Worth checking before you fill:"
+   },
+   "validation_fill_anyway": {
+      "message": "Fill anyway"
+   },
+   "validation_fix_before_fill": {
+      "message": "Fix these before filling:"
+   },
+   "validation_incomplete_pilgrims": {
+      "message": "{count} saved pilgrim(s) have details that need fixing."
+   },
+   "validation_passport_needs": {
+      "message": "Passport holders must also provide visa type, visa number, visa validity and nationality — TTD's passport pop-up won't submit without them."
+   },
+   "validation_ready": {
+      "message": "Ready"
+   },
+   "vault_add": {
+      "message": "＋ Add"
+   },
+   "vault_add_from": {
+      "message": "👨‍👩‍👧 Add from Saved Pilgrims ({count})"
+   },
+   "vault_add_pilgrims": {
+      "message": "Add pilgrims"
+   },
+   "vault_added": {
+      "message": "✓ Added"
+   },
+   "vault_details_incomplete": {
+      "message": "Details incomplete"
+   },
+   "vault_empty": {
+      "message": "👨‍👩‍👧 You have no saved pilgrims yet. Saved details stay only in this browser."
+   },
+   "vault_manage": {
+      "message": "⚙ Manage Saved Pilgrims"
+   },
+   "vault_privacy": {
+      "message": "Saved locally in this browser and ready for quick access."
+   },
+   "vault_title_add": {
+      "message": "Add to this booking"
+   },
+   "vault_title_added": {
+      "message": "Already added"
+   },
+   "vault_title_full": {
+      "message": "List is full"
+   },
+   "vault_unnamed": {
+      "message": "Unnamed pilgrim"
+   },
+   "volunteer_details_heading": {
+      "message": "Volunteer Details"
+   },
+   "yes_label": {
+      "message": "Yes"
+   }
+}

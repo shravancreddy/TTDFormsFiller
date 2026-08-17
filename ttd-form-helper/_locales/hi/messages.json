@@ -1,0 +1,818 @@
+{
+   "action_add_pilgrim": {
+      "message": "तीर्थयात्री जोड़ें"
+   },
+   "action_cancel": {
+      "message": "रद्द करें"
+   },
+   "action_edit_pilgrim": {
+      "message": "तीर्थयात्री संपादित करें"
+   },
+   "action_fill": {
+      "message": "⚡ भरें"
+   },
+   "action_fill_all": {
+      "message": "⚡ सभी विवरण भरें"
+   },
+   "action_save": {
+      "message": "सहेजें"
+   },
+   "action_update": {
+      "message": "अपडेट करें"
+   },
+   "action_update_pilgrim": {
+      "message": "तीर्थयात्री अपडेट करें"
+   },
+   "contact_gothram": {
+      "message": "गोत्र: {gothram}"
+   },
+   "contact_no_address": {
+      "message": "कोई पता विवरण नहीं"
+   },
+   "contact_no_email": {
+      "message": "कोई ईमेल नहीं"
+   },
+   "education_heading": {
+      "message": "शिक्षा"
+   },
+   "empty_no_pilgrims_body": {
+      "message": "नीचे दिए गए फॉर्म का उपयोग करके अपना पहला तीर्थयात्री जोड़ें ↓"
+   },
+   "empty_no_pilgrims_hint": {
+      "message": "सहेजे गए तीर्थयात्रियों के विवरण एक क्लिक में TTD बुकिंग फॉर्म में ऑटोफिल किए जा सकते हैं।"
+   },
+   "empty_no_pilgrims_title": {
+      "message": "अभी तक कोई तीर्थयात्री नहीं जोड़ा गया"
+   },
+   "experience_refs_heading": {
+      "message": "अनुभव और संदर्भ"
+   },
+   "extension_description": {
+      "message": "TTD दर्शन, सेवा और श्रीवाणी बुकिंग फ़ॉर्म के लिए मुफ़्त वन-क्लिक ऑटोफ़िल। आपका विवरण इसी डिवाइस पर रहता है।"
+   },
+   "extension_name": {
+      "message": "TTD Form Helper"
+   },
+   "field_age": {
+      "message": "आयु *"
+   },
+   "field_alt_mobile": {
+      "message": "वैकल्पिक मोबाइल"
+   },
+   "field_blood_group": {
+      "message": "रक्त समूह"
+   },
+   "field_city": {
+      "message": "शहर"
+   },
+   "field_city_required": {
+      "message": "शहर *"
+   },
+   "field_commitment": {
+      "message": "प्रतिबद्धता"
+   },
+   "field_country": {
+      "message": "देश"
+   },
+   "field_country_placeholder": {
+      "message": "जैसे, भारत, USA, UK"
+   },
+   "field_country_placeholder_short": {
+      "message": "जैसे, भारत"
+   },
+   "field_country_required": {
+      "message": "देश *"
+   },
+   "field_date_placeholder": {
+      "message": "DD/MM/YYYY"
+   },
+   "field_designation": {
+      "message": "पदनाम / सेवानिवृत्त के रूप में *"
+   },
+   "field_details": {
+      "message": "विवरण"
+   },
+   "field_district": {
+      "message": "जिला"
+   },
+   "field_district_required": {
+      "message": "जिला *"
+   },
+   "field_dob": {
+      "message": "जन्म तिथि *"
+   },
+   "field_door_no": {
+      "message": "दरवाज़ा नंबर *"
+   },
+   "field_door_no_short": {
+      "message": "दरवाज़ा नं."
+   },
+   "field_email": {
+      "message": "ईमेल"
+   },
+   "field_email_id": {
+      "message": "ईमेल आईडी *"
+   },
+   "field_employee_id": {
+      "message": "कर्मचारी आईडी *"
+   },
+   "field_employment_status": {
+      "message": "रोज़गार स्थिति"
+   },
+   "field_exp_desc": {
+      "message": "अनुभव विवरण"
+   },
+   "field_exp_years": {
+      "message": "अनुभव (वर्ष)"
+   },
+   "field_experience": {
+      "message": "अनुभव"
+   },
+   "field_expertise_areas": {
+      "message": "विशेषज्ञता क्षेत्र"
+   },
+   "field_father_husband": {
+      "message": "पिता/पति का नाम *"
+   },
+   "field_father_spouse": {
+      "message": "पिता/जीवनसाथी का नाम *"
+   },
+   "field_fitness": {
+      "message": "फिटनेस *"
+   },
+   "field_frequency": {
+      "message": "आवृत्ति"
+   },
+   "field_full_name_aadhaar": {
+      "message": "पूरा नाम (आधार के अनुसार) *"
+   },
+   "field_gender": {
+      "message": "लिंग *"
+   },
+   "field_gothram": {
+      "message": "गोत्रम"
+   },
+   "field_gothram_hint": {
+      "message": "केवल दिव्यानुग्रह होमम के लिए आवश्यक"
+   },
+   "field_id_number": {
+      "message": "पहचान संख्या *"
+   },
+   "field_id_proof": {
+      "message": "पहचान प्रमाण *"
+   },
+   "field_id_proof_number": {
+      "message": "पहचान प्रमाण संख्या *"
+   },
+   "field_id_proof_type": {
+      "message": "पहचान प्रमाण प्रकार *"
+   },
+   "field_institute_name": {
+      "message": "संस्थान का नाम"
+   },
+   "field_languages": {
+      "message": "ज्ञात भाषाएँ"
+   },
+   "field_last_2_periods": {
+      "message": "पिछली 2 अवधियाँ"
+   },
+   "field_location": {
+      "message": "स्थान"
+   },
+   "field_marital_status": {
+      "message": "वैवाहिक स्थिति *"
+   },
+   "field_mentally_fit": {
+      "message": "मानसिक रूप से स्वस्थ"
+   },
+   "field_mobile": {
+      "message": "मोबाइल नंबर *"
+   },
+   "field_mobile_short": {
+      "message": "मोबाइल"
+   },
+   "field_nakshatra": {
+      "message": "नक्षत्र"
+   },
+   "field_name": {
+      "message": "नाम *"
+   },
+   "field_nearest_temple": {
+      "message": "निकटतम TTD मंदिर *"
+   },
+   "field_no_of_times": {
+      "message": "कितनी बार"
+   },
+   "field_other_org": {
+      "message": "अन्य संगठन का नाम"
+   },
+   "field_photo": {
+      "message": "फोटो"
+   },
+   "field_physically_fit": {
+      "message": "शारीरिक रूप से स्वस्थ"
+   },
+   "field_pin_code": {
+      "message": "पिन कोड"
+   },
+   "field_pincode": {
+      "message": "पिनकोड"
+   },
+   "field_place_of_work": {
+      "message": "कार्य स्थान/संबंधित *"
+   },
+   "field_preferred_loc": {
+      "message": "पसंदीदा स्थान"
+   },
+   "field_previously_volunteered": {
+      "message": "पहले स्वयंसेवा की है?"
+   },
+   "field_profession": {
+      "message": "व्यवसाय *"
+   },
+   "field_profession_category": {
+      "message": "व्यवसाय श्रेणी"
+   },
+   "field_proof_number": {
+      "message": "प्रमाण संख्या"
+   },
+   "field_proof_type": {
+      "message": "प्रमाण प्रकार"
+   },
+   "field_qualification": {
+      "message": "योग्यता *"
+   },
+   "field_qualification_category": {
+      "message": "योग्यता श्रेणी"
+   },
+   "field_ref_1_name": {
+      "message": "1. संदर्भ नाम"
+   },
+   "field_ref_2_name": {
+      "message": "2. संदर्भ नाम"
+   },
+   "field_residential_address": {
+      "message": "आवासीय पता *"
+   },
+   "field_role": {
+      "message": "भूमिका"
+   },
+   "field_sector": {
+      "message": "क्षेत्र"
+   },
+   "field_specialisation": {
+      "message": "विशेषज्ञता/कौशल *"
+   },
+   "field_specialization": {
+      "message": "विशेषज्ञता"
+   },
+   "field_specific_qualification": {
+      "message": "विशिष्ट योग्यता"
+   },
+   "field_specify_location": {
+      "message": "स्थान निर्दिष्ट करें"
+   },
+   "field_specify_other_area": {
+      "message": "अन्य क्षेत्र निर्दिष्ट करें"
+   },
+   "field_state": {
+      "message": "राज्य"
+   },
+   "field_state_required": {
+      "message": "राज्य *"
+   },
+   "field_street": {
+      "message": "गली *"
+   },
+   "field_surname": {
+      "message": "उपनाम"
+   },
+   "field_synced_leader": {
+      "message": "टीम लीडर से सिंक किया गया"
+   },
+   "field_ticket_count": {
+      "message": "टिकटों की संख्या"
+   },
+   "field_training_experience": {
+      "message": "प्रशिक्षण अनुभव?"
+   },
+   "field_university": {
+      "message": "विश्वविद्यालय/कॉलेज का नाम"
+   },
+   "field_upload_edu_certificate": {
+      "message": "शैक्षिक प्रमाणपत्र अपलोड करें *"
+   },
+   "field_upload_education": {
+      "message": "दस्तावेज़ अपलोड करें (शिक्षा) *"
+   },
+   "field_upload_id_proof": {
+      "message": "पहचान प्रमाण अपलोड करें *"
+   },
+   "field_village_town_city": {
+      "message": "गाँव / कस्बा / शहर"
+   },
+   "field_visa_number": {
+      "message": "वीज़ा/OCI संख्या"
+   },
+   "field_visa_type": {
+      "message": "वीज़ा का प्रकार"
+   },
+   "field_visa_type_placeholder": {
+      "message": "केवल अल्फ़ान्यूमेरिक"
+   },
+   "field_visa_validity": {
+      "message": "वीज़ा वैधता तिथि"
+   },
+   "field_year_graduation": {
+      "message": "स्नातक वर्ष"
+   },
+   "field_zodiac": {
+      "message": "राशि"
+   },
+   "gender_female": {
+      "message": "महिला"
+   },
+   "gender_male": {
+      "message": "पुरुष"
+   },
+   "gender_transgender": {
+      "message": "ट्रांसजेंडर"
+   },
+   "general_details_heading": {
+      "message": "सामान्य विवरण"
+   },
+   "group_add_member": {
+      "message": "➕ सदस्य जोड़ें"
+   },
+   "group_autosave_note": {
+      "message": "💾 सदस्य जानकारी फ़ील्ड भरते ही स्वतः सहेजी जाती है"
+   },
+   "group_copy_from_leader": {
+      "message": "📋 लीडर से पता कॉपी करें"
+   },
+   "group_copy_to_all": {
+      "message": "📋 पता सभी सदस्यों को कॉपी करें"
+   },
+   "group_fill_member": {
+      "message": "सदस्य # भरें"
+   },
+   "group_fill_member_btn": {
+      "message": "⚡ यह सदस्य भरें"
+   },
+   "group_remove_member": {
+      "message": "➖ हटाएँ"
+   },
+   "hint_max_1mb": {
+      "message": "अधिकतम 1 MB • JPEG, PNG"
+   },
+   "idproof_aadhaar": {
+      "message": "आधार कार्ड"
+   },
+   "idproof_passport": {
+      "message": "पासपोर्ट"
+   },
+   "lang_aria": {
+      "message": "भाषा बदलें (वर्तमान: {lang})"
+   },
+   "lang_menu_label": {
+      "message": "भाषा"
+   },
+   "lang_title": {
+      "message": "भाषा बदलें"
+   },
+   "move_down": {
+      "message": "नीचे ले जाएँ"
+   },
+   "move_up": {
+      "message": "ऊपर ले जाएँ"
+   },
+   "msg_add_person_first": {
+      "message": "पहले कम से कम एक व्यक्ति जोड़ें"
+   },
+   "msg_added_person": {
+      "message": "{name} जोड़ा गया"
+   },
+   "msg_added_pilgrim": {
+      "message": "{name} जोड़ा गया"
+   },
+   "msg_address_copied_from": {
+      "message": "टीम लीडर से पता कॉपी किया गया"
+   },
+   "msg_address_copied_to_all": {
+      "message": "पता सभी सदस्यों को कॉपी किया गया"
+   },
+   "msg_all_filled": {
+      "message": "सब भर दिए गए!"
+   },
+   "msg_aruna_cleared": {
+      "message": "अरुणाचल विवरण साफ़ किए गए"
+   },
+   "msg_aruna_filled": {
+      "message": "अरुणाचल फ़ॉर्म भर दिया गया!"
+   },
+   "msg_autofilling_member": {
+      "message": "सदस्य {n} भरा जा रहा है..."
+   },
+   "msg_contact_saved": {
+      "message": "संपर्क विवरण सहेजे गए!"
+   },
+   "msg_error_autofilling_member": {
+      "message": "सदस्य {n} भरने में त्रुटि।"
+   },
+   "msg_error_hrce": {
+      "message": "त्रुटि: HRCE पेज खोलें या रीफ़्रेश करें"
+   },
+   "msg_error_reading_file": {
+      "message": "फ़ाइल पढ़ने में त्रुटि"
+   },
+   "msg_error_refresh": {
+      "message": "त्रुटि: TTD पेज रीफ़्रेश करें"
+   },
+   "msg_error_refresh_page": {
+      "message": "त्रुटि: पेज रीफ़्रेश करें"
+   },
+   "msg_file_too_large": {
+      "message": "फ़ाइल बहुत बड़ी है। अधिकतम आकार 1 MB है"
+   },
+   "msg_file_uploaded": {
+      "message": "{name} सफलतापूर्वक अपलोड हुई"
+   },
+   "msg_filled": {
+      "message": "भर दिया गया!"
+   },
+   "msg_filled_member": {
+      "message": "सदस्य {n} का फ़ॉर्म भर दिया गया"
+   },
+   "msg_form_filled": {
+      "message": "फ़ॉर्म भर दिया गया!"
+   },
+   "msg_invalid_format": {
+      "message": "अमान्य प्रारूप। केवल {extensions} अनुमत हैं"
+   },
+   "msg_invalid_format_group": {
+      "message": "अमान्य प्रारूप। केवल .jpeg, .png, .pdf अनुमत हैं"
+   },
+   "msg_invalid_member": {
+      "message": "अमान्य सदस्य संख्या"
+   },
+   "msg_loaded_first": {
+      "message": "सेट से {total} में से पहले {count} लोड किए गए"
+   },
+   "msg_loaded_first_people": {
+      "message": "सेट से {total} में से पहले {count} लोड किए गए"
+   },
+   "msg_loaded_from_set": {
+      "message": "सेट से {count} तीर्थयात्री लोड किए गए"
+   },
+   "msg_loaded_people": {
+      "message": "सेट से {count} लोग लोड किए गए"
+   },
+   "msg_max_people": {
+      "message": "अधिकतम {count} लोग अनुमत हैं!"
+   },
+   "msg_max_pilgrims": {
+      "message": "अधिकतम 6 तीर्थयात्री अनुमत हैं!"
+   },
+   "msg_person_added": {
+      "message": "व्यक्ति जोड़ा गया!"
+   },
+   "msg_person_deleted": {
+      "message": "व्यक्ति हटाया गया!"
+   },
+   "msg_person_updated": {
+      "message": "व्यक्ति अपडेट किया गया!"
+   },
+   "msg_pilgrim_added": {
+      "message": "तीर्थयात्री जोड़ा गया!"
+   },
+   "msg_pilgrim_deleted": {
+      "message": "तीर्थयात्री हटा दिया गया!"
+   },
+   "msg_pilgrim_updated": {
+      "message": "तीर्थयात्री अपडेट किया गया!"
+   },
+   "msg_required": {
+      "message": "{field} आवश्यक है"
+   },
+   "msg_select_accommodation_date": {
+      "message": "आवास तिथि चुनें"
+   },
+   "msg_select_darshan_date": {
+      "message": "पहले ब्रेक दर्शन तिथि चुनें"
+   },
+   "msg_sevak_saved": {
+      "message": "सेवक डेटा सहेजा गया!"
+   },
+   "msg_srivani_filled": {
+      "message": "श्रीवाणी विवरण भर दिए गए। TTD पर मैन्युअल रूप से जारी रखें।"
+   },
+   "msg_tabs_reset": {
+      "message": "टैब डिफ़ॉल्ट पर रीसेट किए गए"
+   },
+   "msg_unable_fill": {
+      "message": "फ़ॉर्म भरने में असमर्थ"
+   },
+   "msg_uploaded_member": {
+      "message": "{name} सदस्य {n} के लिए अपलोड हुई"
+   },
+   "nav_settings": {
+      "message": "सेटिंग्स"
+   },
+   "no_label": {
+      "message": "नहीं"
+   },
+   "noun_person": {
+      "message": "व्यक्ति"
+   },
+   "noun_pilgrim": {
+      "message": "तीर्थयात्री"
+   },
+   "open_booking_page": {
+      "message": "बुकिंग पेज खोलें ↗"
+   },
+   "personal_details_heading": {
+      "message": "व्यक्तिगत विवरण"
+   },
+   "pilgrim_details_line": {
+      "message": "{age} वर्ष • {gender} • {idProof}"
+   },
+   "pilgrim_limit": {
+      "message": "({count}/6 तीर्थयात्री)"
+   },
+   "pilgrims_heading": {
+      "message": "तीर्थयात्री ({count})"
+   },
+   "placeholder_10_digit": {
+      "message": "10 अंक"
+   },
+   "placeholder_aadhaar_12": {
+      "message": "12 अंकों का आधार"
+   },
+   "placeholder_e_g_bt": {
+      "message": "जैसे, बी.टेक"
+   },
+   "placeholder_e_g_engineer": {
+      "message": "जैसे, इंजीनियर"
+   },
+   "placeholder_e_g_jan_2024": {
+      "message": "जैसे, जनवरी 2024"
+   },
+   "placeholder_enter_district": {
+      "message": "जिला दर्ज करें"
+   },
+   "placeholder_full_name_aadhaar": {
+      "message": "आधार के अनुसार पूरा नाम"
+   },
+   "placeholder_optional": {
+      "message": "वैकल्पिक"
+   },
+   "placeholder_passport_number": {
+      "message": "पासपोर्ट नंबर"
+   },
+   "placeholder_relation": {
+      "message": "संबंध"
+   },
+   "placeholder_residential_address": {
+      "message": "पूरा आवासीय पता"
+   },
+   "profession_heading": {
+      "message": "व्यवसाय"
+   },
+   "select_category_first": {
+      "message": "पहले श्रेणी चुनें"
+   },
+   "select_district": {
+      "message": "जिला चुनें"
+   },
+   "select_dots": {
+      "message": "चुनें..."
+   },
+   "select_placeholder": {
+      "message": "चुनें"
+   },
+   "select_state": {
+      "message": "राज्य चुनें"
+   },
+   "select_temple": {
+      "message": "मंदिर चुनें"
+   },
+   "select_year": {
+      "message": "वर्ष चुनें"
+   },
+   "set_action_load": {
+      "message": "लोड करें"
+   },
+   "set_load": {
+      "message": "🗂️ सहेजा गया सेट लोड करें ({count})"
+   },
+   "set_manage": {
+      "message": "⚙ सेट प्रबंधित करें"
+   },
+   "set_no_pilgrims": {
+      "message": "इस सेट में अभी कोई तीर्थयात्री नहीं है"
+   },
+   "set_replace_title": {
+      "message": "सूची को इस सेट से बदलें"
+   },
+   "set_replaces": {
+      "message": "{count} तीर्थयात्री — वर्तमान सूची को बदलता है"
+   },
+   "seva_apply_to_form": {
+      "message": "⚡ फ़ॉर्म में भरें"
+   },
+   "seva_save_data": {
+      "message": "💾 सेवक डेटा सहेजें"
+   },
+   "seva_saved_info": {
+      "message": "सहेजी गई जानकारी"
+   },
+   "sidebar_members": {
+      "message": "सदस्य"
+   },
+   "srivani_accommodation_date": {
+      "message": "आवास तिथि"
+   },
+   "srivani_add_person": {
+      "message": "व्यक्ति जोड़ें"
+   },
+   "srivani_additional_laddus": {
+      "message": "अतिरिक्त लड्डू"
+   },
+   "srivani_booking_type": {
+      "message": "बुकिंग का प्रकार"
+   },
+   "srivani_break_darshan_date": {
+      "message": "ब्रेक दर्शन तिथि"
+   },
+   "srivani_checkin_slot": {
+      "message": "चेक-इन समय स्लॉट"
+   },
+   "srivani_edit_person": {
+      "message": "व्यक्ति संपादित करें"
+   },
+   "srivani_field_age_placeholder": {
+      "message": "आयु"
+   },
+   "srivani_field_id_number": {
+      "message": "पहचान प्रमाण संख्या *"
+   },
+   "srivani_field_id_number_placeholder": {
+      "message": "आधार / पासपोर्ट संख्या"
+   },
+   "srivani_field_id_type": {
+      "message": "पहचान प्रमाण का प्रकार *"
+   },
+   "srivani_field_name": {
+      "message": "नाम (आईडी के अनुसार) *"
+   },
+   "srivani_field_name_placeholder": {
+      "message": "नाम दर्ज करें"
+   },
+   "srivani_fill_all": {
+      "message": "⚡ श्रीवाणी विवरण भरें"
+   },
+   "srivani_future_booking": {
+      "message": "भविष्य की बुकिंग"
+   },
+   "srivani_no_people": {
+      "message": "अभी तक कोई व्यक्ति नहीं जोड़ा गया"
+   },
+   "srivani_optional_placeholder": {
+      "message": "वैकल्पिक"
+   },
+   "srivani_people_heading": {
+      "message": "लोग ({count}/{max})"
+   },
+   "srivani_select_accommodation": {
+      "message": "आवास चुनें"
+   },
+   "srivani_update_person": {
+      "message": "व्यक्ति अपडेट करें"
+   },
+   "tab_dismiss_aria": {
+      "message": "टिप हटाएँ"
+   },
+   "tab_drag_title": {
+      "message": "पुनर्व्यवस्थित करने के लिए खींचें"
+   },
+   "tab_hint": {
+      "message": "💡 टिप: टैब को पुनर्व्यवस्थित करने के लिए उन्हें ड्रैग करें — आपका क्रम सहेज लिया जाएगा।"
+   },
+   "tab_nav_title": {
+      "message": "क्रम सहेजने के लिए टैब खींचें — आपका क्रम सहेजा जाता है"
+   },
+   "tab_pilgrim": {
+      "message": "🛕 तीर्थयात्री बुकिंग"
+   },
+   "tab_seva": {
+      "message": "🙏 श्रीवारी सेवा"
+   },
+   "tab_seva_group": {
+      "message": "👥 सेवा (समूह)"
+   },
+   "tab_srivani": {
+      "message": "🪔 श्रीवाणी"
+   },
+   "tabmanager_autosaved": {
+      "message": "आपके विकल्प स्वचालित रूप से सहेजे जाते हैं।"
+   },
+   "tabmanager_error_one_visible": {
+      "message": "कम से कम एक टैब दृश्यमान रहना चाहिए"
+   },
+   "tabmanager_hidden": {
+      "message": "🚫 छिपाया गया"
+   },
+   "tabmanager_hide_tab_title": {
+      "message": "यह टैब छिपाने के लिए क्लिक करें"
+   },
+   "tabmanager_local_note": {
+      "message": "सहेजा गया तीर्थयात्री डेटा केवल इसी ब्राउज़र में रहता है।"
+   },
+   "tabmanager_reset": {
+      "message": "↺ डिफ़ॉल्ट पर रीसेट करें"
+   },
+   "tabmanager_reset_title": {
+      "message": "मूल क्रम बहाल करें और सभी टैब दिखाएँ"
+   },
+   "tabmanager_settings": {
+      "message": "⚙ सहेजे गए तीर्थयात्री और सेटिंग्स"
+   },
+   "tabmanager_settings_title": {
+      "message": "सहेजे गए तीर्थयात्री, सेट, बैकअप और सेटिंग्स खोलें"
+   },
+   "tabmanager_show_hide": {
+      "message": "टैब दिखाएं या छिपाएं"
+   },
+   "tabmanager_show_tab_title": {
+      "message": "यह टैब दिखाने के लिए क्लिक करें"
+   },
+   "tabmanager_shown": {
+      "message": "👁 दिखाया गया"
+   },
+   "team_leader": {
+      "message": "टीम लीडर"
+   },
+   "team_member": {
+      "message": "टीम सदस्य"
+   },
+   "team_member_n": {
+      "message": "टीम सदस्य {n}"
+   },
+   "theme_switch_to_dark": {
+      "message": "डार्क मोड पर स्विच करें"
+   },
+   "theme_switch_to_light": {
+      "message": "लाइट मोड पर स्विच करें"
+   },
+   "trainer_specifics_heading": {
+      "message": "प्रशिक्षक विशेषताएँ"
+   },
+   "unit_years": {
+      "message": "वर्ष"
+   },
+   "uploads_heading": {
+      "message": "अपलोड"
+   },
+   "vault_add": {
+      "message": "＋ जोड़ें"
+   },
+   "vault_add_from": {
+      "message": "👨‍👩‍👧 सहेजे गए तीर्थयात्रियों से जोड़ें ({count})"
+   },
+   "vault_add_pilgrims": {
+      "message": "तीर्थयात्री जोड़ें"
+   },
+   "vault_added": {
+      "message": "✓ जोड़ा गया"
+   },
+   "vault_details_incomplete": {
+      "message": "विवरण अधूरे हैं"
+   },
+   "vault_empty": {
+      "message": "👨‍👩‍👧 आपके पास अभी कोई सहेजा हुआ तीर्थयात्री नहीं है। सहेजे गए विवरण केवल इसी ब्राउज़र में रहते हैं।"
+   },
+   "vault_manage": {
+      "message": "⚙ सहेजे गए तीर्थयात्रियों को प्रबंधित करें"
+   },
+   "vault_privacy": {
+      "message": "इस ब्राउज़र में स्थानीय रूप से सहेजा गया और त्वरित पहुँच के लिए तैयार।"
+   },
+   "vault_title_add": {
+      "message": "इस बुकिंग में जोड़ें"
+   },
+   "vault_title_added": {
+      "message": "पहले ही जोड़ा जा चुका है"
+   },
+   "vault_title_full": {
+      "message": "सूची भरी हुई है"
+   },
+   "vault_unnamed": {
+      "message": "बिना नाम का तीर्थयात्री"
+   },
+   "volunteer_details_heading": {
+      "message": "स्वयंसेवक विवरण"
+   },
+   "yes_label": {
+      "message": "हाँ"
+   }
+}
