@@ -121,6 +121,34 @@ right manifest variant as `manifest.json` inside each zip. The same Chrome paylo
 is wrapped as a CRX3 file at the repository root (`main.crx`). The signing key is
 kept at `dist/signing.pem` (gitignored) so rebuilds keep a stable extension id.
 
+### Chrome Web Store API
+
+The dashboard upload is a zip (not `main.crx`). Item
+`jblkehmfclkjbbohifajkgmdboopoaig` under publisher
+`702edc48-7ef9-4264-9e89-777ba80e429b`.
+
+Credentials live in gitignored `cws.env` (see `cws.env.example`). They have to be
+created in **your** Google account — Google Cloud OAuth cannot be created from
+this repo:
+
+1. Open [Google Cloud Console](https://console.cloud.google.com/) and create or pick a project.
+2. Enable **Chrome Web Store API**.
+3. **APIs & Services → OAuth consent screen** → External. Add yourself as a test user.
+4. **Credentials → Create credentials → OAuth client ID → Web application**.
+   Authorized redirect URI: `https://developers.google.com/oauthplayground`
+5. Open [OAuth 2.0 Playground](https://developers.google.com/oauthplayground).
+   Gear icon → **Use your own OAuth credentials**. Paste the client ID and secret.
+   Scope: `https://www.googleapis.com/auth/chromewebstore` → **Authorize APIs**
+   (sign in with the same Google account that owns the Web Store listing) →
+   **Exchange authorization code for tokens**.
+6. Copy client ID, client secret, and refresh token into `cws.env`.
+
+```bash
+cp cws.env.example cws.env   # then fill CWS_CLIENT_ID / SECRET / REFRESH_TOKEN
+python publish_cws.py        # upload package only
+python publish_cws.py --publish
+```
+
 ## Browser support
 
 | Feature | Chrome / Edge | Firefox | Safari |
