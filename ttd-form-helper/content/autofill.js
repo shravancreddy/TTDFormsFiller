@@ -1697,18 +1697,61 @@
       if (opts.thenContinue) await clickContinueGeneric();
     }
 
+    const sevakHasData = (m) => !!m && (m.sevakName || m.spvrName || m.mobileNo);
+    // A group booking page shows more than one sevak block at once.
+    const isGroupSevaPage = () => document.querySelectorAll('[class*="sevakContainer"]').length > 1;
+
+    // Group members live in a separate array key, filled per-member by index.
+    async function loadGroupMembers() {
+      const stored = await chrome.storage.local.get(["groupSevaData"]);
+      const raw = stored.groupSevaData;
+      if (isEncryptedValue(raw)) return { locked: true, members: [] };
+      const arr = Array.isArray(raw) ? raw : [];
+      const members = [];
+      arr.forEach((m, index) => {
+        if (sevakHasData(m)) members.push({ member: m, index });
+      });
+      return { members };
+    }
+
+    // Fills one sevak; a numeric memberIndex targets the matching group block.
+    async function fillSevaMember(data, memberIndex) {
+      const payload = { ...data, clickSaveAndAdd: false };
+      if (typeof memberIndex === "number") payload.memberIndex = memberIndex;
+      await fillSevaForm(payload);
+    }
+    async function fillSevaMemberReport(member, index) {
+      await fillSevaMember(member, index);
+      showToast("🙏 Filled member " + (index + 1) + " — review, then Save & Add Sevak.", "success");
+    }
+
     async function runSevaFill() {
+      // On a group page, fill from the group array (per-member); otherwise the
+      // single-sevak profile. The menu lets the user pick a specific member.
+      if (isGroupSevaPage()) {
+        const { members, locked } = await loadGroupMembers();
+        if (locked) {
+          showToast("🔒 Group Seva data is locked — open the extension popup to fill it.", "warn");
+          return;
+        }
+        if (members.length) {
+          await fillSevaMember(members[0].member, members[0].index);
+          showToast("🙏 Filled member " + (members[0].index + 1) + " — use the ▾ menu to fill others.", "success");
+          return;
+        }
+        // No group members saved — fall through to the single-sevak profile.
+      }
       const { value, locked } = await loadPlainKey("sevakData");
       if (locked) {
         showToast("🔒 Seva data is locked — open the extension popup to fill it.", "warn");
         return;
       }
-      if (!value || (!value.sevakName && !value.spvrName && !value.mobileNo)) {
+      if (!sevakHasData(value)) {
         showToast("No Sevak details saved — open the extension to add them.", "warn");
         return;
       }
       // One-click helper fills only; the user reviews and submits themselves.
-      await fillSevaForm({ ...value, clickSaveAndAdd: false });
+      await fillSevaMember(value);
       showToast("🙏 Sevak details filled — review, then Save & Add Sevak.", "success");
     }
 
@@ -1976,7 +2019,22 @@
         menu.appendChild(menuItem("🪔 Fill Srivani", () => runGuarded(runSrivaniFill)));
         menu.appendChild(menuItem("⏭️ Fill Srivani & Continue", () => runGuarded(() => runSrivaniFill({ thenContinue: true }))));
       } else if (type === "seva") {
-        menu.appendChild(menuItem("🙏 Fill Sevak", () => runGuarded(runSevaFill)));
+        if (isGroupSevaPage()) {
+          const { members, locked } = await loadGroupMembers();
+          if (locked) {
+            menu.appendChild(menuItem("🔒 Group data locked — use the popup", () => {}));
+          } else if (members.length) {
+            menu.appendChild(menuSeparator("Group members"));
+            members.forEach(({ member, index }) => {
+              const nm = member.sevakName || member.spvrName || "Member " + (index + 1);
+              menu.appendChild(menuItem("🙏 Fill member " + (index + 1) + " — " + nm, () => runGuarded(() => fillSevaMemberReport(member, index))));
+            });
+          } else {
+            menu.appendChild(menuItem("No group members saved — use the popup", () => {}));
+          }
+        } else {
+          menu.appendChild(menuItem("🙏 Fill Sevak", () => runGuarded(runSevaFill)));
+        }
       } else {
         menu.appendChild(menuItem("Open a TTD booking form first", () => {}));
       }
