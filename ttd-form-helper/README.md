@@ -51,6 +51,19 @@ you'll get a `TTD-Form-Helper-v1.2.0` folder with a `HOW-TO-LOAD.txt` inside:
 Then follow the steps below, pointing at the unzipped folder. (These bundles are for
 **loading unpacked**; they are not signed store builds.)
 
+### Packed CRX (`main.crx`)
+
+A signed Chromium package is at the repository root as [`main.crx`](../main.crx).
+
+1. Download `main.crx`.
+2. Open `chrome://extensions` (or `edge://extensions` / Brave / Opera).
+3. Turn on **Developer mode**.
+4. Drag `main.crx` onto the page.
+
+Chrome may refuse CRX files that are not from the Chrome Web Store. If that happens,
+use the unpacked zip above instead (**Load unpacked**). Rebuild both the zips and
+`main.crx` with `python package.py`.
+
 ### Chrome / Edge / Brave / Opera
 
 1. Go to `chrome://extensions` (or `edge://extensions`).
@@ -89,7 +102,7 @@ needs an Apple Developer signing identity.
 ## Packaging for the stores
 
 ```bash
-python package.py           # builds dist/*-chrome.zip and dist/*-firefox.zip
+python package.py           # builds dist/*-chrome.zip, dist/*-firefox.zip, and ../main.crx
 python package.py --check   # validate only, write nothing
 ```
 
@@ -104,7 +117,9 @@ failure shows up locally instead of after a slow upload:
 
 It also keeps dev-only files (`package.py`, `icons/gen_icons.py`,
 `manifest.firefox.json`, `README.md`) out of the uploaded package, and writes the
-right manifest variant as `manifest.json` inside each zip.
+right manifest variant as `manifest.json` inside each zip. The same Chrome payload
+is wrapped as a CRX3 file at the repository root (`main.crx`). The signing key is
+kept at `dist/signing.pem` (gitignored) so rebuilds keep a stable extension id.
 
 ## Browser support
 
