@@ -4,6 +4,9 @@ ttd-form-helper/dist/
 # CRX signing key (keep local so rebuilds retain the same extension id)
 *.pem
 
+# Chrome Web Store API credentials
+ttd-form-helper/cws.env
+
 # Python bytecode from the icon generator
 __pycache__/
 *.pyc
