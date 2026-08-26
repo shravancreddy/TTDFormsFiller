@@ -12,12 +12,160 @@
   };
   const norm = (s) => (s ? s.toString().toLowerCase().trim().replace(/\s+/g, " ") : "");
 
-  const setNativeValue = (el, value) => {
-    if (!el) return;
+  // ---- On-page visual feedback (pure DOM, respects reduced-motion) ----
+  const prefersReducedMotion = () => {
+    try {
+      return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    } catch {
+      return false;
+    }
+  };
+  const FEEDBACK_STYLE_ID = "ttdfh-feedback-style";
+  const ensureFeedbackStyles = () => {
+    if (document.getElementById(FEEDBACK_STYLE_ID)) return;
+    const style = document.createElement("style");
+    style.id = FEEDBACK_STYLE_ID;
+    style.textContent = `
+      @keyframes ttdfh-flash-ok { 0% { box-shadow: 0 0 0 3px rgba(30,158,92,.6); } 100% { box-shadow: 0 0 0 3px rgba(30,158,92,0); } }
+      @keyframes ttdfh-flash-warn { 0% { box-shadow: 0 0 0 3px rgba(217,119,6,.65); } 100% { box-shadow: 0 0 0 3px rgba(217,119,6,0); } }
+      .ttdfh-mark-ok { animation: ttdfh-flash-ok 1.1s ease-out; border-radius: 6px; }
+      .ttdfh-mark-warn { animation: ttdfh-flash-warn 1.6s ease-out; border-radius: 6px; }
+      .ttdfh-sr-only { position: fixed !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    `;
+    (document.head || document.documentElement).appendChild(style);
+  };
+  const isOnScreen = (el) => {
+    if (!el) return false;
+    const rect = el.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  };
+  const flashField = (el, ok) => {
+    if (!el || prefersReducedMotion() || !isOnScreen(el)) return;
+    ensureFeedbackStyles();
+    const cls = ok ? "ttdfh-mark-ok" : "ttdfh-mark-warn";
+    el.classList.remove("ttdfh-mark-ok", "ttdfh-mark-warn");
+    void el.offsetWidth; // reflow so the animation restarts on a repeated fill
+    el.classList.add(cls);
+    setTimeout(() => el.classList.remove(cls), 1800);
+  };
+  let liveRegion = null;
+  const announce = (msg) => {
+    try {
+      ensureFeedbackStyles();
+      if (!liveRegion || !liveRegion.isConnected) {
+        liveRegion = document.createElement("div");
+        liveRegion.className = "ttdfh-sr-only";
+        liveRegion.setAttribute("role", "status");
+        liveRegion.setAttribute("aria-live", "polite");
+        liveRegion.setAttribute("aria-atomic", "true");
+        document.body.appendChild(liveRegion);
+      }
+      liveRegion.textContent = "";
+      setTimeout(() => {
+        if (liveRegion) liveRegion.textContent = msg;
+      }, 30);
+    } catch {}
+  };
+  // A single on-page toast helper shared by the fillers and the floating button.
+  const PAGE_TOAST_ID = "ttdfh-fill-toast";
+  const toast = (message, kind) => {
+    try {
+      const existing = document.getElementById(PAGE_TOAST_ID);
+      if (existing) existing.remove();
+      const color = kind === "error" ? "#DC2626" : kind === "warn" ? "#D97706" : "#1E9E5C";
+      const node = document.createElement("div");
+      node.id = PAGE_TOAST_ID;
+      node.setAttribute("role", "status");
+      node.textContent = message;
+      node.style.cssText =
+        "position:fixed;bottom:96px;right:22px;z-index:2147483647;background:" +
+        color +
+        ";color:#fff;font:600 13px/1.4 system-ui,-apple-system,sans-serif;padding:11px 16px;border-radius:12px;max-width:320px;box-shadow:0 10px 30px rgba(0,0,0,.3);";
+      document.body.appendChild(node);
+      announce(message);
+      setTimeout(() => {
+        if (document.getElementById(PAGE_TOAST_ID) === node) node.remove();
+      }, 4500);
+    } catch {}
+  };
+
+  // ---- Wait-for-condition helpers (replace brittle fixed sleeps) ----
+  const waitFor = async (predicate, { timeout = 2500, interval = 60 } = {}) => {
+    const start = Date.now();
+    for (;;) {
+      let result;
+      try {
+        result = predicate();
+      } catch {
+        result = false;
+      }
+      if (result) return result;
+      if (Date.now() - start >= timeout) return null;
+      await sleep(interval);
+    }
+  };
+  const waitForElement = (selector, opts) => waitFor(() => document.querySelector(selector), opts);
+
+  // ---- Unified controlled-input setter ----
+  // Drives the React synthetic onChange a controlled input attaches, if present.
+  const dispatchReactOnChange = (el, value, extra) => {
+    const propsKey = Object.keys(el).find((k) => k.startsWith("__reactProps$"));
+    if (!propsKey) return false;
+    const props = el[propsKey];
+    if (!props || typeof props.onChange !== "function") return false;
+    const base = { value, ...(extra || {}) };
+    try {
+      props.onChange({
+        target: base,
+        currentTarget: base,
+        preventDefault: () => {},
+        stopPropagation: () => {},
+        persist: () => {},
+        nativeEvent: new Event("change"),
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  // Writes a value to a plain (non-dropdown) input: native prototype setter +
+  // input/change/blur, then the React onChange path if the framework ignored the
+  // native write. Highlights the field green when the value stuck, amber if not.
+  const setControlledValue = (el, value) => {
+    if (!el) return false;
+    const target = value == null ? "" : String(value);
     const desc = Object.getOwnPropertyDescriptor(el.constructor.prototype, "value");
-    if (desc && desc.set) desc.set.call(el, value);
-    else el.value = value;
+    if (desc && desc.set) desc.set.call(el, target);
+    else el.value = target;
     dispatchAll(el);
+    if ((el.value || "") !== target) dispatchReactOnChange(el, target);
+    const ok = (el.value || "") === target || (!!el.value && target !== "");
+    flashField(el, ok);
+    return ok;
+  };
+  // Kept as the name the fillers already call throughout this file.
+  const setNativeValue = (el, value) => setControlledValue(el, value);
+
+  // Picks the right technique for a field: an autocomplete / read-only combobox
+  // needs the floating-list flow; a plain text input takes a direct write.
+  const looksLikeCombobox = (el) =>
+    !!el &&
+    (el.readOnly ||
+      el.getAttribute("role") === "combobox" ||
+      el.getAttribute("aria-autocomplete") === "list" ||
+      el.getAttribute("aria-haspopup") === "listbox" ||
+      el.hasAttribute("aria-expanded"));
+  const smartSet = async (el, value) => {
+    if (!el || value == null || value === "") return false;
+    if (looksLikeCombobox(el)) {
+      await selectFromDropdown(el, value);
+      if (el.value && el.value.trim()) {
+        flashField(el, true);
+        return true;
+      }
+      // Dropdown route left it empty — fall through to a direct write.
+    }
+    return setControlledValue(el, value);
   };
 
   // Fills a React-controlled "combobox" style input: click it open, wait for the
@@ -130,6 +278,7 @@
       el.dispatchEvent(new FocusEvent("blur", { bubbles: true, relatedTarget: document.body }));
       document.body.click();
       await sleep(80);
+      flashField(el, true);
       return true;
     }
     return false;
@@ -196,8 +345,18 @@
       if (el) setNativeValue(el, contact.pincode);
     }
     if (contact.gothram) {
-      const el = findFirstByNames("gothram", "gotram");
-      if (el) setNativeValue(el, contact.gothram);
+      // The gothram field name varies across booking flows (the Homam / arjitha
+      // seva form in particular), and on some pages it is a searchable
+      // autocomplete rather than a plain input — so try several names/labels and
+      // let smartSet choose the direct-write vs floating-list technique.
+      const el =
+        findFirstByNames("gothram", "gotram", "gotra", "gothra", "gothramName", "pilgrimGothram") ||
+        findByNameOrLabel("gothram", "Gothram") ||
+        findByNameOrLabel("gotra", "Gotra");
+      if (el) {
+        const ok = await smartSet(el, contact.gothram);
+        if (!ok) flashField(el, false);
+      }
     }
   };
 
@@ -238,47 +397,48 @@
     }
     await sleep(80);
 
-    if (pilgrim.idProof === "Passport") {
-      let popup = null;
-      for (let i = 0; i < 20 && !popup; i++) {
-        popup =
+    if (norm(pilgrim.idProof) === "passport") {
+      // Wait for the modal to be present *and* mounted (a field rendered),
+      // rather than a fixed sleep that can fire before React fills it in.
+      const popup = await waitFor(() => {
+        const p =
           document.querySelector('[class*="passportVisaPopup"]') ||
           document.querySelector('[class*="popup"]') ||
           document.querySelector('[class*="modal"]');
-        if (!popup) await sleep(200);
-      }
+        return p && p.querySelector("input") ? p : null;
+      }, { timeout: 4000, interval: 150 });
       if (popup) {
         const field = (name) => popup.querySelector(`input[name="${name}"]`);
-        if (pilgrim.idNumber) {
-          const el = field("passportNumber");
-          if (el) setNativeValue(el, pilgrim.idNumber);
-        }
-        await sleep(300);
         const passportCountry = pilgrim.passportCountry || contactCountry;
-        if (passportCountry) {
-          const el = field("country");
-          if (el) setNativeValue(el, passportCountry);
+        const wanted = [
+          ["passportNumber", pilgrim.idNumber, "Passport number"],
+          ["country", passportCountry, "Country"],
+          ["visaNumber", pilgrim.visaNumber, "Visa number"],
+          ["visaType", pilgrim.visaType, "Visa type"],
+          ["visaValidityDate", pilgrim.visaValidityDate, "Visa validity"],
+        ];
+        for (const [name, value] of wanted) {
+          if (!value) continue;
+          const el = field(name);
+          if (el) {
+            await smartSet(el, value);
+            await sleep(120);
+          }
         }
-        if (pilgrim.visaNumber) {
-          const el = field("visaNumber");
-          if (el) setNativeValue(el, pilgrim.visaNumber);
-        }
-        if (pilgrim.visaType) {
-          const el = field("visaType");
-          if (el) setNativeValue(el, pilgrim.visaType);
-        }
-        if (pilgrim.visaValidityDate) {
-          const el = field("visaValidityDate");
-          if (el) setNativeValue(el, pilgrim.visaValidityDate);
-        }
-        await sleep(600);
+        // Confirm each value actually took before trying to submit.
+        const missing = wanted
+          .filter(([name, value]) => value && (() => { const el = field(name); return !el || !el.value || !el.value.trim(); })())
+          .map(([, , label]) => label);
+        await sleep(300);
         const submitBtn =
           popup.querySelector('button[type="submit"]') ||
           popup.querySelector('button[class*="continueBtn"]') ||
           Array.from(popup.querySelectorAll("button")).find((b) => b.innerText?.toLowerCase().includes("submit"));
-        if (submitBtn && !submitBtn.disabled) {
+        if (submitBtn && !submitBtn.disabled && missing.length === 0) {
           submitBtn.click();
           await sleep(1000);
+        } else if (missing.length > 0) {
+          toast("Passport popup: still missing " + missing.join(", ") + ". Please review before submitting.", "warn");
         }
       }
     }
@@ -322,6 +482,33 @@
     if (idEl && person.idNumber) setNativeValue(idEl, person.idNumber);
   };
 
+  // Fills up to nine Srivani members, keeping the Continue button watched while
+  // the SPA remounts. Shared by the popup message handler and the floating button.
+  const fillSrivaniMembers = async (members) => {
+    const stopWatching = watchForContinueButton();
+    try {
+      const first = document.querySelector('input[name="fName0"]');
+      const form = first && first.closest("form");
+      const formHidden = !!form && form.classList.contains("ng-hide");
+      const startIndex = first && !formHidden && !(first.value || "").trim() ? 0 : 1;
+      const upTo9 = (members || []).slice(0, 9);
+      let filled = 0;
+      for (let i = 0; i < upTo9.length; i++) {
+        if (upTo9[i] && upTo9[i].name && upTo9[i].name.trim()) {
+          announce("Filling Srivani member " + (i + 1) + " of " + upTo9.length);
+          filled++;
+        }
+        await fillSrivaniMember(upTo9[i], startIndex + i);
+        await sleep(150);
+      }
+      await sleep(400);
+      clickContinueIfPresent();
+      return { status: "success", filled };
+    } finally {
+      stopWatching();
+    }
+  };
+
   const isVisible = (el) => {
     if (!el || el.closest(".ng-hide, [hidden]")) return false;
     const style = window.getComputedStyle(el);
@@ -360,7 +547,7 @@
     return () => observer && observer.disconnect();
   };
 
-  const fillAllPilgrims = async (pilgrims, contact) => {
+  const fillAllPilgrims = async (pilgrims, contact, onProgress) => {
     let nameInputs = Array.from(document.querySelectorAll('input[name="name"]'));
     if (nameInputs.length === 0) nameInputs = Array.from(document.querySelectorAll('input[name="fname"]'));
     if (nameInputs.length === 0) return { status: "error", message: "Name inputs not found" };
@@ -371,6 +558,8 @@
     }
     const count = Math.min(emptySlots.length, pilgrims.length);
     for (let i = 0; i < count; i++) {
+      if (typeof onProgress === "function") onProgress(i + 1, count);
+      announce("Filling pilgrim " + (i + 1) + " of " + count);
       await fillPilgrim(pilgrims[i], emptySlots[i], contact ? contact.country : undefined);
       await sleep(150);
     }
@@ -384,8 +573,36 @@
   // the sender is checked anyway so a stray message can never move real data.
   const isOwnExtension = (sender) => !!sender && sender.id === chrome.runtime.id;
 
+  // One fill at a time, whether triggered from the popup or the on-page button.
+  const FILL_ACTIONS = new Set(["AUTOFILL", "FILL_SEVA", "FILL_ALL", "FILL_CONTACT", "FILL_SRIVANI"]);
+  let globalFilling = false;
+
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (!message || !isOwnExtension(sender)) return;
+
+    if (FILL_ACTIONS.has(message.action)) {
+      if (globalFilling) {
+        sendResponse({ status: "error", message: "A fill is already running — please wait for it to finish." });
+        return true;
+      }
+      globalFilling = true;
+      const original = sendResponse;
+      // Clear the lock whenever the handler responds (success or error), with a
+      // safety timeout in case a handler never replies.
+      let cleared = false;
+      const release = () => {
+        if (cleared) return;
+        cleared = true;
+        globalFilling = false;
+      };
+      setTimeout(release, 60000);
+      sendResponse = (resp) => {
+        release();
+        try {
+          original(resp);
+        } catch {}
+      };
+    }
 
     if (message.action === "AUTOFILL") {
       const { pilgrim, contact } = message.data;
@@ -457,24 +674,11 @@
     if (message.action === "FILL_SRIVANI") {
       const { members } = message.data;
       (async () => {
-        const stopWatching = watchForContinueButton();
         try {
-          const first = document.querySelector('input[name="fName0"]');
-          const form = first && first.closest("form");
-          const formHidden = !!form && form.classList.contains("ng-hide");
-          const startIndex = first && !formHidden && !(first.value || "").trim() ? 0 : 1;
-          const upTo9 = members.slice(0, 9);
-          for (let i = 0; i < upTo9.length; i++) {
-            await fillSrivaniMember(upTo9[i], startIndex + i);
-            await sleep(150);
-          }
-          await sleep(400);
-          clickContinueIfPresent();
-          sendResponse({ status: "success" });
+          const result = await fillSrivaniMembers(members);
+          sendResponse(result);
         } catch (err) {
           sendResponse({ status: "error", message: err.toString() });
-        } finally {
-          stopWatching();
         }
       })();
       return true;
@@ -786,7 +990,7 @@
           if (trigger) {
             trigger.click();
             await sleep(150);
-            const options = document.querySelectorAll('.floatingDropdown_checkboxListItem__AJXt6, [class*="checkboxListItem"]');
+            const options = document.querySelectorAll('[class*="checkboxListItem"], .floatingDropdown_checkboxListItem__AJXt6');
             for (const opt of options) {
               const label = opt.textContent?.trim();
               const isMatch = data.areaOfTrainerExp.some((wanted) => {
@@ -848,7 +1052,7 @@
         trigger.focus();
         await sleep(200);
         for (const lang of data.languages) {
-          const options = document.querySelectorAll(".floatingDropdown_checkboxListItem__AJXt6, li");
+          const options = document.querySelectorAll('[class*="checkboxListItem"], li');
           for (const opt of options) {
             if (opt.textContent?.trim() === lang) {
               const cb = opt.querySelector('input[type="checkbox"]');
@@ -872,32 +1076,32 @@
       for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
       return new File([buffer], name, { type });
     };
+    const applyFile = (input, fileMeta) => {
+      const file = dataUrlToFile(fileMeta.data, fileMeta.name, fileMeta.type);
+      const dt = new DataTransfer();
+      dt.items.add(file); // a fresh DataTransfer replaces any previously staged file
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "files")?.set;
+      if (setter) setter.call(input, dt.files);
+      else input.files = dt.files;
+      dispatchReactOnChange(input, fileMeta.name, { files: dt.files, type: "file" });
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+      dispatchAll(input);
+    };
     const setFileInput = async (input, fileMeta) => {
       if (!input || !fileMeta || !fileMeta.data) return false;
       try {
-        const file = dataUrlToFile(fileMeta.data, fileMeta.name, fileMeta.type);
-        const dt = new DataTransfer();
-        dt.items.add(file);
-        const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "files")?.set;
-        if (setter) setter.call(input, dt.files);
-        else input.files = dt.files;
-        const propsKey = Object.keys(input).find((k) => k.startsWith("__reactProps$"));
-        if (propsKey && input[propsKey]?.onChange) {
-          try {
-            input[propsKey].onChange({
-              target: { files: dt.files, value: fileMeta.name, type: "file" },
-              currentTarget: { files: dt.files, value: fileMeta.name, type: "file" },
-              preventDefault: () => {},
-              stopPropagation: () => {},
-              persist: () => {},
-              nativeEvent: new Event("change"),
-            });
-          } catch {}
+        applyFile(input, fileMeta);
+        await sleep(80);
+        // Verify the file actually attached; retry once if the UI dropped it.
+        if (!(input.files && input.files.length === 1)) {
+          applyFile(input, fileMeta);
+          await sleep(120);
         }
-        input.dispatchEvent(new Event("change", { bubbles: true }));
-        dispatchAll(input);
-        return true;
+        const ok = !!(input.files && input.files.length >= 1);
+        flashField(input, ok);
+        return ok;
       } catch {
+        flashField(input, false);
         return false;
       }
     };
@@ -994,7 +1198,7 @@
               return g.offsetParent !== null && rect.width > 0 && rect.height > 0;
             }) || groups[groups.length - 1];
       } else {
-        group = Array.from(root.querySelectorAll('.profile_radioGroup__RkVE_, div[class*="radioGroup"]')).find((g) =>
+        group = Array.from(root.querySelectorAll('div[class*="radioGroup"], .profile_radioGroup__RkVE_')).find((g) =>
           g.textContent.includes("Mentally Fit")
         );
       }
@@ -1189,28 +1393,31 @@
   (function () {
     const BTN_ID = "ttdfh-fill-button";
     const STYLE_ID = BTN_ID + "-style";
-    const TOAST_ID = "ttdfh-fill-toast";
     let busy = false;
 
+    // Detect which TTD booking form is on the page so the button can fill the
+    // right one automatically (no need to open the popup first).
+    function detectFormType() {
+      if (document.querySelector('input[name="fName0"], input[name="fName1"]')) return "srivani";
+      if (document.querySelector('input[name="sevakName"], input[name="spvrName"], [class*="sevakContainer"]')) return "seva";
+      if (document.querySelector('input[name="name"], input[name="fname"]')) return "pilgrim";
+      return null;
+    }
     function hasBookingForm() {
-      return document.querySelector('input[name="name"], input[name="fname"]') !== null;
+      return detectFormType() !== null;
+    }
+    const FORM_LABELS = {
+      pilgrim: "Fill Pilgrims",
+      seva: "Fill Sevak",
+      srivani: "Fill Srivani",
+    };
+    function formLabel(type) {
+      return FORM_LABELS[type] || "Fill Details";
     }
 
+    // Delegates to the shared on-page toast (also announces to screen readers).
     function showToast(message, kind) {
-      const existing = document.getElementById(TOAST_ID);
-      if (existing) existing.remove();
-      const color = kind === "error" ? "#DC2626" : kind === "warn" ? "#D97706" : "#1E9E5C";
-      const toast = document.createElement("div");
-      toast.id = TOAST_ID;
-      toast.textContent = message;
-      toast.style.cssText =
-        "position:fixed;bottom:96px;right:22px;z-index:2147483647;background:" +
-        color +
-        ";color:#fff;font:600 13px/1.4 system-ui,-apple-system,sans-serif;padding:11px 16px;border-radius:12px;max-width:300px;box-shadow:0 10px 30px rgba(0,0,0,.3);animation:ttdfh-toast-in .25s ease-out;";
-      document.body.appendChild(toast);
-      setTimeout(() => {
-        if (document.getElementById(TOAST_ID) === toast) toast.remove();
-      }, 4000);
+      toast(message, kind);
     }
 
     const isEncryptedValue = (v) => !!v && typeof v === "object" && v.__tfhEnc === 1 && v.iv && v.ct;
@@ -1240,43 +1447,121 @@
       return response.data || {};
     }
 
-    async function onFillClick() {
-      if (busy) return;
-      if (!hasBookingForm()) {
-        showToast("Open a TTD pilgrim booking form first.", "warn");
+    function setBusy(on) {
+      busy = on;
+      const btn = document.getElementById(BTN_ID);
+      if (btn) btn.classList.toggle("ttdfh-busy", on);
+      if (!on) setProgress("");
+    }
+
+    function setProgress(text) {
+      const el = document.getElementById("ttdfh-progress");
+      if (!el) return;
+      el.textContent = text || "";
+      el.style.display = text ? "block" : "none";
+    }
+
+    // Reads a plaintext storage key for the on-page button. Seva/Srivani data
+    // can't be decrypted here when at-rest encryption is on (only pilgrims and
+    // contact can, via the background worker), so an encrypted blob returns a
+    // locked signal and the user is pointed at the popup.
+    async function loadPlainKey(key) {
+      const stored = await chrome.storage.local.get([key]);
+      const value = stored[key];
+      if (isEncryptedValue(value)) return { locked: true };
+      return { value };
+    }
+
+    function handleFillError(err) {
+      const message = (err && err.message) || "";
+      if (message === "VAULT_LOCKED") {
+        showToast("🔒 Your data is locked — open TTD Form Helper and unlock it first.", "warn");
+      } else if (/extension context invalidated/i.test(message) || !chrome.runtime?.id) {
+        removeButton();
+        showToast("Extension was reloaded — refresh this TTD page to use autofill.", "warn");
+      } else {
+        showToast(message || "Fill failed — try reloading the TTD page.", "error");
+      }
+    }
+
+    function scrollToFirstEmpty(selector) {
+      try {
+        const first = Array.from(document.querySelectorAll(selector)).find(
+          (el) => isOnScreen(el) && (!el.value || !el.value.trim())
+        );
+        if (first) first.scrollIntoView({ block: "center", behavior: prefersReducedMotion() ? "auto" : "smooth" });
+      } catch {}
+    }
+
+    async function runPilgrimFill() {
+      const stored = await loadSavedData();
+      const pilgrims = stored.pilgrims || [];
+      const contact = stored.contact || {};
+      if (!pilgrims.length) {
+        showToast("No pilgrims saved — open the extension to add them.", "warn");
         return;
       }
-      busy = true;
-      const btn = document.getElementById(BTN_ID);
-      if (btn) btn.classList.add("ttdfh-busy");
+      const result = await fillAllPilgrims(pilgrims, contact, (done, total) => setProgress(done + "/" + total + " pilgrims…"));
+      if (result.status === "success") {
+        showToast("⚡ Filled " + result.filled + " pilgrim" + (result.filled === 1 ? "" : "s") + ".", "success");
+        scrollToFirstEmpty('input[name="name"], input[name="fname"]');
+      } else {
+        showToast(result.message || "Could not fill this page.", "error");
+      }
+    }
+
+    async function runSrivaniFill() {
+      const { value, locked } = await loadPlainKey("srivaniPeople");
+      if (locked) {
+        showToast("🔒 Srivani data is locked — open the extension popup to fill it.", "warn");
+        return;
+      }
+      const members = Array.isArray(value) ? value.filter((p) => p && p.name && p.name.trim()) : [];
+      if (!members.length) {
+        showToast("No Srivani members saved — open the extension to add them.", "warn");
+        return;
+      }
+      const result = await fillSrivaniMembers(members);
+      showToast("🪔 Filled " + result.filled + " Srivani member" + (result.filled === 1 ? "" : "s") + ".", "success");
+    }
+
+    async function runSevaFill() {
+      const { value, locked } = await loadPlainKey("sevakData");
+      if (locked) {
+        showToast("🔒 Seva data is locked — open the extension popup to fill it.", "warn");
+        return;
+      }
+      if (!value || (!value.sevakName && !value.spvrName && !value.mobileNo)) {
+        showToast("No Sevak details saved — open the extension to add them.", "warn");
+        return;
+      }
+      // One-click helper fills only; the user reviews and submits themselves.
+      await fillSevaForm({ ...value, clickSaveAndAdd: false });
+      showToast("🙏 Sevak details filled — review, then Save & Add Sevak.", "success");
+    }
+
+    async function onFillClick() {
+      if (busy) return;
+      if (globalFilling) {
+        showToast("A fill is already running — please wait.", "warn");
+        return;
+      }
+      const type = detectFormType();
+      if (!type) {
+        showToast("Open a TTD booking form first.", "warn");
+        return;
+      }
+      setBusy(true);
+      globalFilling = true;
       try {
-        const stored = await loadSavedData();
-        const pilgrims = stored.pilgrims || [];
-        const contact = stored.contact || {};
-        if (!pilgrims.length) {
-          showToast("No pilgrims saved — open the extension to add them.", "warn");
-          return;
-        }
-        const result = await fillAllPilgrims(pilgrims, contact);
-        if (result.status === "success") {
-          showToast("⚡ Filled " + result.filled + " pilgrim" + (result.filled === 1 ? "" : "s") + ".", "success");
-        } else {
-          showToast(result.message || "Could not fill this page.", "error");
-        }
+        if (type === "srivani") await runSrivaniFill();
+        else if (type === "seva") await runSevaFill();
+        else await runPilgrimFill();
       } catch (err) {
-        const message = (err && err.message) || "";
-        if (message === "VAULT_LOCKED") {
-          showToast("🔒 Your data is locked — open TTD Form Helper and unlock it first.", "warn");
-        } else if (/extension context invalidated/i.test(message) || !chrome.runtime?.id) {
-          removeButton();
-          showToast("Extension was reloaded — refresh this TTD page to use autofill.", "warn");
-        } else {
-          showToast(message || "Fill failed — try reloading the TTD page.", "error");
-        }
+        handleFillError(err);
       } finally {
-        busy = false;
-        const btn2 = document.getElementById(BTN_ID);
-        if (btn2) btn2.classList.remove("ttdfh-busy");
+        globalFilling = false;
+        setBusy(false);
       }
     }
 
@@ -1345,6 +1630,18 @@
           border-radius: 999px;
           box-shadow: 0 2px 8px rgba(0,0,0,.35);
         }
+        #ttdfh-progress {
+          position: absolute;
+          right: 0;
+          bottom: 66px;
+          background: rgba(30, 20, 20, .97);
+          color: #fff;
+          font: 700 11px/1.3 system-ui, -apple-system, sans-serif;
+          padding: 5px 10px;
+          border-radius: 999px;
+          white-space: nowrap;
+          box-shadow: 0 8px 22px rgba(0,0,0,.4);
+        }
         #ttdfh-fab-wrap .ttdfh-pop {
           position: absolute;
           right: 72px;
@@ -1385,6 +1682,10 @@
         @keyframes ttdfh-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes ttdfh-spin { to { transform: rotate(360deg); } }
         @keyframes ttdfh-toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        @media (prefers-reduced-motion: reduce) {
+          #${BTN_ID} { animation: none; transition: none; }
+          #${BTN_ID}:hover, #${BTN_ID}:focus-visible, #${BTN_ID}:active { transform: none; }
+        }
       `;
       document.head.appendChild(style);
     }
@@ -1396,15 +1697,33 @@
       if (style) style.remove();
     }
 
-    function injectButton() {
-      if (document.getElementById(BTN_ID)) return;
+    function updateLabel(type) {
+      const label = formLabel(type);
+      const btn = document.getElementById(BTN_ID);
+      if (btn) btn.setAttribute("aria-label", label + ". Shortcut: " + shortcutFull);
+      const title = document.getElementById("ttdfh-pop-title");
+      if (title) title.textContent = label;
+    }
+
+    function injectButton(type) {
+      if (document.getElementById(BTN_ID)) {
+        updateLabel(type);
+        return;
+      }
       ensureStyles();
       const wrap = document.createElement("div");
       wrap.id = "ttdfh-fab-wrap";
+
+      const progress = document.createElement("div");
+      progress.id = "ttdfh-progress";
+      progress.setAttribute("aria-hidden", "true");
+      progress.style.display = "none";
+      wrap.appendChild(progress);
+
       const btn = document.createElement("button");
       btn.id = BTN_ID;
       btn.type = "button";
-      btn.setAttribute("aria-label", "Fill pilgrim details. Shortcut: " + shortcutFull);
+      btn.setAttribute("aria-label", formLabel(type) + ". Shortcut: " + shortcutFull);
       btn.innerHTML = '<span class="ttdfh-icon" aria-hidden="true">⚡</span><span class="ttdfh-kbd" aria-hidden="true">' + shortcutLabel + "</span>";
       btn.addEventListener("click", onFillClick);
       wrap.appendChild(btn);
@@ -1412,9 +1731,11 @@
       const pop = document.createElement("div");
       pop.className = "ttdfh-pop";
       pop.setAttribute("role", "dialog");
-      pop.setAttribute("aria-label", "Fill pilgrim details");
+      pop.setAttribute("aria-label", "Fill booking details");
       pop.innerHTML =
-        '<div class="ttdfh-pop-title">Fill Pilgrim Details</div><div class="ttdfh-pop-kbd-row"><span>Shortcut</span><kbd>' +
+        '<div class="ttdfh-pop-title" id="ttdfh-pop-title">' +
+        formLabel(type) +
+        '</div><div class="ttdfh-pop-kbd-row"><span>Shortcut</span><kbd>' +
         (isMac ? "⌥" : "Alt") +
         "</kbd><kbd>A</kbd></div>";
       wrap.appendChild(pop);
@@ -1422,8 +1743,11 @@
       document.body.appendChild(wrap);
     }
 
+    // Re-runs on DOM changes so the button stays correct as the SPA moves
+    // between booking steps (pilgrim → seva → srivani) without a full reload.
     function sync() {
-      if (hasBookingForm()) injectButton();
+      const type = detectFormType();
+      if (type) injectButton(type);
       else removeButton();
     }
 
