@@ -40,11 +40,23 @@ Motion is skipped automatically when the browser is set to *reduce motion*.
 
 ## Install
 
+### Prebuilt bundle (easiest — no repo clone needed)
+
+Download the ready-to-load zip for your browser from the repository root and unzip it —
+you'll get a `TTD-Form-Helper-v1.2.0` folder with a `HOW-TO-LOAD.txt` inside:
+
+- `TTD-Form-Helper-v1.2.0-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
+- `TTD-Form-Helper-v1.2.0-firefox-unpacked.zip` — Firefox
+
+Then follow the steps below, pointing at the unzipped folder. (These bundles are for
+**loading unpacked**; they are not signed store builds.)
+
 ### Chrome / Edge / Brave / Opera
 
 1. Go to `chrome://extensions` (or `edge://extensions`).
 2. Turn on **Developer mode**.
-3. Click **Load unpacked** and pick this `ttd-form-helper` folder.
+3. Click **Load unpacked** and pick this `ttd-form-helper` folder (or the unzipped
+   `TTD-Form-Helper-v1.2.0` folder from the prebuilt bundle).
 
 ### Firefox
 
