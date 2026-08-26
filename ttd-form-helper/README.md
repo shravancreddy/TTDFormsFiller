@@ -27,7 +27,12 @@ any kind. Key updates:
   checks instead of fixed delays, and verification for file uploads and the passport
   pop-up so half-filled fields are caught and reported on the page.
 - **Robust to layout changes** — prefers stable field names/labels over the site's
-  hashed CSS classes, and re-checks the form as the page moves between steps.
+  hashed CSS classes, re-checks the form as the page moves between steps, and hints you
+  if a known booking page shows no recognised form.
+- **Options menu & fill modes** — right-click the button (or use the ▾ / long-press) for
+  a keyboard-reachable menu: fill only empty rows or overwrite, fill the next empty
+  pilgrim, fill contact only, pick a saved set, fill-and-continue, or undo the last
+  fill. `Alt`+`A` fills; `Alt`+`Shift`+`A` overwrites.
 
 Motion is skipped automatically when the browser is set to *reduce motion*.
 
