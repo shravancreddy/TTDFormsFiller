@@ -128,11 +128,29 @@
       return false;
     }
   };
+  // ---- Undo log: remember the prior value of each field a fill writes ----
+  let fillLog = new Map();
+  let logging = false;
+  const beginLog = () => {
+    fillLog = new Map();
+    logging = true;
+  };
+  const endLog = () => {
+    logging = false;
+  };
+  const recordPrev = (el) => {
+    if (!logging || !el || fillLog.has(el)) return;
+    try {
+      fillLog.set(el, el.value ?? "");
+    } catch {}
+  };
+
   // Writes a value to a plain (non-dropdown) input: native prototype setter +
   // input/change/blur, then the React onChange path if the framework ignored the
   // native write. Highlights the field green when the value stuck, amber if not.
   const setControlledValue = (el, value) => {
     if (!el) return false;
+    recordPrev(el);
     const target = value == null ? "" : String(value);
     const desc = Object.getOwnPropertyDescriptor(el.constructor.prototype, "value");
     if (desc && desc.set) desc.set.call(el, target);
@@ -172,6 +190,7 @@
   // floating option list to render, and click the option whose text matches.
   const selectFromDropdown = async (el, label) => {
     if (!el || !label) return false;
+    recordPrev(el);
     if (el.value && el.value.trim().toLowerCase() === label.trim().toLowerCase()) return true;
 
     const setViaReactProps = (node, val) => {
@@ -547,24 +566,80 @@
     return () => observer && observer.disconnect();
   };
 
-  const fillAllPilgrims = async (pilgrims, contact, onProgress) => {
+  const fillAllPilgrims = async (pilgrims, contact, opts = {}) => {
+    const { onProgress, overwrite = false } = opts;
     let nameInputs = Array.from(document.querySelectorAll('input[name="name"]'));
     if (nameInputs.length === 0) nameInputs = Array.from(document.querySelectorAll('input[name="fname"]'));
     if (nameInputs.length === 0) return { status: "error", message: "Name inputs not found" };
 
-    const emptySlots = [];
-    for (let i = 0; i < nameInputs.length; i++) {
-      if (!nameInputs[i].value || nameInputs[i].value.trim() === "") emptySlots.push(i);
+    // "Only empty" (default) skips rows that already hold a value; "overwrite"
+    // fills the first N rows regardless of what's in them.
+    let slots;
+    if (overwrite) {
+      slots = [];
+      const n = Math.min(nameInputs.length, pilgrims.length);
+      for (let i = 0; i < n; i++) slots.push(i);
+    } else {
+      slots = [];
+      for (let i = 0; i < nameInputs.length; i++) {
+        if (!nameInputs[i].value || nameInputs[i].value.trim() === "") slots.push(i);
+      }
     }
-    const count = Math.min(emptySlots.length, pilgrims.length);
+    const count = Math.min(slots.length, pilgrims.length);
     for (let i = 0; i < count; i++) {
       if (typeof onProgress === "function") onProgress(i + 1, count);
       announce("Filling pilgrim " + (i + 1) + " of " + count);
-      await fillPilgrim(pilgrims[i], emptySlots[i], contact ? contact.country : undefined);
+      await fillPilgrim(pilgrims[i], slots[i], contact ? contact.country : undefined);
       await sleep(150);
     }
     if (contact) await fillContact(contact);
     return { status: "success", filled: count };
+  };
+
+  // ---- Undo the last fill and generalized Continue handling ----
+  const clearFilled = async () => {
+    if (!fillLog.size) {
+      toast("Nothing to clear — no fields have been filled yet.", "warn");
+      return;
+    }
+    let n = 0;
+    for (const [el, prev] of fillLog) {
+      if (el && el.isConnected) {
+        setControlledValue(el, prev);
+        n++;
+        await sleep(20);
+      }
+    }
+    fillLog.clear();
+    toast("↩ Cleared " + n + " filled field" + (n === 1 ? "" : "s") + ".", "success");
+  };
+
+  // A Continue/Next/Proceed button, by stable id or button text — but never a
+  // pay / submit / book / confirm action.
+  const CONTINUE_RE = /^(continue|next|proceed|save\s*&?\s*continue|save and continue)$/i;
+  const findContinueButton = () => {
+    const pasok = document.querySelector("#pasok");
+    if (pasok && isVisible(pasok)) return pasok;
+    const btns = Array.from(document.querySelectorAll('button, input[type="button"], input[type="submit"], a[role="button"]'));
+    return (
+      btns.find((b) => {
+        if (!isVisible(b) || b.disabled) return false;
+        const txt = (b.innerText || b.value || "").trim();
+        if (!CONTINUE_RE.test(txt)) return false;
+        if (/pay|submit|book|confirm|delete|remove|cancel/i.test(txt)) return false;
+        return true;
+      }) || null
+    );
+  };
+  const clickContinueGeneric = async () => {
+    const btn = findContinueButton();
+    if (!btn) {
+      toast("No Continue button found on this step.", "warn");
+      return false;
+    }
+    btn.click();
+    await sleep(300);
+    return true;
   };
 
   // ---- message handling: no license/paywall check, autofill runs immediately ----
@@ -1493,7 +1568,30 @@
       } catch {}
     }
 
-    async function runPilgrimFill() {
+    // Wraps a fill action with the shared lock, the busy state, and (by default)
+    // a fresh undo log so "Clear filled fields" can revert exactly this run.
+    async function runGuarded(fn, { log = true } = {}) {
+      if (busy) return;
+      if (globalFilling) {
+        showToast("A fill is already running — please wait.", "warn");
+        return;
+      }
+      setBusy(true);
+      globalFilling = true;
+      if (log) beginLog();
+      try {
+        await fn();
+      } catch (err) {
+        handleFillError(err);
+      } finally {
+        if (log) endLog();
+        globalFilling = false;
+        setBusy(false);
+      }
+    }
+
+    async function runPilgrimFill(opts = {}) {
+      const { overwrite = false, thenContinue = false } = opts;
       const stored = await loadSavedData();
       const pilgrims = stored.pilgrims || [];
       const contact = stored.contact || {};
@@ -1501,16 +1599,89 @@
         showToast("No pilgrims saved — open the extension to add them.", "warn");
         return;
       }
-      const result = await fillAllPilgrims(pilgrims, contact, (done, total) => setProgress(done + "/" + total + " pilgrims…"));
-      if (result.status === "success") {
-        showToast("⚡ Filled " + result.filled + " pilgrim" + (result.filled === 1 ? "" : "s") + ".", "success");
-        scrollToFirstEmpty('input[name="name"], input[name="fname"]');
-      } else {
+      const result = await fillAllPilgrims(pilgrims, contact, {
+        overwrite,
+        onProgress: (done, total) => setProgress(done + "/" + total + " pilgrims…"),
+      });
+      if (result.status !== "success") {
         showToast(result.message || "Could not fill this page.", "error");
+        return;
       }
+      showToast((overwrite ? "♻️ Re-filled " : "⚡ Filled ") + result.filled + " pilgrim" + (result.filled === 1 ? "" : "s") + ".", "success");
+      if (thenContinue) await clickContinueGeneric();
+      else scrollToFirstEmpty('input[name="name"], input[name="fname"]');
     }
 
-    async function runSrivaniFill() {
+    // Fills only the first still-empty pilgrim row, from the first saved pilgrim.
+    async function runSinglePilgrim() {
+      const stored = await loadSavedData();
+      const pilgrims = stored.pilgrims || [];
+      const contact = stored.contact || {};
+      if (!pilgrims.length) {
+        showToast("No pilgrims saved — open the extension to add them.", "warn");
+        return;
+      }
+      let nameInputs = Array.from(document.querySelectorAll('input[name="name"]'));
+      if (!nameInputs.length) nameInputs = Array.from(document.querySelectorAll('input[name="fname"]'));
+      if (!nameInputs.length) {
+        showToast("No pilgrim rows found on this page.", "error");
+        return;
+      }
+      let slot = nameInputs.findIndex((el) => !el.value || !el.value.trim());
+      if (slot === -1) slot = nameInputs.length - 1;
+      await fillPilgrim(pilgrims[0], slot, contact.country);
+      await fillContact(contact);
+      showToast("① Filled the next empty pilgrim.", "success");
+    }
+
+    async function runContactOnly() {
+      const stored = await loadSavedData();
+      await fillContact(stored.contact || {});
+      showToast("✉️ Contact details filled.", "success");
+    }
+
+    // Reads saved sets + the pilgrim vault directly (only possible when at-rest
+    // encryption is off — those keys aren't handed to content scripts otherwise).
+    async function readSetsAndVault() {
+      const stored = await chrome.storage.local.get(["pilgrimSets", "pilgrimVault"]);
+      if (isEncryptedValue(stored.pilgrimSets) || isEncryptedValue(stored.pilgrimVault)) return { locked: true };
+      return {
+        sets: Array.isArray(stored.pilgrimSets) ? stored.pilgrimSets : [],
+        vault: Array.isArray(stored.pilgrimVault) ? stored.pilgrimVault : [],
+      };
+    }
+
+    async function runFillFromSet(setId, overwrite) {
+      const { sets, vault, locked } = await readSetsAndVault();
+      if (locked) {
+        showToast("🔒 Saved sets are locked — open the extension popup to use them.", "warn");
+        return;
+      }
+      const set = (sets || []).find((s) => s.id === setId);
+      if (!set) {
+        showToast("That set no longer exists.", "warn");
+        return;
+      }
+      const members = (set.pilgrimIds || [])
+        .map((id) => (vault || []).find((v) => v.id === id))
+        .filter(Boolean)
+        .slice(0, 6);
+      if (!members.length) {
+        showToast("That set has no pilgrims.", "warn");
+        return;
+      }
+      try {
+        await chrome.storage.local.set({ lastUsedSet: setId });
+      } catch {}
+      const stored = await loadSavedData();
+      const result = await fillAllPilgrims(members, stored.contact || {}, {
+        overwrite: !!overwrite,
+        onProgress: (done, total) => setProgress(done + "/" + total + " pilgrims…"),
+      });
+      showToast("Filled " + result.filled + " from “" + (set.name || "set") + "”.", "success");
+    }
+
+    async function runSrivaniFill(opts = {}) {
       const { value, locked } = await loadPlainKey("srivaniPeople");
       if (locked) {
         showToast("🔒 Srivani data is locked — open the extension popup to fill it.", "warn");
@@ -1523,6 +1694,7 @@
       }
       const result = await fillSrivaniMembers(members);
       showToast("🪔 Filled " + result.filled + " Srivani member" + (result.filled === 1 ? "" : "s") + ".", "success");
+      if (opts.thenContinue) await clickContinueGeneric();
     }
 
     async function runSevaFill() {
@@ -1540,29 +1712,18 @@
       showToast("🙏 Sevak details filled — review, then Save & Add Sevak.", "success");
     }
 
-    async function onFillClick() {
-      if (busy) return;
-      if (globalFilling) {
-        showToast("A fill is already running — please wait.", "warn");
-        return;
-      }
+    // Default action: fill the detected form (pilgrims: only-empty unless overwrite).
+    function onFillClick(opts = {}) {
       const type = detectFormType();
       if (!type) {
         showToast("Open a TTD booking form first.", "warn");
         return;
       }
-      setBusy(true);
-      globalFilling = true;
-      try {
-        if (type === "srivani") await runSrivaniFill();
-        else if (type === "seva") await runSevaFill();
-        else await runPilgrimFill();
-      } catch (err) {
-        handleFillError(err);
-      } finally {
-        globalFilling = false;
-        setBusy(false);
-      }
+      runGuarded(() => {
+        if (type === "srivani") return runSrivaniFill();
+        if (type === "seva") return runSevaFill();
+        return runPilgrimFill({ overwrite: !!opts.overwrite });
+      });
     }
 
     const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform || "") || /mac/i.test((navigator.userAgentData && navigator.userAgentData.platform) || "");
@@ -1642,6 +1803,64 @@
           white-space: nowrap;
           box-shadow: 0 8px 22px rgba(0,0,0,.4);
         }
+        #ttdfh-caret {
+          position: absolute;
+          top: -6px;
+          right: -6px;
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          border: 1px solid rgba(255,255,255,.55);
+          background: #1E9E5C;
+          color: #fff;
+          font: 700 12px/1 system-ui, sans-serif;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+          box-shadow: 0 2px 8px rgba(0,0,0,.35);
+        }
+        #ttdfh-caret:hover, #ttdfh-caret:focus-visible { transform: scale(1.1); outline: none; }
+        #ttdfh-menu {
+          position: absolute;
+          right: 0;
+          bottom: 68px;
+          min-width: 210px;
+          max-width: 280px;
+          background: rgba(30, 20, 20, .98);
+          border: 1px solid rgba(255,255,255,.10);
+          border-radius: 12px;
+          padding: 6px;
+          box-shadow: 0 18px 50px rgba(0,0,0,.5);
+          z-index: 2147483647;
+        }
+        #ttdfh-menu .ttdfh-menu-item {
+          display: block;
+          width: 100%;
+          text-align: left;
+          background: transparent;
+          border: 0;
+          border-radius: 8px;
+          color: #fff;
+          font: 600 12.5px/1.3 system-ui, -apple-system, sans-serif;
+          padding: 9px 10px;
+          cursor: pointer;
+        }
+        #ttdfh-menu .ttdfh-menu-item:hover, #ttdfh-menu .ttdfh-menu-item:focus-visible {
+          background: rgba(255,255,255,.12);
+          outline: none;
+        }
+        #ttdfh-menu .ttdfh-menu-sep {
+          font: 700 10px/1.2 system-ui, sans-serif;
+          text-transform: uppercase;
+          letter-spacing: .05em;
+          color: rgba(255,255,255,.5);
+          padding: 8px 10px 4px;
+          border-top: 1px solid rgba(255,255,255,.08);
+          margin-top: 4px;
+        }
+        #ttdfh-menu .ttdfh-menu-sep:empty { padding: 0; margin: 4px 0; border-top: 1px solid rgba(255,255,255,.08); }
         #ttdfh-fab-wrap .ttdfh-pop {
           position: absolute;
           right: 72px;
@@ -1705,6 +1924,74 @@
       if (title) title.textContent = label;
     }
 
+    // ---- Right-click / long-press / caret menu (keyboard-reachable) ----
+    let menuOpen = false;
+    function closeMenu() {
+      const menu = document.getElementById("ttdfh-menu");
+      if (menu) menu.hidden = true;
+      menuOpen = false;
+    }
+    function menuItem(label, onClick) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "ttdfh-menu-item";
+      b.setAttribute("role", "menuitem");
+      b.textContent = label;
+      b.addEventListener("click", () => {
+        closeMenu();
+        onClick();
+      });
+      return b;
+    }
+    function menuSeparator(label) {
+      const d = document.createElement("div");
+      d.className = "ttdfh-menu-sep";
+      if (label) d.textContent = label;
+      return d;
+    }
+    async function openMenu() {
+      const menu = document.getElementById("ttdfh-menu");
+      if (!menu) return;
+      menu.innerHTML = "";
+      const type = detectFormType();
+      if (type === "pilgrim") {
+        menu.appendChild(menuItem("⚡ Fill all (empty rows)", () => onFillClick()));
+        menu.appendChild(menuItem("♻️ Fill all (overwrite)", () => onFillClick({ overwrite: true })));
+        menu.appendChild(menuItem("① Fill next empty pilgrim", () => runGuarded(runSinglePilgrim)));
+        menu.appendChild(menuItem("✉️ Fill contact only", () => runGuarded(runContactOnly)));
+        menu.appendChild(menuItem("⏭️ Fill all & Continue", () => runGuarded(() => runPilgrimFill({ thenContinue: true }))));
+        const { sets, locked } = await readSetsAndVault();
+        if (!locked && Array.isArray(sets) && sets.length) {
+          let lastUsed = "";
+          try {
+            lastUsed = (await chrome.storage.local.get(["lastUsedSet"])).lastUsedSet || "";
+          } catch {}
+          menu.appendChild(menuSeparator("Saved sets"));
+          sets.slice(0, 8).forEach((s) => {
+            const star = s.id === lastUsed ? "★ " : "";
+            menu.appendChild(menuItem(star + "👥 " + (s.name || "Unnamed set"), () => runGuarded(() => runFillFromSet(s.id, false))));
+          });
+        }
+      } else if (type === "srivani") {
+        menu.appendChild(menuItem("🪔 Fill Srivani", () => runGuarded(runSrivaniFill)));
+        menu.appendChild(menuItem("⏭️ Fill Srivani & Continue", () => runGuarded(() => runSrivaniFill({ thenContinue: true }))));
+      } else if (type === "seva") {
+        menu.appendChild(menuItem("🙏 Fill Sevak", () => runGuarded(runSevaFill)));
+      } else {
+        menu.appendChild(menuItem("Open a TTD booking form first", () => {}));
+      }
+      menu.appendChild(menuSeparator());
+      menu.appendChild(menuItem("↩️ Clear filled fields", () => runGuarded(clearFilled, { log: false })));
+      menu.hidden = false;
+      menuOpen = true;
+      const first = menu.querySelector(".ttdfh-menu-item");
+      if (first) first.focus();
+    }
+    function toggleMenu() {
+      if (menuOpen) closeMenu();
+      else openMenu();
+    }
+
     function injectButton(type) {
       if (document.getElementById(BTN_ID)) {
         updateLabel(type);
@@ -1720,13 +2007,60 @@
       progress.style.display = "none";
       wrap.appendChild(progress);
 
+      const menu = document.createElement("div");
+      menu.id = "ttdfh-menu";
+      menu.setAttribute("role", "menu");
+      menu.setAttribute("aria-label", "Fill options");
+      menu.hidden = true;
+      menu.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeMenu();
+          const b = document.getElementById(BTN_ID);
+          if (b) b.focus();
+        }
+      });
+      wrap.appendChild(menu);
+
       const btn = document.createElement("button");
       btn.id = BTN_ID;
       btn.type = "button";
-      btn.setAttribute("aria-label", formLabel(type) + ". Shortcut: " + shortcutFull);
+      btn.setAttribute("aria-label", formLabel(type) + ". Shortcut: " + shortcutFull + ". Right-click or use the ▾ menu for more options.");
+      btn.setAttribute("aria-haspopup", "menu");
       btn.innerHTML = '<span class="ttdfh-icon" aria-hidden="true">⚡</span><span class="ttdfh-kbd" aria-hidden="true">' + shortcutLabel + "</span>";
-      btn.addEventListener("click", onFillClick);
+      btn.addEventListener("click", () => onFillClick());
+      btn.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        openMenu();
+      });
+      // Long-press on touch devices opens the menu.
+      let pressTimer = null;
+      btn.addEventListener("touchstart", () => {
+        pressTimer = setTimeout(() => {
+          pressTimer = null;
+          openMenu();
+        }, 500);
+      }, { passive: true });
+      const cancelPress = () => {
+        if (pressTimer) {
+          clearTimeout(pressTimer);
+          pressTimer = null;
+        }
+      };
+      btn.addEventListener("touchend", cancelPress);
+      btn.addEventListener("touchmove", cancelPress);
       wrap.appendChild(btn);
+
+      const caret = document.createElement("button");
+      caret.id = "ttdfh-caret";
+      caret.type = "button";
+      caret.setAttribute("aria-label", "More fill options");
+      caret.setAttribute("aria-haspopup", "menu");
+      caret.textContent = "▾";
+      caret.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleMenu();
+      });
+      wrap.appendChild(caret);
 
       const pop = document.createElement("div");
       pop.className = "ttdfh-pop";
@@ -1752,15 +2086,45 @@
     }
 
     window.addEventListener("keydown", (e) => {
-      if (e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey && e.code === "KeyA") {
+      // Alt+A = normal fill (empty rows); Alt+Shift+A = overwrite existing values.
+      if (e.altKey && !e.ctrlKey && !e.metaKey && e.code === "KeyA") {
         if (!hasBookingForm()) return;
         e.preventDefault();
-        onFillClick();
+        onFillClick({ overwrite: e.shiftKey });
       }
     });
 
-    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", sync);
-    else sync();
+    // Close the options menu when clicking away from the button.
+    document.addEventListener("click", (e) => {
+      if (!menuOpen) return;
+      const wrap = document.getElementById("ttdfh-fab-wrap");
+      if (wrap && !wrap.contains(e.target)) closeMenu();
+    });
+
+    // Selector-health check: if this looks like a booking page but no known form
+    // is found once the SPA settles, hint the user (non-blocking) — once per page.
+    let healthChecked = false;
+    function looksLikeBookingUrl() {
+      const p = (location.pathname + location.search).toLowerCase();
+      return /book|darshan|seva|srivani|pilgrim|sevak|arjitha|homam/.test(p);
+    }
+    function selectorHealthCheck() {
+      if (healthChecked || !looksLikeBookingUrl() || detectFormType()) return;
+      healthChecked = true;
+      setTimeout(() => {
+        if (!detectFormType() && looksLikeBookingUrl()) {
+          toast("Page layout may have changed — open the extension popup to fill.", "warn");
+        }
+      }, 4000);
+    }
+
+    function boot() {
+      sync();
+      selectorHealthCheck();
+    }
+
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+    else boot();
 
     let debounceTimer;
     const observer = new MutationObserver(() => {
