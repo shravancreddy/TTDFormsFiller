@@ -12,6 +12,27 @@ bypasses CAPTCHA / OTP / payment steps, and it never submits a booking by itself
 
 ---
 
+## The on-page Fill button
+
+The floating **⚡ Fill** button works entirely in the page — no server or network of
+any kind. Key updates:
+
+- **Auto-detects the form** — Pilgrim, Sevak (Srivari Seva / Group) or Srivani — and
+  fills the right one straight from the button, relabelling itself to match. You no
+  longer have to open the popup first for Seva or Srivani forms.
+- **Visible feedback while it works** — each field flashes green as it is filled (amber
+  if it couldn't be set), a small progress pill counts multi-person fills, and progress
+  is announced for screen readers.
+- **Sturdier filling** — one shared routine for React-controlled inputs, wait-for-ready
+  checks instead of fixed delays, and verification for file uploads and the passport
+  pop-up so half-filled fields are caught and reported on the page.
+- **Robust to layout changes** — prefers stable field names/labels over the site's
+  hashed CSS classes, and re-checks the form as the page moves between steps.
+
+Motion is skipped automatically when the browser is set to *reduce motion*.
+
+---
+
 ## Install
 
 ### Chrome / Edge / Brave / Opera
@@ -74,7 +95,7 @@ right manifest variant as `manifest.json` inside each zip.
 |---|---|---|---|
 | Form autofill (all tabs) | ✅ | ✅ | ✅ |
 | Popup, settings, 6 languages | ✅ | ✅ | ✅ |
-| Floating Fill button on TTD pages | ✅ | ✅ | ✅ |
+| Floating Fill button (auto-detects form type) | ✅ | ✅ | ✅ |
 | Encrypted backup export / import | ✅ | ✅ | ✅ |
 | Optional at-rest encryption | ✅ | ✅ 115+ | ✅ 16.4+ |
 | Install as unpacked / temporary | ✅ | ⚠ temporary only | ❌ needs Xcode |
