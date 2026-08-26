@@ -31,8 +31,8 @@ any kind. Key updates:
   if a known booking page shows no recognised form.
 - **Options menu & fill modes** — right-click the button (or use the ▾ / long-press) for
   a keyboard-reachable menu: fill only empty rows or overwrite, fill the next empty
-  pilgrim, fill contact only, pick a saved set, fill-and-continue, or undo the last
-  fill. `Alt`+`A` fills; `Alt`+`Shift`+`A` overwrites.
+  pilgrim, fill contact only, pick a saved set, choose a group Seva member, fill-and-
+  continue, or undo the last fill. `Alt`+`A` fills; `Alt`+`Shift`+`A` overwrites.
 
 Motion is skipped automatically when the browser is set to *reduce motion*.
 
