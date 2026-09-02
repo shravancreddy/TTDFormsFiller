@@ -29,6 +29,10 @@ any kind. Key updates:
 - **Robust to layout changes** — prefers stable field names/labels over the site's
   hashed CSS classes, re-checks the form as the page moves between steps, and hints you
   if a known booking page shows no recognised form.
+- **Self-QC after every fill** — every field the fill touches is checked once it's
+  done: a persistent green ring + dot for anything with a value, a red ring + dot for
+  anything still blank, plus a one-line "X/Y filled, missing: …" summary that jumps
+  you to the first problem field. Marks clear on the next fill or after ~20s.
 - **Options menu & fill modes** — right-click the button (or use the ▾ / long-press) for
   a keyboard-reachable menu: fill only empty rows or overwrite, fill the next empty
   pilgrim, fill contact only, pick a saved set, choose a group Seva member, fill-and-
@@ -43,10 +47,10 @@ Motion is skipped automatically when the browser is set to *reduce motion*.
 ### Prebuilt bundle (easiest — no repo clone needed)
 
 Download the ready-to-load zip for your browser from the repository root and unzip it —
-you'll get a `TTD-Form-Helper-v1.2.1` folder with a `HOW-TO-LOAD.txt` inside:
+you'll get a `TTD-Form-Helper-v1.2.2` folder with a `HOW-TO-LOAD.txt` inside:
 
-- `TTD-Form-Helper-v1.2.1-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
-- `TTD-Form-Helper-v1.2.1-firefox-unpacked.zip` — Firefox
+- `TTD-Form-Helper-v1.2.2-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
+- `TTD-Form-Helper-v1.2.2-firefox-unpacked.zip` — Firefox
 
 Then follow the steps below, pointing at the unzipped folder. (These bundles are for
 **loading unpacked**; they are not signed store builds.)
@@ -69,7 +73,7 @@ use the unpacked zip above instead (**Load unpacked**). Rebuild both the zips an
 1. Go to `chrome://extensions` (or `edge://extensions`).
 2. Turn on **Developer mode**.
 3. Click **Load unpacked** and pick this `ttd-form-helper` folder (or the unzipped
-   `TTD-Form-Helper-v1.2.1` folder from the prebuilt bundle).
+   `TTD-Form-Helper-v1.2.2` folder from the prebuilt bundle).
 
 ### Firefox
 
@@ -252,7 +256,23 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ## Version history
 
-### 1.2.1 — current
+### 1.2.2 — current
+
+- **Self-QC after every fill** — every field a fill run writes to (plain inputs,
+  dropdowns, radio groups, file uploads) is now checked once the run finishes:
+  filled fields get a persistent green ring + dot, still-blank ones get a red
+  ring + dot, and a toast summarizes "X/Y filled" with the names of anything
+  missing, scrolling to the first problem field. Marks clear on the next fill or
+  after ~20 seconds. Applies to both the floating on-page button and the popup's
+  fill actions.
+- **Faster pilgrim filling** — removed several fixed `sleep()` pauses that were
+  never doing anything: plain-text fields (name, age, ID number) write and
+  dispatch their events synchronously, so back-to-back writes don't need a delay
+  between them, and the per-pilgrim loop's fixed 150ms pause dropped to a 30ms
+  yield. Dropdown, popup and Seva-form timing — the parts that genuinely wait on
+  the page's own async rendering — are unchanged.
+
+### 1.2.1
 
 - **Version bump only** — the Chrome Web Store rejects an upload whose
   `manifest.json` version is not strictly greater than the currently published

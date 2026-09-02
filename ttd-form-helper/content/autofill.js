@@ -89,6 +89,149 @@
     } catch {}
   };
 
+  // ---- Self-QC: track every field a fill touches, then mark filled (green) vs
+  // blank/failed (red) once the run finishes, with a small on-page summary. ----
+  const QC_STYLE_ID = "ttdfh-qc-style";
+  const ensureQCStyles = () => {
+    if (document.getElementById(QC_STYLE_ID)) return;
+    const style = document.createElement("style");
+    style.id = QC_STYLE_ID;
+    style.textContent = `
+      .ttdfh-qc-ok { box-shadow: 0 0 0 2px rgba(30,158,92,.85) !important; border-radius: 6px; }
+      .ttdfh-qc-missing { box-shadow: 0 0 0 2px rgba(220,38,38,.9) !important; border-radius: 6px; }
+      .ttdfh-qc-dot {
+        position: fixed; width: 9px; height: 9px; border-radius: 50%;
+        pointer-events: none; z-index: 2147483647; box-shadow: 0 0 0 2px #fff, 0 1px 3px rgba(0,0,0,.35);
+      }
+      .ttdfh-qc-dot-ok { background: #1E9E5C; }
+      .ttdfh-qc-dot-missing { background: #DC2626; }
+    `;
+    (document.head || document.documentElement).appendChild(style);
+  };
+
+  // The set of fields the *current* fill run wrote to. A plain module-level Set
+  // is safe because only one fill runs at a time (see `globalFilling`).
+  let qcFields = new Set();
+  const beginQCTrack = () => {
+    qcFields = new Set();
+  };
+  const trackQC = (el) => {
+    if (el) qcFields.add(el);
+  };
+
+  const qcFieldStatus = (el) => {
+    if (!el || !el.isConnected) return null; // removed from the DOM — nothing to report
+    if (el.type === "file") return !!(el.files && el.files.length > 0);
+    if (el.type === "radio") {
+      // A tracked radio is just one representative of its group — the group
+      // "has a value" once any radio sharing its name is checked.
+      if (!el.name) return !!el.checked;
+      const esc = (window.CSS && CSS.escape) ? CSS.escape(el.name) : el.name;
+      const root = el.form || document;
+      return !!root.querySelector(`input[name="${esc}"]:checked`);
+    }
+    if (el.type === "checkbox") return !!el.checked;
+    return !!(el.value && el.value.toString().trim());
+  };
+  const qcFieldLabel = (el) => {
+    if (!el) return "field";
+    if (el.id) {
+      const lab = document.querySelector(`label[for="${(window.CSS && CSS.escape) ? CSS.escape(el.id) : el.id}"]`);
+      if (lab && lab.textContent.trim()) return lab.textContent.trim();
+    }
+    const aria = el.getAttribute("aria-label");
+    if (aria) return aria;
+    const wrapLabel = el.closest("label");
+    if (wrapLabel && wrapLabel.textContent.trim()) return wrapLabel.textContent.trim();
+    return el.placeholder || el.name || el.id || "field";
+  };
+
+  // Clears the previous run's marks/dots and their scroll listener, if any.
+  let qcCleanup = null;
+  const clearQC = () => {
+    if (qcCleanup) {
+      qcCleanup();
+      qcCleanup = null;
+    }
+  };
+
+  // Marks every tracked field green (has a value) or red (still blank), drops a
+  // small colored dot at its corner, and shows a one-line pass/fail summary.
+  // Marks persist for a while so the user can spot problem fields at a glance,
+  // then clear automatically (or immediately on the next fill).
+  const runFieldQC = () => {
+    ensureQCStyles();
+    clearQC();
+
+    const entries = [];
+    let okCount = 0;
+    const missingLabels = [];
+    let firstMissingEl = null;
+
+    for (const el of qcFields) {
+      const status = qcFieldStatus(el);
+      if (status === null) continue;
+      el.classList.add(status ? "ttdfh-qc-ok" : "ttdfh-qc-missing");
+      if (status) okCount++;
+      else {
+        missingLabels.push(qcFieldLabel(el));
+        if (!firstMissingEl) firstMissingEl = el;
+      }
+      if (isOnScreen(el)) {
+        const dot = document.createElement("div");
+        dot.className = "ttdfh-qc-dot " + (status ? "ttdfh-qc-dot-ok" : "ttdfh-qc-dot-missing");
+        document.body.appendChild(dot);
+        entries.push({ el, dot });
+      }
+    }
+
+    const reposition = () => {
+      for (const { el, dot } of entries) {
+        if (!el.isConnected || !isOnScreen(el)) {
+          dot.style.display = "none";
+          continue;
+        }
+        const rect = el.getBoundingClientRect();
+        dot.style.display = "block";
+        dot.style.left = rect.right - 4 + "px";
+        dot.style.top = rect.top - 4 + "px";
+      }
+    };
+    reposition();
+    window.addEventListener("scroll", reposition, true);
+    window.addEventListener("resize", reposition);
+
+    const cleanup = () => {
+      window.removeEventListener("scroll", reposition, true);
+      window.removeEventListener("resize", reposition);
+      entries.forEach(({ dot }) => dot.remove());
+      qcFields.forEach((el) => el.classList.remove("ttdfh-qc-ok", "ttdfh-qc-missing"));
+    };
+    qcCleanup = cleanup;
+    setTimeout(() => {
+      if (qcCleanup === cleanup) {
+        cleanup();
+        qcCleanup = null;
+      }
+    }, 20000);
+
+    const total = okCount + missingLabels.length;
+    if (total > 0) {
+      if (missingLabels.length === 0) {
+        toast(`✅ Self-QC: all ${okCount} field${okCount === 1 ? "" : "s"} filled.`, "success");
+      } else {
+        const shown = missingLabels.slice(0, 4).join(", ") + (missingLabels.length > 4 ? "…" : "");
+        toast(`⚠ Self-QC: ${okCount}/${total} filled. Missing: ${shown}`, "warn");
+        if (firstMissingEl) {
+          try {
+            firstMissingEl.scrollIntoView({ block: "center", behavior: prefersReducedMotion() ? "auto" : "smooth" });
+          } catch {}
+        }
+      }
+    }
+    return { ok: okCount, missing: missingLabels.length, missingLabels };
+  };
+
   // ---- Wait-for-condition helpers (replace brittle fixed sleeps) ----
   const waitFor = async (predicate, { timeout = 2500, interval = 60 } = {}) => {
     const start = Date.now();
@@ -151,6 +294,7 @@
   const setControlledValue = (el, value) => {
     if (!el) return false;
     recordPrev(el);
+    trackQC(el);
     const target = value == null ? "" : String(value);
     const desc = Object.getOwnPropertyDescriptor(el.constructor.prototype, "value");
     if (desc && desc.set) desc.set.call(el, target);
@@ -191,6 +335,7 @@
   const selectFromDropdown = async (el, label) => {
     if (!el || !label) return false;
     recordPrev(el);
+    trackQC(el);
     if (el.value && el.value.trim().toLowerCase() === label.trim().toLowerCase()) return true;
 
     const setViaReactProps = (node, val) => {
@@ -390,13 +535,15 @@
   const fillPilgrim = async (pilgrim, index, contactCountry) => {
     const byIndex = (name) => document.querySelectorAll(`input[name="${name}"]`)[index];
 
+    // Plain inputs settle synchronously on the write itself (setControlledValue
+    // already dispatches input/change/blur before returning), so back-to-back
+    // writes don't need a sleep between them — only the dropdown/popup flows
+    // below do, because those wait on the page's own async rendering.
     const nameEl = nthByNames(index, "name", "fname");
     if (nameEl) setNativeValue(nameEl, pilgrim.name);
-    await sleep(100);
 
     const ageEl = byIndex("age");
     if (ageEl) setNativeValue(ageEl, pilgrim.age);
-    await sleep(100);
 
     const genderEl = byIndex("gender");
     if (genderEl) await selectFromDropdown(genderEl, pilgrim.gender);
@@ -414,7 +561,6 @@
       if (idNumberEl.disabled) idNumberEl.disabled = false;
       setNativeValue(idNumberEl, pilgrim.idNumber);
     }
-    await sleep(80);
 
     if (norm(pilgrim.idProof) === "passport") {
       // Wait for the modal to be present *and* mounted (a field rendered),
@@ -590,7 +736,10 @@
       if (typeof onProgress === "function") onProgress(i + 1, count);
       announce("Filling pilgrim " + (i + 1) + " of " + count);
       await fillPilgrim(pilgrims[i], slots[i], contact ? contact.country : undefined);
-      await sleep(150);
+      // A short yield (not a fixed 150ms) — each pilgrim row is a static,
+      // already-rendered field set, so there's nothing to wait for beyond
+      // giving the page's own listeners a tick to run between rows.
+      await sleep(30);
     }
     if (contact) await fillContact(contact);
     return { status: "success", filled: count };
@@ -661,6 +810,7 @@
         return true;
       }
       globalFilling = true;
+      beginQCTrack();
       const original = sendResponse;
       // Clear the lock whenever the handler responds (success or error), with a
       // safety timeout in case a handler never replies.
@@ -699,7 +849,7 @@
           if (slot === -1 && nameInputs.length > 0) slot = nameInputs.length - 1;
           if (slot !== -1) await fillPilgrim(pilgrim, slot, contact.country);
           await fillContact(contact);
-          sendResponse({ status: "success" });
+          sendResponse({ status: "success", qc: runFieldQC() });
         } catch (err) {
           sendResponse({ status: "error", message: err.message || err.toString() });
         }
@@ -712,7 +862,7 @@
       (async () => {
         try {
           await fillSevaForm(sevakData, sevakData.memberIndex);
-          sendResponse({ status: "success" });
+          sendResponse({ status: "success", qc: runFieldQC() });
         } catch (err) {
           sendResponse({ status: "error", message: err.message || err.toString() });
         }
@@ -725,7 +875,7 @@
       (async () => {
         try {
           const result = await fillAllPilgrims(pilgrims, contact);
-          sendResponse(result);
+          sendResponse({ ...result, qc: runFieldQC() });
         } catch (err) {
           sendResponse({ status: "error", message: err.toString() });
         }
@@ -738,7 +888,7 @@
       (async () => {
         try {
           await fillContact(contact);
-          sendResponse({ status: "success" });
+          sendResponse({ status: "success", qc: runFieldQC() });
         } catch (err) {
           sendResponse({ status: "error", message: err.toString() });
         }
@@ -751,7 +901,7 @@
       (async () => {
         try {
           const result = await fillSrivaniMembers(members);
-          sendResponse(result);
+          sendResponse({ ...result, qc: runFieldQC() });
         } catch (err) {
           sendResponse({ status: "error", message: err.toString() });
         }
@@ -812,7 +962,9 @@
 
     const checkRadioGroupByValue = (name, value) => {
       if (!value) return;
-      scope.querySelectorAll(`input[name="${name}"]`).forEach((el) => {
+      const group = scope.querySelectorAll(`input[name="${name}"]`);
+      if (group.length) trackQC(group[0]); // one representative field per radio group
+      group.forEach((el) => {
         if (el.value.toLowerCase() === value.toLowerCase()) {
           el.checked = true;
           el.click();
@@ -1164,6 +1316,7 @@
     };
     const setFileInput = async (input, fileMeta) => {
       if (!input || !fileMeta || !fileMeta.data) return false;
+      trackQC(input);
       try {
         applyFile(input, fileMeta);
         await sleep(80);
@@ -1570,7 +1723,7 @@
 
     // Wraps a fill action with the shared lock, the busy state, and (by default)
     // a fresh undo log so "Clear filled fields" can revert exactly this run.
-    async function runGuarded(fn, { log = true } = {}) {
+    async function runGuarded(fn, { log = true, qc = log } = {}) {
       if (busy) return;
       if (globalFilling) {
         showToast("A fill is already running — please wait.", "warn");
@@ -1579,8 +1732,10 @@
       setBusy(true);
       globalFilling = true;
       if (log) beginLog();
+      if (qc) beginQCTrack();
       try {
         await fn();
+        if (qc) runFieldQC();
       } catch (err) {
         handleFillError(err);
       } finally {
