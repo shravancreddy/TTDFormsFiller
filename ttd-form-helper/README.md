@@ -104,6 +104,12 @@ Then follow the steps below, pointing at the unzipped folder. (These bundles are
 
 A signed Chromium package is at the repository root as [`main.crx`](../main.crx).
 
+> ⚠️ **`main.crx` is currently built at v1.2.0 and lags the source.** It can only
+> be rebuilt on a machine holding the private key at `dist/signing.pem`
+> (gitignored, so the extension id stays stable across releases) — run
+> `python package.py` there. Until then, prefer the unpacked zip above, which is
+> built from the current source.
+
 1. Download `main.crx`.
 2. Open `chrome://extensions` (or `edge://extensions` / Brave / Opera).
 3. Turn on **Developer mode**.
@@ -153,7 +159,19 @@ needs an Apple Developer signing identity.
 ```bash
 python package.py           # builds dist/*-chrome.zip, dist/*-firefox.zip, and ../main.crx
 python package.py --check   # validate only, write nothing
+
+python bundle.py            # builds the ../TTD-Form-Helper-v<version>-*.zip download bundles
+python bundle.py --check    # report what would be written, write nothing
 ```
+
+The two scripts produce different things and both matter on a release:
+`package.py` builds the trimmed **store-upload** payload (no README, files at the
+archive root) plus the signed CRX, while `bundle.py` builds the **download
+bundles** published at the repository root — the same files inside a
+version-named folder with `README.md` and a short `HOW-TO-LOAD.txt`, ready to
+side-load. `bundle.py` reuses `package.py`'s file list and locale checks, so the
+two can't disagree about what ships. Those bundles were hand-made before, which
+is how they ended up nine releases behind the source.
 
 The script pre-checks the rules the Chrome Web Store rejects uploads for, so a
 failure shows up locally instead of after a slow upload:
@@ -164,7 +182,7 @@ failure shows up locally instead of after a slow upload:
 - `extension_name` ≤ 45 characters and `extension_description` ≤ 132, per locale;
 - message keys are valid identifiers and each `messages.json` parses.
 
-It also keeps dev-only files (`package.py`, `icons/gen_icons.py`,
+It also keeps dev-only files (`package.py`, `bundle.py`, `icons/gen_icons.py`,
 `manifest.firefox.json`, `README.md`) out of the uploaded package, and writes the
 right manifest variant as `manifest.json` inside each zip. The same Chrome payload
 is wrapped as a CRX3 file at the repository root (`main.crx`). The signing key is

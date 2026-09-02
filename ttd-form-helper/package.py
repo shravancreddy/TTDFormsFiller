@@ -28,7 +28,7 @@ PEM_PATH = OUT / "signing.pem"
 INCLUDE_DIRS = ["_locales", "content", "icons", "options", "popup", "shared"]
 INCLUDE_FILES = ["background.js"]
 # Dev-only files that must never ship inside a store package.
-EXCLUDE_NAMES = {"gen_icons.py", "package.py", "manifest.firefox.json", "README.md", ".DS_Store"}
+EXCLUDE_NAMES = {"gen_icons.py", "package.py", "bundle.py", "manifest.firefox.json", "README.md", ".DS_Store"}
 EXCLUDE_SUFFIXES = {".pyc"}
 EXCLUDE_DIRS = {"__pycache__", "dist"}
 
