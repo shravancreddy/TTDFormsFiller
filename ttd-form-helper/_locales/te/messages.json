@@ -5,6 +5,12 @@
    "action_cancel": {
       "message": "రద్దు చేయండి"
    },
+   "action_clear_fields": {
+      "message": "ఫీల్డ్‌లను తొలగించు"
+   },
+   "action_clear_fields_title": {
+      "message": "చివరి నింపడాన్ని రద్దు చేయండి లేదా ఫారమ్ ఫీల్డ్‌లను ఖాళీ చేయండి"
+   },
    "action_edit_pilgrim": {
       "message": "భక్తుడి వివరాలను సవరించండి"
    },
@@ -13,6 +19,30 @@
    },
    "action_fill_all": {
       "message": "⚡ అన్ని వివరాలను పూరించండి"
+   },
+   "action_fill_all_continue": {
+      "message": "అందరినీ నింపి కొనసాగించు"
+   },
+   "action_fill_all_continue_title": {
+      "message": "అందరినీ నింపి, తర్వాత Continue బటన్ నొక్కండి"
+   },
+   "action_fill_all_title": {
+      "message": "సేవ్ చేసిన యాత్రికులందరినీ ఫారమ్‌లో నింపండి"
+   },
+   "action_fill_next": {
+      "message": "తదుపరి యాత్రికుడిని నింపు"
+   },
+   "action_fill_next_title": {
+      "message": "ఇంకా ఫారమ్‌లో లేని తదుపరి యాత్రికుడిని నింపండి"
+   },
+   "action_in_saved": {
+      "message": "ఇప్పటికే సేవ్ చేసిన యాత్రికుల్లో ఉంది"
+   },
+   "action_keep_in_saved": {
+      "message": "తర్వాతి బుకింగ్‌ల కోసం సేవ్ చేసిన యాత్రికుల్లో ఉంచు"
+   },
+   "action_remove_from_booking": {
+      "message": "ఈ బుకింగ్ నుండి తీసివేయి"
    },
    "action_save": {
       "message": "సేవ్ చేయండి"
@@ -431,6 +461,9 @@
    "msg_error_refresh_page": {
       "message": "లోపం: పేజీని రిఫ్రెష్ చేయండి"
    },
+   "msg_fields_cleared": {
+      "message": "ఫారమ్ ఫీల్డ్‌లు తొలగించబడ్డాయి."
+   },
    "msg_file_too_large": {
       "message": "ఫైల్ చాలా పెద్దది. గరిష్ట పరిమాణం 1 MB"
    },
@@ -454,6 +487,9 @@
    },
    "msg_invalid_member": {
       "message": "చెల్లని సభ్యుని సంఖ్య"
+   },
+   "msg_kept_in_saved": {
+      "message": "{name} సేవ్ చేసిన యాత్రికుల్లో ఉంచబడ్డారు."
    },
    "msg_loaded_first": {
       "message": "సెట్ నుండి {total} లో మొదటి {count} లోడ్ అయ్యాయి"

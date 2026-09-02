@@ -43,6 +43,14 @@ function wireSettingsButton() {
   });
 }
 
+// The panel stays open until it's dismissed on purpose — the toolbar icon
+// toggles it, and this is the other way out.
+function wireCloseButton() {
+  document.getElementById("close-panel").addEventListener("click", () => {
+    window.close();
+  });
+}
+
 /** Shows a padlock button only when at-rest encryption is switched on. */
 async function syncLockButton() {
   const btn = document.getElementById("lock-toggle");
@@ -136,6 +144,7 @@ async function main() {
   await applyTheme();
   wireThemeToggle();
   wireSettingsButton();
+  wireCloseButton();
   wireLockButton();
   await boot();
 }

@@ -849,6 +849,27 @@
     return { status: "success", filled: count };
   };
 
+  // Fills the next still-empty pilgrim row with the next saved pilgrim who
+  // isn't on the page yet, skipping anyone already there by name — however
+  // they got there. Shared by the floating button and the panel's
+  // "Fill next empty pilgrim" action so both behave identically.
+  const fillNextPilgrim = async (pilgrims, contact) => {
+    let nameInputs = Array.from(document.querySelectorAll('input[name="name"]'));
+    if (!nameInputs.length) nameInputs = Array.from(document.querySelectorAll('input[name="fname"]'));
+    if (!nameInputs.length) return { status: "error", message: "No pilgrim rows found on this page." };
+
+    const onPage = new Set(nameInputs.map((el) => norm(el.value)).filter(Boolean));
+    const next = (pilgrims || []).find((p) => p && p.name && !onPage.has(norm(p.name)));
+    if (!next) return { status: "noop", message: "All saved pilgrims are already on this form." };
+
+    const slot = nameInputs.findIndex((el) => !el.value || !el.value.trim());
+    if (slot === -1) return { status: "noop", message: "Every pilgrim row on this page is already filled." };
+
+    await fillPilgrim(next, slot, contact ? contact.country : undefined);
+    if (contact) await fillContact(contact);
+    return { status: "success", filled: 1, name: next.name, slot };
+  };
+
   // ---- Undo the last fill and generalized Continue handling ----
   // First choice is an exact undo: put back whatever each field held before
   // the last fill overwrote it. If there's no usable log — the page re-rendered
@@ -920,7 +941,9 @@
   const isOwnExtension = (sender) => !!sender && sender.id === chrome.runtime.id;
 
   // One fill at a time, whether triggered from the popup or the on-page button.
-  const FILL_ACTIONS = new Set(["AUTOFILL", "FILL_SEVA", "FILL_ALL", "FILL_CONTACT", "FILL_SRIVANI"]);
+  const FILL_ACTIONS = new Set([
+    "AUTOFILL", "FILL_SEVA", "FILL_ALL", "FILL_CONTACT", "FILL_SRIVANI", "FILL_NEXT", "CLEAR_FIELDS",
+  ]);
   let globalFilling = false;
 
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -933,8 +956,9 @@
       }
       globalFilling = true;
       // Same fresh undo log the floating button starts, so a fill driven from
-      // the popup can be reverted by "Clear filled fields" as well.
-      beginLog();
+      // the popup can be reverted by "Clear filled fields" as well. Clearing is
+      // the one action that must NOT reset it — it's what it reads to undo.
+      if (message.action !== "CLEAR_FIELDS") beginLog();
       const original = sendResponse;
       // Clear the lock whenever the handler responds (success or error), with a
       // safety timeout in case a handler never replies.
@@ -996,11 +1020,43 @@
     }
 
     if (message.action === "FILL_ALL") {
-      const { pilgrims, contact } = message.data;
+      const { pilgrims, contact, thenContinue } = message.data;
       (async () => {
         try {
           const result = await fillAllPilgrims(pilgrims, contact);
-          sendResponse({ ...result, qc: runFieldQC() });
+          const qc = runFieldQC();
+          if (thenContinue && result.status === "success") await clickContinueGeneric();
+          sendResponse({ ...result, qc });
+        } catch (err) {
+          sendResponse({ status: "error", message: err.toString() });
+        }
+      })();
+      return true;
+    }
+
+    if (message.action === "FILL_NEXT") {
+      const { pilgrims, contact } = message.data;
+      (async () => {
+        try {
+          const result = await fillNextPilgrim(pilgrims, resolveEffectiveContact(contact, pilgrims));
+          if (result.status === "noop") {
+            toast(result.message, "warn");
+            sendResponse({ status: "success", filled: 0, message: result.message });
+            return;
+          }
+          sendResponse({ ...result, qc: result.status === "success" ? runFieldQC() : undefined });
+        } catch (err) {
+          sendResponse({ status: "error", message: err.toString() });
+        }
+      })();
+      return true;
+    }
+
+    if (message.action === "CLEAR_FIELDS") {
+      (async () => {
+        try {
+          await clearFilled();
+          sendResponse({ status: "success" });
         } catch (err) {
           sendResponse({ status: "error", message: err.toString() });
         }
@@ -1899,30 +1955,16 @@
         showToast("No pilgrims saved — open the extension to add them.", "warn");
         return;
       }
-      let nameInputs = Array.from(document.querySelectorAll('input[name="name"]'));
-      if (!nameInputs.length) nameInputs = Array.from(document.querySelectorAll('input[name="fname"]'));
-      if (!nameInputs.length) {
-        showToast("No pilgrim rows found on this page.", "error");
+      const result = await fillNextPilgrim(pilgrims, contact);
+      if (result.status === "error") {
+        showToast(result.message, "error");
         return;
       }
-
-      // Whoever is already typed into the form — by an earlier click, by
-      // "Fill all", or by hand — is skipped.
-      const onPage = new Set(nameInputs.map((el) => norm(el.value)).filter(Boolean));
-      const next = pilgrims.find((p) => p && p.name && !onPage.has(norm(p.name)));
-      if (!next) {
-        showToast("All saved pilgrims are already on this form.", "warn");
+      if (result.status === "noop") {
+        showToast(result.message, "warn");
         return;
       }
-
-      const slot = nameInputs.findIndex((el) => !el.value || !el.value.trim());
-      if (slot === -1) {
-        showToast("Every pilgrim row on this page is already filled.", "warn");
-        return;
-      }
-      await fillPilgrim(next, slot, contact.country);
-      await fillContact(contact);
-      showToast("① Filled " + (next.name || "the next pilgrim") + " into row " + (slot + 1) + ".", "success");
+      showToast("① Filled " + (result.name || "the next pilgrim") + " into row " + (result.slot + 1) + ".", "success");
     }
 
     async function runContactOnly() {

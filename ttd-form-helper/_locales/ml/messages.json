@@ -5,6 +5,12 @@
    "action_cancel": {
       "message": "റദ്ദാക്കുക"
    },
+   "action_clear_fields": {
+      "message": "ഫീൽഡുകൾ മായ്ക്കുക"
+   },
+   "action_clear_fields_title": {
+      "message": "അവസാന പൂരിപ്പിക്കൽ പഴയപടിയാക്കുക, അല്ലെങ്കിൽ ഫീൽഡുകൾ ശൂന്യമാക്കുക"
+   },
    "action_edit_pilgrim": {
       "message": "തീർത്ഥാടക വിവരം തിരുത്തുക"
    },
@@ -13,6 +19,30 @@
    },
    "action_fill_all": {
       "message": "⚡ എല്ലാ വിവരങ്ങളും പൂരിപ്പിക്കുക"
+   },
+   "action_fill_all_continue": {
+      "message": "എല്ലാം പൂരിപ്പിച്ച് തുടരുക"
+   },
+   "action_fill_all_continue_title": {
+      "message": "എല്ലാവരെയും പൂരിപ്പിച്ച ശേഷം Continue ബട്ടൺ അമർത്തുക"
+   },
+   "action_fill_all_title": {
+      "message": "സേവ് ചെയ്ത എല്ലാ തീർത്ഥാടകരെയും ഫോമിൽ പൂരിപ്പിക്കുക"
+   },
+   "action_fill_next": {
+      "message": "അടുത്ത തീർത്ഥാടകനെ പൂരിപ്പിക്കുക"
+   },
+   "action_fill_next_title": {
+      "message": "ഇതുവരെ ഫോമിൽ ഇല്ലാത്ത അടുത്ത തീർത്ഥാടകനെ പൂരിപ്പിക്കുക"
+   },
+   "action_in_saved": {
+      "message": "ഇതിനകം സേവ് ചെയ്ത തീർത്ഥാടകരിലുണ്ട്"
+   },
+   "action_keep_in_saved": {
+      "message": "പിന്നീടുള്ള ബുക്കിംഗുകൾക്കായി സേവ് ചെയ്ത തീർത്ഥാടകരിൽ സൂക്ഷിക്കുക"
+   },
+   "action_remove_from_booking": {
+      "message": "ഈ ബുക്കിംഗിൽ നിന്ന് നീക്കുക"
    },
    "action_save": {
       "message": "സേവ് ചെയ്യുക"
@@ -431,6 +461,9 @@
    "msg_error_refresh_page": {
       "message": "പിശക്: പേജ് റിഫ്രഷ് ചെയ്യുക"
    },
+   "msg_fields_cleared": {
+      "message": "ഫോം ഫീൽഡുകൾ മായ്ച്ചു."
+   },
    "msg_file_too_large": {
       "message": "ഫയൽ വളരെ വലുതാണ്. പരമാവധി വലുപ്പം 1 MB"
    },
@@ -454,6 +487,9 @@
    },
    "msg_invalid_member": {
       "message": "അസാധുവായ അംഗ നമ്പർ"
+   },
+   "msg_kept_in_saved": {
+      "message": "{name} സേവ് ചെയ്ത തീർത്ഥാടകരിൽ സൂക്ഷിച്ചു."
    },
    "msg_loaded_first": {
       "message": "സെറ്റിൽ നിന്ന് {total} ലെ ആദ്യ {count} ലോഡ് ചെയ്തു"

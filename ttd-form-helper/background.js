@@ -14,6 +14,41 @@ import { secureGet, getVaultState } from "./shared/secureStore.js";
 const ALLOWED_ORIGINS = ["https://tirupatibalaji.ap.gov.in", "https://ttdevasthanams.ap.gov.in"];
 const ALLOWED_KEYS = ["pilgrims", "contact"];
 
+// The UI runs in the side panel rather than a popup: a popup closes the moment
+// you click anything outside it, which made copying details in from another
+// page or tab impossible. The side panel stays open, is resized by dragging its
+// edge, and toggles from the toolbar icon.
+function enableSidePanel() {
+  try {
+    if (api.sidePanel && api.sidePanel.setPanelBehavior) {
+      api.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(() => {});
+    }
+  } catch {}
+}
+enableSidePanel();
+api.runtime.onInstalled?.addListener(enableSidePanel);
+api.runtime.onStartup?.addListener(enableSidePanel);
+
+// Fallback for builds without the side panel API (older Chrome, Safari): the
+// toolbar click has no popup to open, so give it a real window instead.
+// With openPanelOnActionClick set, Chrome opens the panel and this never fires.
+api.action?.onClicked?.addListener(async (tab) => {
+  try {
+    if (api.sidePanel && api.sidePanel.open && tab && tab.windowId != null) {
+      await api.sidePanel.open({ windowId: tab.windowId });
+      return;
+    }
+  } catch {}
+  try {
+    await api.windows.create({
+      url: api.runtime.getURL("popup/index.html"),
+      type: "popup",
+      width: 460,
+      height: 780,
+    });
+  } catch {}
+});
+
 function isTrustedSender(sender) {
   if (!sender || sender.id !== api.runtime.id) return false;
   // Extension pages (popup/options) have no sender.tab and are trusted.

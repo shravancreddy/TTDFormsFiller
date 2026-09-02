@@ -42,6 +42,38 @@ any kind. Key updates:
   focus → blur, so the site's own validation re-runs and clears any stale "this
   field is required" error instead of leaving Continue disabled.
 
+## The side panel
+
+The extension's UI is a **side panel**, not a popup. Click the toolbar icon to
+open it, click it again (or the ✕ next to the ⚙️) to close it. That means:
+
+- **It stays open** when you click the page, switch tabs, or copy details in
+  from somewhere else. A popup closes the instant it loses focus, which made
+  pasting details in from another page impossible.
+- **It resizes** — drag its inner edge to whatever width shows the whole form
+  at once. The layout follows: past ~520px the fill actions go from two columns
+  to four.
+
+Chrome/Edge 114+ is required for the side panel. Firefox gets the same page as a
+sidebar (`sidebar_action`) and keeps the toolbar popup as well.
+
+The pilgrim tab's fill actions are labelled icon buttons — **⚡ Fill all**,
+**① Fill next pilgrim**, **⏭️ Fill all & continue**, **🧹 Clear fields**.
+
+## One pilgrim record, two places to edit it
+
+The panel's "Pilgrims for this booking" and Settings → "Saved pilgrims" edit the
+same kind of record through the **same form component**
+(`shared/pilgrimForm.js`), so they always show the same fields — contact details
+included. They also stay in step at runtime: each watches `storage.onChanged`,
+so a pilgrim added or edited in one shows up in the other without a reload.
+
+Saved pilgrims is the master list of people. Anyone you add in the panel is
+written into it automatically (no checkbox to remember), which is what makes
+them available to pilgrim **sets**. A pilgrim who only exists in the current
+booking can be kept for later with the ☆ button on their card; ⭐ means they're
+already in Saved pilgrims.
+
 ## Where contact details live
 
 TTD asks for one set of contact details per booking, not per person, so they're
@@ -59,10 +91,10 @@ Motion is skipped automatically when the browser is set to *reduce motion*.
 ### Prebuilt bundle (easiest — no repo clone needed)
 
 Download the ready-to-load zip for your browser from the repository root and unzip it —
-you'll get a `TTD-Form-Helper-v1.2.4` folder with a `HOW-TO-LOAD.txt` inside:
+you'll get a `TTD-Form-Helper-v1.3.0` folder with a `HOW-TO-LOAD.txt` inside:
 
-- `TTD-Form-Helper-v1.2.4-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
-- `TTD-Form-Helper-v1.2.4-firefox-unpacked.zip` — Firefox
+- `TTD-Form-Helper-v1.3.0-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
+- `TTD-Form-Helper-v1.3.0-firefox-unpacked.zip` — Firefox
 
 Then follow the steps below, pointing at the unzipped folder. (These bundles are for
 **loading unpacked**; they are not signed store builds.)
@@ -85,7 +117,7 @@ use the unpacked zip above instead (**Load unpacked**). Rebuild both the zips an
 1. Go to `chrome://extensions` (or `edge://extensions`).
 2. Turn on **Developer mode**.
 3. Click **Load unpacked** and pick this `ttd-form-helper` folder (or the unzipped
-   `TTD-Form-Helper-v1.2.4` folder from the prebuilt bundle).
+   `TTD-Form-Helper-v1.3.0` folder from the prebuilt bundle).
 
 ### Firefox
 
@@ -142,7 +174,8 @@ kept at `dist/signing.pem` (gitignored) so rebuilds keep a stable extension id.
 | Feature | Chrome / Edge | Firefox | Safari |
 |---|---|---|---|
 | Form autofill (all tabs) | ✅ | ✅ | ✅ |
-| Popup, settings, 6 languages | ✅ | ✅ | ✅ |
+| Side panel UI (stays open, resizable) | ✅ 114+ | ✅ sidebar | ⚠ popup only |
+| Settings page, 6 languages | ✅ | ✅ | ✅ |
 | Floating Fill button (auto-detects form type) | ✅ | ✅ | ✅ |
 | Encrypted backup export / import | ✅ | ✅ | ✅ |
 | Optional at-rest encryption | ✅ | ✅ 115+ | ✅ 16.4+ |
@@ -165,14 +198,17 @@ so there is very little to abuse in the first place.
 ### Site access is limited to two domains
 
 ```json
-"permissions":      ["storage"],
+"permissions":      ["storage", "sidePanel"],
 "host_permissions": ["https://tirupatibalaji.ap.gov.in/*",
                      "https://ttdevasthanams.ap.gov.in/*"]
 ```
 
+`sidePanel` only lets the extension show its own page in the browser's side
+panel — it grants no access to any site, tab or data.
+
 `activeTab` was deliberately **removed** in favour of two explicit host permissions.
 `activeTab` would have granted access to whatever tab you were on — any site — each
-time you opened the popup. With host permissions the browser itself refuses to load
+time you opened the panel. With host permissions the browser itself refuses to load
 the extension anywhere except those two TTD origins. Your bank, mail and work apps are
 unreachable to it, not merely untouched. Check it under *Site access* on your
 browser's extension details page.
@@ -268,7 +304,38 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ## Version history
 
-### 1.2.4 — current
+### 1.3.0 — current
+
+- **The UI is a side panel now.** A popup closes the moment it loses focus, so
+  copying details in from another page or tab was impossible and every stray
+  click threw away what you were typing. The same page is now Chrome's side
+  panel: it stays open across clicks and tab switches, resizes by dragging its
+  edge (the fill actions reflow from two columns to four past ~520px), and
+  toggles from the toolbar icon or the new ✕ beside the ⚙️. Firefox gets it as
+  a `sidebar_action`. **This raises the Chrome floor to 114** (the side panel
+  API); a build without it falls back to opening the page in its own window.
+- **One pilgrim form, shared by the panel and Settings.** The two were separate
+  copies that had drifted — Settings → Saved pilgrims never got the contact
+  fields the panel grew — so the same person came out with different fields
+  depending on where you added them. Both now build the form from
+  `shared/pilgrimForm.js`: name, relationship, age, gender, ID, passport block,
+  contact block and notes, everywhere.
+- **The two lists stay in sync.** Panel and Settings both watch
+  `storage.onChanged`, so a pilgrim added or edited in one appears in the other
+  without reopening anything. Saved pilgrims is the master list: anyone added in
+  the panel is written into it automatically, which is what makes them
+  selectable in pilgrim sets — previously a panel-added pilgrim was invisible to
+  Settings and to sets.
+- **Move a booking pilgrim back into Saved pilgrims.** Each card in the booking
+  list has a ☆ button that keeps that person for later bookings; ⭐ means they're
+  already saved.
+- **Labelled icon actions in the panel** — ⚡ Fill all, ① Fill next pilgrim,
+  ⏭️ Fill all & continue, 🧹 Clear fields, backed by new `FILL_NEXT` and
+  `CLEAR_FIELDS` content-script actions and a `thenContinue` flag on `FILL_ALL`.
+  "Fill next pilgrim" uses the same context-aware selection as the floating
+  button, so it skips whoever is already on the form.
+
+### 1.2.4
 
 - **Real tab-outs — fixes stale "this field is required" and a disabled Continue.**
   React does not listen for the `blur` event at all; it wires `onBlur` to the

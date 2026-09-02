@@ -5,6 +5,12 @@
    "action_cancel": {
       "message": "Cancel"
    },
+   "action_clear_fields": {
+      "message": "Clear fields"
+   },
+   "action_clear_fields_title": {
+      "message": "Undo the last fill, or empty the form's fields"
+   },
    "action_edit_pilgrim": {
       "message": "Edit Pilgrim"
    },
@@ -14,8 +20,32 @@
    "action_fill_all": {
       "message": "⚡ Fill All Details"
    },
+   "action_fill_all_continue": {
+      "message": "Fill all & continue"
+   },
+   "action_fill_all_continue_title": {
+      "message": "Fill everyone, then press the form's Continue button"
+   },
+   "action_fill_all_title": {
+      "message": "Fill every saved pilgrim into the form"
+   },
+   "action_fill_next": {
+      "message": "Fill next pilgrim"
+   },
+   "action_fill_next_title": {
+      "message": "Fill the next pilgrim who isn't on the form yet"
+   },
    "action_fill_one": {
       "message": "Fill only this pilgrim into the form"
+   },
+   "action_in_saved": {
+      "message": "Already in Saved pilgrims"
+   },
+   "action_keep_in_saved": {
+      "message": "Keep in Saved pilgrims for later bookings"
+   },
+   "action_remove_from_booking": {
+      "message": "Remove from this booking"
    },
    "action_save": {
       "message": "Save"
@@ -473,6 +503,9 @@
    "msg_error_refresh_page": {
       "message": "Error: Refresh the page"
    },
+   "msg_fields_cleared": {
+      "message": "Form fields cleared."
+   },
    "msg_file_too_large": {
       "message": "File too large. Max size is 1 MB"
    },
@@ -496,6 +529,9 @@
    },
    "msg_invalid_member": {
       "message": "Invalid member number"
+   },
+   "msg_kept_in_saved": {
+      "message": "{name} kept in Saved pilgrims."
    },
    "msg_loaded_first": {
       "message": "Loaded first {count} of {total} from set"
