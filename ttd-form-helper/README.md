@@ -250,6 +250,35 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ---
 
+## Version history
+
+### 1.2.0 — current
+
+- **Ship fresh unpacked bundles** — rebuilt the Chrome/Edge/Brave/Opera and Firefox
+  zips under the `v1.2.0` naming and dropped the stale root zip that no longer
+  matched the packaged code.
+- **Fill Group Seva members from the on-page button** — the floating Fill button's
+  options menu can now pick a specific member of a saved Group Seva set instead of
+  only ever filling the first one.
+- **Fill modes, options menu, undo, selector-health hint** — added a right-click /
+  ▾ / long-press menu on the Fill button (fill empty rows only or overwrite, fill
+  the next empty pilgrim, contact-only, choose a saved set, fill-and-continue) plus
+  an **undo last fill** action and a hint when a known booking page shows no
+  recognised form. Added `Alt`+`A` (fill) and `Alt`+`Shift`+`A` (overwrite)
+  keyboard shortcuts.
+- **Smarter, sturdier on-page fill** — auto-detects Pilgrim / Sevak (Srivari Seva or
+  Group) / Srivani forms and relabels the button to match, so the popup no longer
+  needs to be opened first. Added visible per-field fill feedback (green/amber
+  flashes, a progress pill, screen-reader announcements), a shared routine for
+  React-controlled inputs, wait-for-ready checks in place of fixed delays,
+  verification for file uploads and the passport pop-up, and preference for stable
+  field names/labels over the site's hashed CSS classes so layout changes don't
+  break filling.
+
+Everything above shipped as part of the 1.2.0 line — the extension's `version`
+field has not changed since this repository's history began, so there is no
+separate 1.0.0 / 1.1.0 release to list.
+
 ## Layout
 
 ```
