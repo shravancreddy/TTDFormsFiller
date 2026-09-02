@@ -23,6 +23,9 @@
    "action_update_pilgrim": {
       "message": "ഭക്തനെ അപ്ഡേറ്റ് ചെയ്യുക"
    },
+   "contact_apply_to_pilgrims": {
+      "message": "ഈ വിവരങ്ങൾ ഇല്ലാത്ത തീർത്ഥാടകർക്കും ഇത് ചേർക്കുക"
+   },
    "contact_gothram": {
       "message": "ഗോത്രം: {gothram}"
    },
@@ -416,6 +419,9 @@
    "msg_contact_saved": {
       "message": "ബന്ധപ്പെടാനുള്ള വിവരങ്ങൾ സംരക്ഷിച്ചു!"
    },
+   "msg_contact_saved_and_applied": {
+      "message": "കോൺടാക്റ്റ് സേവ് ചെയ്തു, {count} തീർത്ഥാടകർക്ക് ബാധകമാക്കി!"
+   },
    "msg_error_autofilling_member": {
       "message": "അംഗം {n} പൂരിപ്പിക്കുന്നതിൽ പിശക്."
    },
@@ -532,6 +538,12 @@
    },
    "personal_details_heading": {
       "message": "വ്യക്തിഗത വിവരങ്ങൾ"
+   },
+   "pilgrim_contact_heading": {
+      "message": "ബന്ധപ്പെടാനുള്ള വിവരങ്ങൾ (ഐച്ഛികം)"
+   },
+   "pilgrim_contact_hint": {
+      "message": "താഴെയുള്ള പങ്കിട്ട ബന്ധപ്പെടൽ വിഭാഗം ശൂന്യമാണെങ്കിൽ, ഫോം പൂരിപ്പിക്കാൻ ഈ തീർത്ഥാടകന്റെ വിവരങ്ങൾ ഉപയോഗിക്കും."
    },
    "pilgrim_details_line": {
       "message": "{age} വയസ്സ് • {gender} • {idProof}"

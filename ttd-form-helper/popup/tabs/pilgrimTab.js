@@ -8,7 +8,12 @@ import { validatePilgrim, validateContact } from "../../shared/validation.js";
 import { liveValidate, buildBadge, buildIssueList } from "../../shared/formValidation.js";
 
 const MAX_PILGRIMS = 6;
-const emptyPilgrim = () => ({ name: "", age: "", gender: "", idProof: "Aadhaar Card", idNumber: "", visaNumber: "", visaType: "", visaValidityDate: "", passportCountry: "" });
+const emptyPilgrim = () => ({
+  name: "", age: "", gender: "", idProof: "Aadhaar Card", idNumber: "",
+  visaNumber: "", visaType: "", visaValidityDate: "", passportCountry: "",
+  // Optional per-pilgrim contact override — see the shared Contact section.
+  email: "", city: "", state: "", country: "", pincode: "",
+});
 const emptyContact = () => ({ email: "", city: "", state: "", country: "", pincode: "", gothram: "" });
 
 export async function renderPilgrimTab(container) {
@@ -228,6 +233,19 @@ export async function renderPilgrimTab(container) {
           <div class="form-group"><label>${t("field_country")}</label><input name="passportCountry" placeholder="${t("field_country_placeholder")}" /></div>
         </div>
       </div>
+      <details class="pilgrim-contact-details">
+        <summary>${t("pilgrim_contact_heading")}</summary>
+        <small class="field-hint">${t("pilgrim_contact_hint")}</small>
+        <div class="form-row">
+          <div class="form-group"><label>${t("field_email")}</label><input name="email" type="email" /></div>
+          <div class="form-group"><label>${t("field_city")}</label><input name="city" /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>${t("field_state")}</label><input name="state" /></div>
+          <div class="form-group"><label>${t("field_country")}</label><input name="country" placeholder="${t("field_country_placeholder")}" /></div>
+        </div>
+        <div class="form-group"><label>${t("field_pincode")}</label><input name="pincode" maxlength="6" /></div>
+      </details>
       <div class="form-actions">
         <button type="submit" class="btn-primary">${t(editingId ? "action_update_pilgrim" : "action_add_pilgrim")}</button>
         ${editingId ? `<button type="button" class="btn-secondary" data-cancel>${t("action_cancel")}</button>` : ""}
@@ -308,6 +326,7 @@ export async function renderPilgrimTab(container) {
         <div class="form-group"><label>${t("field_pincode")}</label><input name="pincode" maxlength="6" /></div>
         <div class="form-group"><label>${t("field_gothram")}</label><input name="gothram" /><small class="field-hint">${t("field_gothram_hint")}</small></div>
       </div>
+      <label class="checkbox-label" style="margin-bottom: 12px;"><input type="checkbox" name="applyToPilgrims" /> ${t("contact_apply_to_pilgrims")}</label>
       <button type="submit" class="btn-secondary">${t("action_save")}</button>
     `;
     for (const [key, val] of Object.entries(contact)) {
@@ -322,9 +341,34 @@ export async function renderPilgrimTab(container) {
         showMessage(t("validation_blocked_toast"), "error");
         return;
       }
-      contact = Object.fromEntries(new FormData(contactForm).entries());
+      const raw = Object.fromEntries(new FormData(contactForm).entries());
+      const applyToPilgrims = !!raw.applyToPilgrims;
+      delete raw.applyToPilgrims;
+      contact = raw;
       await storageSet({ [STORAGE_KEYS.contact]: contact });
-      showMessage(t("msg_contact_saved"));
+
+      // Backfill only — never overwrite a pilgrim's own contact override.
+      if (applyToPilgrims && pilgrims.length > 0) {
+        const CONTACT_FIELDS = ["email", "city", "state", "country", "pincode"];
+        let touched = 0;
+        pilgrims = pilgrims.map((p) => {
+          const next = { ...p };
+          let changed = false;
+          for (const f of CONTACT_FIELDS) {
+            if (!next[f] && contact[f]) {
+              next[f] = contact[f];
+              changed = true;
+            }
+          }
+          if (changed) touched++;
+          return next;
+        });
+        if (touched > 0) await persistPilgrims();
+        showMessage(touched > 0 ? t("msg_contact_saved_and_applied", { count: touched }) : t("msg_contact_saved"));
+      } else {
+        showMessage(t("msg_contact_saved"));
+      }
+      render();
     });
     contactCard.appendChild(contactForm);
     wrap.appendChild(contactCard);

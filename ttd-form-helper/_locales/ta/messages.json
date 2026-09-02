@@ -23,6 +23,9 @@
    "action_update_pilgrim": {
       "message": "பக்தரைப் புதுப்பிக்கவும்"
    },
+   "contact_apply_to_pilgrims": {
+      "message": "இந்த விவரங்கள் இல்லாத யாத்ரீகர்களுக்கும் இதை நிரப்பவும்"
+   },
    "contact_gothram": {
       "message": "கோத்ரம்: {gothram}"
    },
@@ -416,6 +419,9 @@
    "msg_contact_saved": {
       "message": "தொடர்பு விவரங்கள் சேமிக்கப்பட்டன!"
    },
+   "msg_contact_saved_and_applied": {
+      "message": "தொடர்பு சேமிக்கப்பட்டது, {count} யாத்ரீகர்களுக்குப் பயன்படுத்தப்பட்டது!"
+   },
    "msg_error_autofilling_member": {
       "message": "உறுப்பினர் {n} நிரப்புவதில் பிழை."
    },
@@ -532,6 +538,12 @@
    },
    "personal_details_heading": {
       "message": "தனிப்பட்ட விவரங்கள்"
+   },
+   "pilgrim_contact_heading": {
+      "message": "தொடர்பு விவரங்கள் (விரும்பினால்)"
+   },
+   "pilgrim_contact_hint": {
+      "message": "கீழே உள்ள பகிரப்பட்ட தொடர்பு பிரிவு காலியாக இருந்தால், படிவத்தை நிரப்ப இந்த யாத்ரீகரின் விவரங்கள் பயன்படுத்தப்படும்."
    },
    "pilgrim_details_line": {
       "message": "{age} வயது • {gender} • {idProof}"

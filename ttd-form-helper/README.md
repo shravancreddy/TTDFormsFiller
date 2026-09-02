@@ -29,10 +29,11 @@ any kind. Key updates:
 - **Robust to layout changes** — prefers stable field names/labels over the site's
   hashed CSS classes, re-checks the form as the page moves between steps, and hints you
   if a known booking page shows no recognised form.
-- **Self-QC after every fill** — every field the fill touches is checked once it's
-  done: a persistent green ring + dot for anything with a value, a red ring + dot for
-  anything still blank, plus a one-line "X/Y filled, missing: …" summary that jumps
-  you to the first problem field. Marks clear on the next fill or after ~20s.
+- **Self-QC after every fill** — scans every field currently on the page (not just
+  the ones this run wrote to), marking a persistent green ring + dot for anything
+  with a value and a red ring + dot for anything still blank, plus a one-line
+  "X/Y filled" summary that jumps you to the first problem field. Marks clear on
+  the next fill or after ~20s.
 - **Options menu & fill modes** — right-click the button (or use the ▾ / long-press) for
   a keyboard-reachable menu: fill only empty rows or overwrite, fill the next empty
   pilgrim, fill contact only, pick a saved set, choose a group Seva member, fill-and-
@@ -47,10 +48,10 @@ Motion is skipped automatically when the browser is set to *reduce motion*.
 ### Prebuilt bundle (easiest — no repo clone needed)
 
 Download the ready-to-load zip for your browser from the repository root and unzip it —
-you'll get a `TTD-Form-Helper-v1.2.2` folder with a `HOW-TO-LOAD.txt` inside:
+you'll get a `TTD-Form-Helper-v1.2.3` folder with a `HOW-TO-LOAD.txt` inside:
 
-- `TTD-Form-Helper-v1.2.2-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
-- `TTD-Form-Helper-v1.2.2-firefox-unpacked.zip` — Firefox
+- `TTD-Form-Helper-v1.2.3-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
+- `TTD-Form-Helper-v1.2.3-firefox-unpacked.zip` — Firefox
 
 Then follow the steps below, pointing at the unzipped folder. (These bundles are for
 **loading unpacked**; they are not signed store builds.)
@@ -73,7 +74,7 @@ use the unpacked zip above instead (**Load unpacked**). Rebuild both the zips an
 1. Go to `chrome://extensions` (or `edge://extensions`).
 2. Turn on **Developer mode**.
 3. Click **Load unpacked** and pick this `ttd-form-helper` folder (or the unzipped
-   `TTD-Form-Helper-v1.2.2` folder from the prebuilt bundle).
+   `TTD-Form-Helper-v1.2.3` folder from the prebuilt bundle).
 
 ### Firefox
 
@@ -256,7 +257,45 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ## Version history
 
-### 1.2.2 — current
+### 1.2.3 — current
+
+- **Self-QC now scans the whole form, not just this run's writes** — the previous
+  version only marked fields *this fill attempt* wrote to, so a "Fill Contact"
+  or "Fill next empty pilgrim" action reported just those few fields, and a
+  fill that skipped an already-filled pilgrim row (the default "only empty"
+  mode) left that row unmarked even though it visibly had data. Self-QC now
+  scans every visible, enabled field on the page after each run — including
+  rows filled by hand or by an earlier run — so the green/red marks reflect
+  the actual state of the whole form. Checkboxes and radio groups are credited
+  when set but never red-flagged when not, since "unchecked" is a legitimate
+  end state for most of those.
+- **Fixed a stale-marker bug** — the old design could mark a DOM node the page
+  had since replaced (a re-render), leaving a field that was genuinely filled
+  showing no green ring at all. Scanning the live DOM after each run instead
+  of replaying captured element references removes this class of bug entirely.
+- **"Lightning fast" tabout fix** — the synthetic `blur` event fired right after
+  filling a field is now deferred one animation frame (~16ms) instead of firing
+  in the same tick as `input`/`change`. Firing it immediately could race the
+  page's own async state commit, so an on-blur "this field is required"
+  validator would sometimes read the old, empty value and flag a field that
+  had, in fact, just been filled — most noticeable after manually clearing a
+  field and re-running the fill.
+- **Speed, take two** — 1.2.2 removed the fixed pauses between plain-field
+  writes entirely, which saved time but could race a page re-render and
+  silently drop a write. They're back, but as a single animation-frame yield
+  (~16ms) instead of a 100ms+ `sleep()` — still 6-9x faster than before 1.2.2,
+  with a safety margin restored. Dropdown, popup and Seva-form timing — which
+  genuinely wait on the page's own async rendering — remain untouched.
+- **Optional per-pilgrim contact details** — the Add Pilgrim form now has a
+  collapsible "Contact details (optional)" section (email, city, state,
+  country, PIN code) for when a pilgrim's contact info differs from, or needs
+  to stand in for, the shared Contact section. When the shared Contact section
+  is missing a field, the fill now falls back to that field from the first
+  pilgrim in the run that set it. Saving the shared Contact section also gained
+  an "Also fill in any pilgrims missing these details" checkbox that backfills
+  (never overwrites) each saved pilgrim's blank contact fields.
+
+### 1.2.2
 
 - **Self-QC after every fill** — every field a fill run writes to (plain inputs,
   dropdowns, radio groups, file uploads) is now checked once the run finishes:
