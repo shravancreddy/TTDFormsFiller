@@ -5,6 +5,12 @@
    "action_cancel": {
       "message": "ರದ್ದುಮಾಡಿ"
    },
+   "action_clear_fields": {
+      "message": "ಫೀಲ್ಡ್‌ಗಳನ್ನು ಅಳಿಸಿ"
+   },
+   "action_clear_fields_title": {
+      "message": "ಕೊನೆಯ ಭರ್ತಿಯನ್ನು ರದ್ದುಗೊಳಿಸಿ ಅಥವಾ ಫಾರ್ಮ್ ಫೀಲ್ಡ್‌ಗಳನ್ನು ಖಾಲಿ ಮಾಡಿ"
+   },
    "action_edit_pilgrim": {
       "message": "ಭಕ್ತರ ವಿವರ ತಿದ್ದುಪಡಿ"
    },
@@ -13,6 +19,30 @@
    },
    "action_fill_all": {
       "message": "⚡ ಎಲ್ಲಾ ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ"
+   },
+   "action_fill_all_continue": {
+      "message": "ಎಲ್ಲವನ್ನೂ ಭರ್ತಿ ಮಾಡಿ ಮುಂದುವರಿಯಿರಿ"
+   },
+   "action_fill_all_continue_title": {
+      "message": "ಎಲ್ಲರನ್ನೂ ಭರ್ತಿ ಮಾಡಿ, ನಂತರ Continue ಬಟನ್ ಒತ್ತಿ"
+   },
+   "action_fill_all_title": {
+      "message": "ಉಳಿಸಿದ ಎಲ್ಲಾ ಯಾತ್ರಿಕರನ್ನು ಫಾರ್ಮ್‌ನಲ್ಲಿ ಭರ್ತಿ ಮಾಡಿ"
+   },
+   "action_fill_next": {
+      "message": "ಮುಂದಿನ ಯಾತ್ರಿಕರನ್ನು ಭರ್ತಿ ಮಾಡಿ"
+   },
+   "action_fill_next_title": {
+      "message": "ಇನ್ನೂ ಫಾರ್ಮ್‌ನಲ್ಲಿ ಇಲ್ಲದ ಮುಂದಿನ ಯಾತ್ರಿಕರನ್ನು ಭರ್ತಿ ಮಾಡಿ"
+   },
+   "action_in_saved": {
+      "message": "ಈಗಾಗಲೇ ಉಳಿಸಿದ ಯಾತ್ರಿಕರಲ್ಲಿದೆ"
+   },
+   "action_keep_in_saved": {
+      "message": "ಮುಂದಿನ ಬುಕಿಂಗ್‌ಗಳಿಗಾಗಿ ಉಳಿಸಿದ ಯಾತ್ರಿಕರಲ್ಲಿ ಇರಿಸಿ"
+   },
+   "action_remove_from_booking": {
+      "message": "ಈ ಬುಕಿಂಗ್‌ನಿಂದ ತೆಗೆದುಹಾಕಿ"
    },
    "action_save": {
       "message": "ಉಳಿಸಿ"
@@ -431,6 +461,9 @@
    "msg_error_refresh_page": {
       "message": "ದೋಷ: ಪುಟವನ್ನು ರಿಫ್ರೆಶ್ ಮಾಡಿ"
    },
+   "msg_fields_cleared": {
+      "message": "ಫಾರ್ಮ್ ಫೀಲ್ಡ್‌ಗಳನ್ನು ಅಳಿಸಲಾಗಿದೆ."
+   },
    "msg_file_too_large": {
       "message": "ಫೈಲ್ ತುಂಬಾ ದೊಡ್ಡದಾಗಿದೆ. ಗರಿಷ್ಠ ಗಾತ್ರ 1 MB"
    },
@@ -454,6 +487,9 @@
    },
    "msg_invalid_member": {
       "message": "ಅಮಾನ್ಯ ಸದಸ್ಯ ಸಂಖ್ಯೆ"
+   },
+   "msg_kept_in_saved": {
+      "message": "{name} ಅವರನ್ನು ಉಳಿಸಿದ ಯಾತ್ರಿಕರಲ್ಲಿ ಇರಿಸಲಾಗಿದೆ."
    },
    "msg_loaded_first": {
       "message": "ಸೆಟ್ನಿಂದ {total} ರಲ್ಲಿ ಮೊದಲ {count} ಲೋಡ್ ಆಗಿದೆ"

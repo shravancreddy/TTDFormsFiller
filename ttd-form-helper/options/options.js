@@ -7,7 +7,9 @@ import { initI18n, setLocale, getLocale, t, SUPPORTED_LOCALES, LOCALE_LABELS } f
 import { encryptBackup, decryptBackup, isEncryptedBackup, passphraseStrength } from "../shared/crypto.js";
 import { renderUnlockScreen } from "../shared/unlockScreen.js";
 import { validatePilgrim } from "../shared/validation.js";
-import { liveValidate, buildBadge } from "../shared/formValidation.js";
+import { buildBadge } from "../shared/formValidation.js";
+import { buildPilgrimForm, emptyPilgrim, CONTACT_FIELDS } from "../shared/pilgrimForm.js";
+import { api } from "../shared/browser.js";
 
 const TAB_DEFS = [
   { id: "pilgrim", icon: "🛕", labelKey: "tab_pilgrim" },
@@ -138,10 +140,10 @@ async function switchScreen(id) {
 }
 
 // ---------------------------------------------------------------- Vault ----
-const emptyVaultEntry = () => ({
-  name: "", relationship: "", gender: "", age: "", idProof: "Aadhaar Card", idNumber: "",
-  visaType: "", visaNumber: "", visaValidityDate: "", passportCountry: "", notes: "",
-});
+// Saved pilgrims and the panel's booking list are the same kind of record and
+// share one form component, so neither can drift into having fields the other
+// is missing (which is how Saved pilgrims ended up with no contact details).
+const emptyVaultEntry = emptyPilgrim;
 
 async function renderVaultScreen(main) {
   let vault = (await storageGet([STORAGE_KEYS.vault]))[STORAGE_KEYS.vault] || [];
@@ -225,95 +227,35 @@ async function renderVaultScreen(main) {
 
   function renderForm() {
     formCard.innerHTML = `<h2>${t(editingId ? "opt_vault_edit" : "opt_vault_add")}</h2>`;
-    const formEl = document.createElement("form");
-    formEl.innerHTML = `
-      <div class="form-row">
-        <div class="form-group"><label>${t("field_name")}</label><input name="name" required /></div>
-        <div class="form-group"><label>${t("opt_vault_relationship")}</label><input name="relationship" placeholder="${t("opt_vault_relationship_placeholder")}" /></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>${t("field_age")}</label><input name="age" type="number" min="0" max="130" /></div>
-        <div class="form-group"><label>${t("field_gender")}</label>
-          <select name="gender">
-            <option value="">${t("select_placeholder")}</option>
-            <option value="Male">${t("gender_male")}</option>
-            <option value="Female">${t("gender_female")}</option>
-            <option value="Transgender">${t("gender_transgender")}</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>${t("field_id_proof")}</label>
-          <select name="idProof">
-            <option value="Aadhaar Card">${t("idproof_aadhaar")}</option>
-            <option value="Passport">${t("idproof_passport")}</option>
-          </select>
-        </div>
-        <div class="form-group"><label>${t("field_id_proof_number")}</label><input name="idNumber" /></div>
-      </div>
-      <div class="passport-extra" hidden>
-        <div class="passport-note">🛂 ${t("validation_passport_needs")}</div>
-        <div class="form-row">
-          <div class="form-group"><label>${t("field_visa_type")}</label><input name="visaType" placeholder="${t("field_visa_type_placeholder")}" /></div>
-          <div class="form-group"><label>${t("field_visa_number")}</label><input name="visaNumber" /></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>${t("field_visa_validity")}</label><input name="visaValidityDate" placeholder="${t("field_date_placeholder")}" inputmode="numeric" /></div>
-          <div class="form-group"><label>${t("field_country")}</label><input name="passportCountry" placeholder="${t("field_country_placeholder")}" /></div>
-        </div>
-      </div>
-      <div class="form-group"><label>${t("opt_vault_notes")}</label><input name="notes" placeholder="${t("opt_vault_notes_placeholder")}" /></div>
-      <div class="form-actions">
-        <button type="submit" class="btn-primary">${t(editingId ? "action_update" : "action_save")}</button>
-        ${editingId ? `<button type="button" class="btn-secondary" data-cancel>${t("action_cancel")}</button>` : ""}
-      </div>
-    `;
-    for (const [k, v] of Object.entries(form)) if (formEl.elements[k]) formEl.elements[k].value = v ?? "";
-
-    const idProofSelect = formEl.elements.idProof;
-    const passportExtra = formEl.querySelector(".passport-extra");
-    const syncPassport = () => {
-      passportExtra.hidden = idProofSelect.value !== "Passport";
-    };
-    syncPassport();
-    // A saved pilgrim may legitimately have no ID stored yet, so only demand a
-    // well-formed number once they've started typing one.
-    const vaultValidator = liveValidate(formEl, (data) =>
-      validatePilgrim(data, { requireIdNumber: !!(data.idNumber || "").trim() })
-    );
-    idProofSelect.addEventListener("change", () => {
-      syncPassport();
-      vaultValidator.run();
-    });
-
-    const cancelBtn = formEl.querySelector("[data-cancel]");
-    if (cancelBtn) cancelBtn.addEventListener("click", () => {
-      form = emptyVaultEntry();
-      editingId = null;
-      renderForm();
-    });
-    formEl.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const check = vaultValidator.revealAll();
-      if (check.errors.length > 0) {
-        showToast(t("validation_blocked_toast"), "error");
-        const firstBad = formEl.querySelector(".invalid");
-        if (firstBad) firstBad.focus();
-        return;
-      }
-      const data = Object.fromEntries(new FormData(formEl).entries());
-      const now = new Date().toISOString();
-      if (editingId) {
-        vault = vault.map((v) => (v.id === editingId ? { ...v, ...data, updatedAt: now } : v));
-      } else {
-        vault = [...vault, { ...data, id: uid(), createdAt: now, updatedAt: now }];
-      }
-      await storageSet({ [STORAGE_KEYS.vault]: vault });
-      showToast(t("opt_vault_saved"));
-      form = emptyVaultEntry();
-      editingId = null;
-      renderForm();
-      renderList();
+    // A saved pilgrim may legitimately have no ID stored yet, so the number is
+    // only checked for format once they've started typing one.
+    const { el: formEl } = buildPilgrimForm({
+      value: form,
+      editing: !!editingId,
+      requireIdNumber: false,
+      contactOpen: CONTACT_FIELDS.some((f) => form[f]),
+      onInvalid: () => showToast(t("validation_blocked_toast"), "error"),
+      onCancel: editingId
+        ? () => {
+            form = emptyVaultEntry();
+            editingId = null;
+            renderForm();
+          }
+        : null,
+      onSubmit: async (data) => {
+        const now = new Date().toISOString();
+        if (editingId) {
+          vault = vault.map((v) => (v.id === editingId ? { ...v, ...data, updatedAt: now } : v));
+        } else {
+          vault = [...vault, { ...data, id: uid(), createdAt: now, updatedAt: now }];
+        }
+        await storageSet({ [STORAGE_KEYS.vault]: vault });
+        showToast(t("opt_vault_saved"));
+        form = emptyVaultEntry();
+        editingId = null;
+        renderForm();
+        renderList();
+      },
     });
     formCard.appendChild(formEl);
   }
@@ -954,10 +896,25 @@ async function renderApp() {
   await switchScreen(activeScreen);
 }
 
+// Saved pilgrims and sets are edited from the panel too, so repaint when the
+// underlying records change rather than showing a stale list until reload.
+function watchSharedRecords() {
+  const WATCHED = [STORAGE_KEYS.vault, STORAGE_KEYS.sets, STORAGE_KEYS.pilgrims];
+  api.storage.onChanged.addListener((changes, area) => {
+    if (area !== "local" || !WATCHED.some((k) => k in changes)) return;
+    if (activeScreen !== "vault" && activeScreen !== "sets") return;
+    // Don't yank a half-typed form out from under the user.
+    const editing = document.querySelector("#opt-main .invalid, #opt-main [data-cancel]");
+    if (editing) return;
+    switchScreen(activeScreen);
+  });
+}
+
 async function main() {
   await initI18n();
   await applyTheme();
   await renderApp();
+  watchSharedRecords();
 }
 
 main();

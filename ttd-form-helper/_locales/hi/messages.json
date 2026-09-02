@@ -5,6 +5,12 @@
    "action_cancel": {
       "message": "रद्द करें"
    },
+   "action_clear_fields": {
+      "message": "फ़ील्ड साफ़ करें"
+   },
+   "action_clear_fields_title": {
+      "message": "पिछली भराई पूर्ववत करें, या फ़ॉर्म के फ़ील्ड खाली करें"
+   },
    "action_edit_pilgrim": {
       "message": "तीर्थयात्री संपादित करें"
    },
@@ -13,6 +19,30 @@
    },
    "action_fill_all": {
       "message": "⚡ सभी विवरण भरें"
+   },
+   "action_fill_all_continue": {
+      "message": "सभी भरें और आगे बढ़ें"
+   },
+   "action_fill_all_continue_title": {
+      "message": "सभी को भरकर फ़ॉर्म का Continue बटन दबाएँ"
+   },
+   "action_fill_all_title": {
+      "message": "सभी सहेजे गए तीर्थयात्रियों को फ़ॉर्म में भरें"
+   },
+   "action_fill_next": {
+      "message": "अगला तीर्थयात्री भरें"
+   },
+   "action_fill_next_title": {
+      "message": "अगला ऐसा तीर्थयात्री भरें जो अभी फ़ॉर्म में नहीं है"
+   },
+   "action_in_saved": {
+      "message": "पहले से सहेजे गए तीर्थयात्रियों में है"
+   },
+   "action_keep_in_saved": {
+      "message": "आगे की बुकिंग के लिए सहेजे गए तीर्थयात्रियों में रखें"
+   },
+   "action_remove_from_booking": {
+      "message": "इस बुकिंग से हटाएँ"
    },
    "action_save": {
       "message": "सहेजें"
@@ -431,6 +461,9 @@
    "msg_error_refresh_page": {
       "message": "त्रुटि: पेज रीफ़्रेश करें"
    },
+   "msg_fields_cleared": {
+      "message": "फ़ॉर्म के फ़ील्ड साफ़ कर दिए गए।"
+   },
    "msg_file_too_large": {
       "message": "फ़ाइल बहुत बड़ी है। अधिकतम आकार 1 MB है"
    },
@@ -454,6 +487,9 @@
    },
    "msg_invalid_member": {
       "message": "अमान्य सदस्य संख्या"
+   },
+   "msg_kept_in_saved": {
+      "message": "{name} को सहेजे गए तीर्थयात्रियों में रखा गया।"
    },
    "msg_loaded_first": {
       "message": "सेट से {total} में से पहले {count} लोड किए गए"

@@ -1,5 +1,14 @@
-html, body { width: 400px; }
-#app { display: flex; flex-direction: column; max-height: 600px; }
+/* Sized by its container, not fixed: in the side panel the user drags the edge
+   to whatever width shows the whole form, and the layout follows. The width
+   floor only applies to the standalone-window fallback. */
+html, body { width: 100%; min-width: 320px; height: 100%; margin: 0; }
+#app { display: flex; flex-direction: column; height: 100%; min-height: 100%; }
+
+/* Roomier layouts once the panel is dragged wide enough for two columns. */
+@media (min-width: 560px) {
+  .tab-content { padding: 18px 22px; }
+  .pilgrim-form .form-row { gap: 14px; }
+}
 
 .app-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -39,6 +48,28 @@ html, body { width: 400px; }
 .seva-container h3 { font-size: 13.5px; }
 .fill-all-section { margin-bottom: 14px; display: flex; flex-direction: column; gap: 8px; }
 .fill-all-section .btn-fill-all { width: 100%; padding: 11px; font-size: 13.5px; }
+
+/* Fill actions: icon over a legible label, two per row (four across once the
+   panel is dragged wider). */
+.action-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+@media (min-width: 520px) { .action-grid { grid-template-columns: repeat(4, 1fr); } }
+.action-tile {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  padding: 10px 6px; min-height: 66px; cursor: pointer; text-align: center;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+  transition: background .15s ease, border-color .15s ease, transform .1s ease;
+}
+.action-tile:hover:not(:disabled) { background: var(--surface-hover); border-color: var(--primary); }
+.action-tile:active:not(:disabled) { transform: scale(.97); }
+.action-tile:disabled { opacity: .45; cursor: not-allowed; }
+.action-tile.primary {
+  background: linear-gradient(160deg, var(--gold, #FFB03B) 0%, var(--primary, #C42F3B) 100%);
+  color: #fff; border-color: transparent;
+}
+.action-tile.primary:hover:not(:disabled) { filter: brightness(1.05); background: linear-gradient(160deg, var(--gold, #FFB03B) 0%, var(--primary, #C42F3B) 100%); }
+.action-tile-icon { font-size: 17px; line-height: 1; }
+.action-tile-label { font-size: 11px; font-weight: 600; line-height: 1.25; }
 .booking-link-small { text-align: center; font-size: 12px; color: var(--primary-dark); text-decoration: none; font-weight: 600; }
 .booking-link-small:hover { text-decoration: underline; }
 

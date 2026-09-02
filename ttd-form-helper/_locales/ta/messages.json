@@ -5,6 +5,12 @@
    "action_cancel": {
       "message": "ரத்து செய்"
    },
+   "action_clear_fields": {
+      "message": "புலங்களை அழி"
+   },
+   "action_clear_fields_title": {
+      "message": "கடைசி நிரப்புதலை மீளமை, அல்லது படிவப் புலங்களை காலி செய்"
+   },
    "action_edit_pilgrim": {
       "message": "பக்தரைத் திருத்து"
    },
@@ -13,6 +19,30 @@
    },
    "action_fill_all": {
       "message": "⚡ அனைத்து விவரங்களையும் நிரப்பு"
+   },
+   "action_fill_all_continue": {
+      "message": "அனைத்தையும் நிரப்பி தொடரவும்"
+   },
+   "action_fill_all_continue_title": {
+      "message": "அனைவரையும் நிரப்பிய பின் Continue பொத்தானை அழுத்தவும்"
+   },
+   "action_fill_all_title": {
+      "message": "சேமித்த அனைத்து யாத்ரீகர்களையும் படிவத்தில் நிரப்பவும்"
+   },
+   "action_fill_next": {
+      "message": "அடுத்த யாத்ரீகரை நிரப்பு"
+   },
+   "action_fill_next_title": {
+      "message": "இன்னும் படிவத்தில் இல்லாத அடுத்த யாத்ரீகரை நிரப்பவும்"
+   },
+   "action_in_saved": {
+      "message": "ஏற்கனவே சேமித்த யாத்ரீகர்களில் உள்ளது"
+   },
+   "action_keep_in_saved": {
+      "message": "பிற்கால முன்பதிவுகளுக்கு சேமித்த யாத்ரீகர்களில் வைத்திரு"
+   },
+   "action_remove_from_booking": {
+      "message": "இந்த முன்பதிவிலிருந்து நீக்கு"
    },
    "action_save": {
       "message": "சேமி"
@@ -431,6 +461,9 @@
    "msg_error_refresh_page": {
       "message": "பிழை: பக்கத்தைப் புதுப்பிக்கவும்"
    },
+   "msg_fields_cleared": {
+      "message": "படிவப் புலங்கள் அழிக்கப்பட்டன."
+   },
    "msg_file_too_large": {
       "message": "கோப்பு மிகப் பெரியது. அதிகபட்ச அளவு 1 MB"
    },
@@ -454,6 +487,9 @@
    },
    "msg_invalid_member": {
       "message": "தவறான உறுப்பினர் எண்"
+   },
+   "msg_kept_in_saved": {
+      "message": "{name} சேமித்த யாத்ரீகர்களில் வைக்கப்பட்டது."
    },
    "msg_loaded_first": {
       "message": "செட்டிலிருந்து {total} இல் முதல் {count} ஏற்றப்பட்டது"

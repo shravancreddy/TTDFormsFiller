@@ -2,32 +2,19 @@ import { STORAGE_KEYS, uid } from "../../shared/storage.js";
 import { secureGet as storageGet, secureSet as storageSet } from "../../shared/secureStore.js";
 import { sendToActiveTab, describeFillResult, describeThrownError } from "../../shared/messaging.js";
 import { t } from "../../shared/i18n.js";
+import { api } from "../../shared/browser.js";
 import { showMessage } from "../toast.js";
 import { createVaultPicker } from "./vaultPicker.js";
 import { validatePilgrim } from "../../shared/validation.js";
-import { liveValidate, buildBadge, buildIssueList } from "../../shared/formValidation.js";
+import { buildBadge, buildIssueList } from "../../shared/formValidation.js";
+import { buildPilgrimForm, emptyPilgrim, deriveContact, CONTACT_FIELDS } from "../../shared/pilgrimForm.js";
 
 const MAX_PILGRIMS = 6;
-// Contact details live on the pilgrim now. There is no separate global contact
-// record to keep in sync — the booking's contact block is filled from the first
-// pilgrim who has these set, which is the one detail TTD asks for per booking
-// rather than per person.
-const CONTACT_FIELDS = ["email", "city", "state", "country", "pincode", "gothram"];
-const emptyPilgrim = () => ({
-  name: "", age: "", gender: "", idProof: "Aadhaar Card", idNumber: "",
-  visaNumber: "", visaType: "", visaValidityDate: "", passportCountry: "",
-  email: "", city: "", state: "", country: "", pincode: "", gothram: "",
-});
 
-/** The booking contact = the first pilgrim who actually has contact details. */
-function deriveContact(pilgrims) {
-  const out = {};
-  for (const field of CONTACT_FIELDS) {
-    const donor = (pilgrims || []).find((p) => p && p[field]);
-    if (donor) out[field] = donor[field];
-  }
-  return out;
-}
+// Switching tabs re-runs the renderer, so the previous run's storage listener
+// is dropped before a new one is attached — otherwise they'd stack up and the
+// tab would repaint once per past visit.
+let detachStorageWatch = null;
 
 export async function renderPilgrimTab(container) {
   container.innerHTML = "";
@@ -36,13 +23,20 @@ export async function renderPilgrimTab(container) {
   container.appendChild(wrap);
 
   let pilgrims = [];
+  let vault = [];
+  let sets = [];
   let editingId = null;
   let form = emptyPilgrim();
-  let sets = [];
 
-  const stored = await storageGet([STORAGE_KEYS.pilgrims, STORAGE_KEYS.contact, STORAGE_KEYS.sets]);
-  pilgrims = Array.isArray(stored[STORAGE_KEYS.pilgrims]) ? stored[STORAGE_KEYS.pilgrims] : [];
-  sets = Array.isArray(stored[STORAGE_KEYS.sets]) ? stored[STORAGE_KEYS.sets] : [];
+  async function loadAll() {
+    const stored = await storageGet([STORAGE_KEYS.pilgrims, STORAGE_KEYS.contact, STORAGE_KEYS.vault, STORAGE_KEYS.sets]);
+    pilgrims = Array.isArray(stored[STORAGE_KEYS.pilgrims]) ? stored[STORAGE_KEYS.pilgrims] : [];
+    vault = Array.isArray(stored[STORAGE_KEYS.vault]) ? stored[STORAGE_KEYS.vault] : [];
+    sets = Array.isArray(stored[STORAGE_KEYS.sets]) ? stored[STORAGE_KEYS.sets] : [];
+    return stored;
+  }
+
+  const stored = await loadAll();
 
   // The derived contact is still written to its own storage key: the content
   // script, the background worker's secure read, and backup/restore all read
@@ -52,6 +46,26 @@ export async function renderPilgrimTab(container) {
       [STORAGE_KEYS.pilgrims]: pilgrims,
       [STORAGE_KEYS.contact]: deriveContact(pilgrims),
     });
+
+  /**
+   * Saved pilgrims are the master list of people, so anyone added or edited
+   * here is written straight back to it — no separate "also save this" step.
+   * Returns the vault id the pilgrim is now linked to.
+   */
+  async function upsertVault(pilgrim) {
+    const now = new Date().toISOString();
+    const { id, vaultId, ...fields } = pilgrim;
+    const index = vaultId ? vault.findIndex((v) => v.id === vaultId) : -1;
+    let linkedId = vaultId;
+    if (index >= 0) {
+      vault = vault.map((v, i) => (i === index ? { ...v, ...fields, updatedAt: now } : v));
+    } else {
+      linkedId = uid();
+      vault = [...vault, { ...fields, id: linkedId, createdAt: now, updatedAt: now }];
+    }
+    await storageSet({ [STORAGE_KEYS.vault]: vault });
+    return linkedId;
+  }
 
   // One-time migration off the old separate contact record: anything it still
   // holds is copied onto pilgrims that don't have their own value yet, so
@@ -72,19 +86,152 @@ export async function renderPilgrimTab(container) {
     if (migrated) await persistPilgrims();
   }
 
+  // Settings and the panel edit the same records, so a change made in one shows
+  // up in the other without either being reopened.
+  const watchedKeys = [STORAGE_KEYS.pilgrims, STORAGE_KEYS.vault, STORAGE_KEYS.sets];
+  const onStorageChanged = async (changes, area) => {
+    if (area !== "local" || !watchedKeys.some((k) => k in changes)) return;
+    if (!wrap.isConnected) return; // another tab has replaced this one
+    const before = JSON.stringify([pilgrims, vault, sets]);
+    await loadAll();
+    // Our own writes land here too — only repaint when something really moved,
+    // and never while the user is part-way through editing someone.
+    if (JSON.stringify([pilgrims, vault, sets]) !== before && !editingId) render();
+  };
+  if (detachStorageWatch) detachStorageWatch();
+  api.storage.onChanged.addListener(onStorageChanged);
+  detachStorageWatch = () => {
+    try {
+      api.storage.onChanged.removeListener(onStorageChanged);
+    } catch {}
+    detachStorageWatch = null;
+  };
+
+  // ------------------------------------------------------------ actions ----
+  function actionButton({ icon, label, title, onClick, disabled = false, primary = false }) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "action-tile" + (primary ? " primary" : "");
+    btn.disabled = disabled;
+    btn.title = title || label;
+    btn.innerHTML = `<span class="action-tile-icon" aria-hidden="true">${icon}</span><span class="action-tile-label"></span>`;
+    btn.querySelector(".action-tile-label").textContent = label;
+    btn.addEventListener("click", onClick);
+    return btn;
+  }
+
+  async function sendFill(message, successKey) {
+    try {
+      const response = await sendToActiveTab(message);
+      const errorMsg = describeFillResult(response, t);
+      showMessage(errorMsg || t(successKey), errorMsg ? "error" : "success");
+    } catch (err) {
+      showMessage(describeThrownError(err, t), "error");
+    }
+  }
+
+  function blockedByValidation() {
+    const broken = pilgrims.filter((p) => validatePilgrim(p).errors.length > 0);
+    if (broken.length === 0) return false;
+    showMessage(t("validation_incomplete_pilgrims", { count: broken.length }), "error");
+    return true;
+  }
+
+  async function onFillAll(thenContinue = false) {
+    if (pilgrims.length === 0 || blockedByValidation()) return;
+    await sendFill(
+      { action: "FILL_ALL", data: { pilgrims, contact: deriveContact(pilgrims), thenContinue } },
+      "msg_all_filled"
+    );
+  }
+
+  async function onFillNext() {
+    if (pilgrims.length === 0 || blockedByValidation()) return;
+    try {
+      const response = await sendToActiveTab({
+        action: "FILL_NEXT",
+        data: { pilgrims, contact: deriveContact(pilgrims) },
+      });
+      const errorMsg = describeFillResult(response, t);
+      if (errorMsg) {
+        showMessage(errorMsg, "error");
+        return;
+      }
+      // Nothing left to place (everyone is on the form already) comes back as a
+      // success with nothing filled — say that rather than claiming a fill.
+      if (response && response.filled === 0) {
+        showMessage(response.message || t("msg_all_filled"), "warn");
+        return;
+      }
+      showMessage(t("msg_filled"), "success");
+    } catch (err) {
+      showMessage(describeThrownError(err, t), "error");
+    }
+  }
+
+  async function onClearFields() {
+    await sendFill({ action: "CLEAR_FIELDS", data: {} }, "msg_fields_cleared");
+  }
+
+  async function onFillOne(pilgrim) {
+    const check = validatePilgrim(pilgrim);
+    if (check.errors.length > 0) {
+      showMessage(check.errors[0].message, "error");
+      return;
+    }
+    await sendFill(
+      { action: "AUTOFILL", data: { pilgrim, contact: deriveContact([pilgrim, ...pilgrims]) } },
+      "msg_filled"
+    );
+  }
+
+  // ------------------------------------------------------------- render ----
   function render() {
     wrap.innerHTML = "";
 
-    // Fill-all bar
+    // Fill actions — icons with legible labels, in the order they're used.
     const fillSection = document.createElement("div");
     fillSection.className = "fill-all-section";
-    const fillBtn = document.createElement("button");
-    fillBtn.type = "button";
-    fillBtn.className = "btn-fill-all";
-    fillBtn.textContent = t("action_fill_all");
-    fillBtn.disabled = pilgrims.length === 0;
-    fillBtn.addEventListener("click", onFillAll);
-    fillSection.appendChild(fillBtn);
+    const actionGrid = document.createElement("div");
+    actionGrid.className = "action-grid";
+    const noPilgrims = pilgrims.length === 0;
+    actionGrid.appendChild(
+      actionButton({
+        icon: "⚡",
+        label: t("action_fill_all"),
+        title: t("action_fill_all_title"),
+        disabled: noPilgrims,
+        primary: true,
+        onClick: () => onFillAll(false),
+      })
+    );
+    actionGrid.appendChild(
+      actionButton({
+        icon: "①",
+        label: t("action_fill_next"),
+        title: t("action_fill_next_title"),
+        disabled: noPilgrims,
+        onClick: onFillNext,
+      })
+    );
+    actionGrid.appendChild(
+      actionButton({
+        icon: "⏭️",
+        label: t("action_fill_all_continue"),
+        title: t("action_fill_all_continue_title"),
+        disabled: noPilgrims,
+        onClick: () => onFillAll(true),
+      })
+    );
+    actionGrid.appendChild(
+      actionButton({
+        icon: "🧹",
+        label: t("action_clear_fields"),
+        title: t("action_clear_fields_title"),
+        onClick: onClearFields,
+      })
+    );
+    fillSection.appendChild(actionGrid);
 
     // Roll every saved pilgrim's problems into one list above the Fill button,
     // so nothing is discovered only after the TTD page rejects it.
@@ -127,14 +274,13 @@ export async function renderPilgrimTab(container) {
         btn.title = t("set_replace_title");
         btn.textContent = t("set_action_load");
         btn.addEventListener("click", async () => {
-          const vault = (await storageGet([STORAGE_KEYS.vault]))[STORAGE_KEYS.vault] || [];
           const members = (s.pilgrimIds || []).map((id) => vault.find((v) => v.id === id)).filter(Boolean);
           if (members.length === 0) {
             showMessage(t("set_no_pilgrims"), "warn");
             return;
           }
           const capped = members.slice(0, MAX_PILGRIMS);
-          pilgrims = capped.map((m) => ({ ...emptyPilgrim(), ...m, id: uid() }));
+          pilgrims = capped.map((m) => ({ ...emptyPilgrim(), ...m, id: uid(), vaultId: m.id }));
           await persistPilgrims();
           showMessage(members.length > MAX_PILGRIMS ? t("msg_loaded_first", { count: MAX_PILGRIMS, total: members.length }) : t("msg_loaded_from_set", { count: capped.length }));
           render();
@@ -178,6 +324,7 @@ export async function renderPilgrimTab(container) {
         detailLine.textContent = t("pilgrim_details_line", { age: p.age, gender: p.gender, idProof: p.idProof });
         info.appendChild(nameLine);
         info.appendChild(detailLine);
+
         const actions = document.createElement("div");
         actions.className = "pilgrim-actions";
         // Fill just this one person into the next empty slot — useful when the
@@ -186,6 +333,22 @@ export async function renderPilgrimTab(container) {
         fillOneBtn.textContent = "⚡";
         fillOneBtn.title = t("action_fill_one");
         fillOneBtn.addEventListener("click", () => onFillOne(p));
+
+        // Keep a booking-only pilgrim for later: copies them into Saved
+        // pilgrims so they can be reused and put into sets.
+        const linked = p.vaultId && vault.some((v) => v.id === p.vaultId);
+        const keepBtn = document.createElement("button");
+        keepBtn.textContent = linked ? "⭐" : "☆";
+        keepBtn.title = linked ? t("action_in_saved") : t("action_keep_in_saved");
+        keepBtn.disabled = !!linked;
+        keepBtn.addEventListener("click", async () => {
+          const vaultId = await upsertVault(p);
+          pilgrims = pilgrims.map((x) => (x.id === p.id ? { ...x, vaultId } : x));
+          await persistPilgrims();
+          showMessage(t("msg_kept_in_saved", { name: p.name || t("noun_pilgrim") }));
+          render();
+        });
+
         const editBtn = document.createElement("button");
         editBtn.textContent = "✏️";
         editBtn.title = t("action_edit_pilgrim");
@@ -197,6 +360,7 @@ export async function renderPilgrimTab(container) {
         const delBtn = document.createElement("button");
         delBtn.className = "btn-delete";
         delBtn.textContent = "🗑️";
+        delBtn.title = t("action_remove_from_booking");
         delBtn.addEventListener("click", async () => {
           pilgrims = pilgrims.filter((x) => x.id !== p.id);
           await persistPilgrims();
@@ -204,6 +368,7 @@ export async function renderPilgrimTab(container) {
           render();
         });
         actions.appendChild(fillOneBtn);
+        actions.appendChild(keepBtn);
         actions.appendChild(editBtn);
         actions.appendChild(delBtn);
         card.appendChild(info);
@@ -229,7 +394,7 @@ export async function renderPilgrimTab(container) {
     pilgrimSection.appendChild(vaultPicker.el);
     wrap.appendChild(pilgrimSection);
 
-    // Add/edit form
+    // Add/edit form — the same component the Settings page uses.
     const formSection = document.createElement("section");
     formSection.className = "form-section";
     const formHeading = document.createElement("h3");
@@ -240,157 +405,48 @@ export async function renderPilgrimTab(container) {
     // actually be used for the booking (the first one), or when editing
     // someone who already has them — otherwise keep the form compact.
     const isFirstPilgrim = editingId ? pilgrims[0]?.id === editingId : pilgrims.length === 0;
-    const contactOpen = isFirstPilgrim || CONTACT_FIELDS.some((f) => form[f]);
 
-    const formEl = document.createElement("form");
-    formEl.innerHTML = `
-      <div class="form-row">
-        <div class="form-group"><label>${t("field_name")}</label><input name="name" required /></div>
-        <div class="form-group"><label>${t("field_age")}</label><input name="age" type="number" min="0" max="130" required /></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>${t("field_gender")}</label>
-          <select name="gender" required>
-            <option value="">${t("select_placeholder")}</option>
-            <option value="Male">${t("gender_male")}</option>
-            <option value="Female">${t("gender_female")}</option>
-            <option value="Transgender">${t("gender_transgender")}</option>
-          </select>
-        </div>
-        <div class="form-group"><label>${t("field_id_proof")}</label>
-          <select name="idProof">
-            <option value="Aadhaar Card">${t("idproof_aadhaar")}</option>
-            <option value="Passport">${t("idproof_passport")}</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group"><label>${t("field_id_proof_number")}</label><input name="idNumber" required /></div>
-      <div class="passport-extra" hidden>
-        <div class="passport-note">🛂 ${t("validation_passport_needs")}</div>
-        <div class="form-row">
-          <div class="form-group"><label>${t("field_visa_type")}</label><input name="visaType" placeholder="${t("field_visa_type_placeholder")}" /></div>
-          <div class="form-group"><label>${t("field_visa_number")}</label><input name="visaNumber" /></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>${t("field_visa_validity")}</label><input name="visaValidityDate" placeholder="${t("field_date_placeholder")}" inputmode="numeric" /></div>
-          <div class="form-group"><label>${t("field_country")}</label><input name="passportCountry" placeholder="${t("field_country_placeholder")}" /></div>
-        </div>
-      </div>
-      <details class="pilgrim-contact-details"${contactOpen ? " open" : ""}>
-        <summary>${t("pilgrim_contact_heading")}</summary>
-        <small class="field-hint">${t("pilgrim_contact_hint")}</small>
-        <div class="form-row">
-          <div class="form-group"><label>${t("field_email")}</label><input name="email" type="email" /></div>
-          <div class="form-group"><label>${t("field_city")}</label><input name="city" /></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>${t("field_state")}</label><input name="state" /></div>
-          <div class="form-group"><label>${t("field_country")}</label><input name="country" placeholder="${t("field_country_placeholder")}" /></div>
-        </div>
-        <div class="form-row">
-          <div class="form-group"><label>${t("field_pincode")}</label><input name="pincode" maxlength="6" /></div>
-          <div class="form-group"><label>${t("field_gothram")}</label><input name="gothram" /></div>
-        </div>
-      </details>
-      <div class="form-actions">
-        <button type="submit" class="btn-primary">${t(editingId ? "action_update_pilgrim" : "action_add_pilgrim")}</button>
-        ${editingId ? `<button type="button" class="btn-secondary" data-cancel>${t("action_cancel")}</button>` : ""}
-      </div>
-    `;
-    for (const [key, val] of Object.entries(form)) {
-      const field = formEl.elements[key];
-      if (field) field.value = val ?? "";
-    }
-    const idProofSelect = formEl.elements.idProof;
-    const passportExtra = formEl.querySelector(".passport-extra");
-    const syncPassportVisibility = () => {
-      passportExtra.hidden = idProofSelect.value !== "Passport";
-    };
-    syncPassportVisibility();
-    idProofSelect.addEventListener("change", () => {
-      syncPassportVisibility();
-      validator.run();
-    });
-
-    const validator = liveValidate(formEl, (data) => validatePilgrim(data));
-
-    const cancelBtn = formEl.querySelector("[data-cancel]");
-    if (cancelBtn) cancelBtn.addEventListener("click", () => {
-      form = emptyPilgrim();
-      editingId = null;
-      render();
-    });
-
-    formEl.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(formEl).entries());
-
-      // Block only on hard errors; warnings are informational and still save.
-      const check = validator.revealAll();
-      if (check.errors.length > 0) {
-        showMessage(t("validation_blocked_toast"), "error");
-        const firstBad = formEl.querySelector(".invalid");
-        if (firstBad) firstBad.focus();
-        return;
-      }
-
-      if (editingId) {
-        pilgrims = pilgrims.map((p) => (p.id === editingId ? { ...p, ...data } : p));
-        showMessage(t("msg_pilgrim_updated"));
-      } else {
-        if (pilgrims.length >= MAX_PILGRIMS) {
-          showMessage(t("msg_max_pilgrims"));
-          return;
+    const { el: formEl } = buildPilgrimForm({
+      value: form,
+      editing: !!editingId,
+      requireIdNumber: true,
+      contactOpen: isFirstPilgrim || CONTACT_FIELDS.some((f) => form[f]),
+      onInvalid: () => showMessage(t("validation_blocked_toast"), "error"),
+      onCancel: editingId
+        ? () => {
+            form = emptyPilgrim();
+            editingId = null;
+            render();
+          }
+        : null,
+      onSubmit: async (data) => {
+        if (editingId) {
+          const existing = pilgrims.find((p) => p.id === editingId);
+          const vaultId = await upsertVault({ ...existing, ...data });
+          pilgrims = pilgrims.map((p) => (p.id === editingId ? { ...p, ...data, vaultId } : p));
+          showMessage(t("msg_pilgrim_updated"));
+        } else {
+          if (pilgrims.length >= MAX_PILGRIMS) {
+            showMessage(t("msg_max_pilgrims"));
+            return;
+          }
+          const vaultId = await upsertVault(data);
+          pilgrims = [...pilgrims, { ...data, id: uid(), vaultId }];
+          showMessage(t("msg_added_pilgrim", { name: data.name }));
         }
-        pilgrims = [...pilgrims, { ...data, id: uid() }];
-        showMessage(t("msg_added_pilgrim", { name: data.name }));
-      }
-      await persistPilgrims();
-      form = emptyPilgrim();
-      editingId = null;
-      render();
+        await persistPilgrims();
+        form = emptyPilgrim();
+        editingId = null;
+        render();
+      },
     });
 
     formSection.appendChild(formEl);
     wrap.appendChild(formSection);
-
-  }
-
-  async function onFillOne(pilgrim) {
-    const check = validatePilgrim(pilgrim);
-    if (check.errors.length > 0) {
-      showMessage(check.errors[0].message, "error");
-      return;
-    }
-    try {
-      const response = await sendToActiveTab({ action: "AUTOFILL", data: { pilgrim, contact: deriveContact([pilgrim, ...pilgrims]) } });
-      const errorMsg = describeFillResult(response, t);
-      showMessage(errorMsg || t("msg_filled"), errorMsg ? "error" : "success");
-    } catch (err) {
-      showMessage(describeThrownError(err, t), "error");
-    }
-  }
-
-  async function onFillAll() {
-    if (pilgrims.length === 0) return;
-    // Filling a form with an invalid Aadhaar wastes a booking attempt, so stop
-    // here rather than letting the TTD site reject it a step later.
-    const broken = pilgrims.filter((p) => validatePilgrim(p).errors.length > 0);
-    if (broken.length > 0) {
-      showMessage(t("validation_incomplete_pilgrims", { count: broken.length }), "error");
-      return;
-    }
-    try {
-      const response = await sendToActiveTab({ action: "FILL_ALL", data: { pilgrims, contact: deriveContact(pilgrims) } });
-      const errorMsg = describeFillResult(response, t);
-      showMessage(errorMsg || t("msg_all_filled"), errorMsg ? "error" : "success");
-    } catch (err) {
-      showMessage(describeThrownError(err, t), "error");
-    }
   }
 
   function escapeHtml(s) {
-    return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[c]));
   }
 
   render();
