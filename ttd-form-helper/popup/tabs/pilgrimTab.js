@@ -198,7 +198,7 @@ export async function renderPilgrimTab(container) {
     actionGrid.appendChild(
       actionButton({
         icon: "⚡",
-        label: t("action_fill_all"),
+        label: t("action_fill_all_short"),
         title: t("action_fill_all_title"),
         disabled: noPilgrims,
         primary: true,
@@ -208,7 +208,7 @@ export async function renderPilgrimTab(container) {
     actionGrid.appendChild(
       actionButton({
         icon: "①",
-        label: t("action_fill_next"),
+        label: t("action_fill_next_short"),
         title: t("action_fill_next_title"),
         disabled: noPilgrims,
         onClick: onFillNext,
@@ -217,7 +217,7 @@ export async function renderPilgrimTab(container) {
     actionGrid.appendChild(
       actionButton({
         icon: "⏭️",
-        label: t("action_fill_all_continue"),
+        label: t("action_fill_all_continue_short"),
         title: t("action_fill_all_continue_title"),
         disabled: noPilgrims,
         onClick: () => onFillAll(true),
@@ -226,7 +226,7 @@ export async function renderPilgrimTab(container) {
     actionGrid.appendChild(
       actionButton({
         icon: "🧹",
-        label: t("action_clear_fields"),
+        label: t("action_clear_fields_short"),
         title: t("action_clear_fields_title"),
         onClick: onClearFields,
       })

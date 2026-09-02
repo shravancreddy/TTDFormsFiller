@@ -8,6 +8,9 @@
    "action_clear_fields": {
       "message": "ఫీల్డ్‌లను తొలగించు"
    },
+   "action_clear_fields_short": {
+      "message": "తొలగించు"
+   },
    "action_clear_fields_title": {
       "message": "చివరి నింపడాన్ని రద్దు చేయండి లేదా ఫారమ్ ఫీల్డ్‌లను ఖాళీ చేయండి"
    },
@@ -23,14 +26,23 @@
    "action_fill_all_continue": {
       "message": "అందరినీ నింపి కొనసాగించు"
    },
+   "action_fill_all_continue_short": {
+      "message": "కొనసాగు"
+   },
    "action_fill_all_continue_title": {
       "message": "అందరినీ నింపి, తర్వాత Continue బటన్ నొక్కండి"
+   },
+   "action_fill_all_short": {
+      "message": "అన్నీ నింపు"
    },
    "action_fill_all_title": {
       "message": "సేవ్ చేసిన యాత్రికులందరినీ ఫారమ్‌లో నింపండి"
    },
    "action_fill_next": {
       "message": "తదుపరి యాత్రికుడిని నింపు"
+   },
+   "action_fill_next_short": {
+      "message": "తదుపరి"
    },
    "action_fill_next_title": {
       "message": "ఇంకా ఫారమ్‌లో లేని తదుపరి యాత్రికుడిని నింపండి"

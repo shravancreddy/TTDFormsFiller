@@ -8,6 +8,9 @@
    "action_clear_fields": {
       "message": "ഫീൽഡുകൾ മായ്ക്കുക"
    },
+   "action_clear_fields_short": {
+      "message": "മായ്ക്കുക"
+   },
    "action_clear_fields_title": {
       "message": "അവസാന പൂരിപ്പിക്കൽ പഴയപടിയാക്കുക, അല്ലെങ്കിൽ ഫീൽഡുകൾ ശൂന്യമാക്കുക"
    },
@@ -23,14 +26,23 @@
    "action_fill_all_continue": {
       "message": "എല്ലാം പൂരിപ്പിച്ച് തുടരുക"
    },
+   "action_fill_all_continue_short": {
+      "message": "തുടരുക"
+   },
    "action_fill_all_continue_title": {
       "message": "എല്ലാവരെയും പൂരിപ്പിച്ച ശേഷം Continue ബട്ടൺ അമർത്തുക"
+   },
+   "action_fill_all_short": {
+      "message": "എല്ലാം"
    },
    "action_fill_all_title": {
       "message": "സേവ് ചെയ്ത എല്ലാ തീർത്ഥാടകരെയും ഫോമിൽ പൂരിപ്പിക്കുക"
    },
    "action_fill_next": {
       "message": "അടുത്ത തീർത്ഥാടകനെ പൂരിപ്പിക്കുക"
+   },
+   "action_fill_next_short": {
+      "message": "അടുത്തത്"
    },
    "action_fill_next_title": {
       "message": "ഇതുവരെ ഫോമിൽ ഇല്ലാത്ത അടുത്ത തീർത്ഥാടകനെ പൂരിപ്പിക്കുക"

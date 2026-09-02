@@ -51,14 +51,15 @@ open it, click it again (or the ✕ next to the ⚙️) to close it. That means:
   from somewhere else. A popup closes the instant it loses focus, which made
   pasting details in from another page impossible.
 - **It resizes** — drag its inner edge to whatever width shows the whole form
-  at once. The layout follows: past ~520px the fill actions go from two columns
-  to four.
+  at once. The layout follows, and the fill actions stay on one row at any width.
 
 Chrome/Edge 114+ is required for the side panel. Firefox gets the same page as a
 sidebar (`sidebar_action`) and keeps the toolbar popup as well.
 
-The pilgrim tab's fill actions are labelled icon buttons — **⚡ Fill all**,
-**① Fill next pilgrim**, **⏭️ Fill all & continue**, **🧹 Clear fields**.
+The pilgrim tab's fill actions sit in one row of labelled icon buttons —
+**⚡ Fill all**, **① Next** (fill the next pilgrim not yet on the form),
+**⏭️ Continue** (fill everyone, then press the form's Continue), and
+**🧹 Clear**. Each button's tooltip spells out the full action.
 
 ## One pilgrim record, two places to edit it
 
@@ -91,10 +92,10 @@ Motion is skipped automatically when the browser is set to *reduce motion*.
 ### Prebuilt bundle (easiest — no repo clone needed)
 
 Download the ready-to-load zip for your browser from the repository root and unzip it —
-you'll get a `TTD-Form-Helper-v1.3.0` folder with a `HOW-TO-LOAD.txt` inside:
+you'll get a `TTD-Form-Helper-v1.3.1` folder with a `HOW-TO-LOAD.txt` inside:
 
-- `TTD-Form-Helper-v1.3.0-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
-- `TTD-Form-Helper-v1.3.0-firefox-unpacked.zip` — Firefox
+- `TTD-Form-Helper-v1.3.1-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
+- `TTD-Form-Helper-v1.3.1-firefox-unpacked.zip` — Firefox
 
 Then follow the steps below, pointing at the unzipped folder. (These bundles are for
 **loading unpacked**; they are not signed store builds.)
@@ -117,7 +118,7 @@ use the unpacked zip above instead (**Load unpacked**). Rebuild both the zips an
 1. Go to `chrome://extensions` (or `edge://extensions`).
 2. Turn on **Developer mode**.
 3. Click **Load unpacked** and pick this `ttd-form-helper` folder (or the unzipped
-   `TTD-Form-Helper-v1.3.0` folder from the prebuilt bundle).
+   `TTD-Form-Helper-v1.3.1` folder from the prebuilt bundle).
 
 ### Firefox
 
@@ -304,7 +305,33 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ## Version history
 
-### 1.3.0 — current
+### 1.3.1 — current
+
+- **Fill actions fit on one row.** The four buttons were a 2x2 grid until the
+  panel was dragged past ~520px. They're now a single row of four at any width
+  (`repeat(4, minmax(0, 1fr))`), with the icon above a short label inside each
+  tile — Fill all / Next / Continue / Clear — and the full description kept as
+  the tooltip.
+- **Clear works on the first click.** It used to restore values from the undo
+  log and *return early*; anything that restore couldn't shift survived, and
+  only the fallback sweep on the second click caught it. There is no early
+  return now — one pass restores (where asked) and then empties whatever is
+  still filled, followed by a second sweep a frame later for values React
+  re-renders back.
+- **Clear now empties Gender and the other dropdown fields.** Those are
+  read-only inputs whose text comes from React state. Writing `""` natively
+  left `el.value === ""`, which matched the target, so the React fallback in
+  `setControlledValue` never fired and the component re-rendered its old label
+  straight back. Clearing now drives the component's `onChange` with an empty
+  value explicitly, and handles `<select>` elements by selecting their blank
+  option.
+- The panel's **Clear** button now empties the form outright, while the
+  floating button's **Undo / clear** still restores pre-fill values first —
+  each matching what its label says. The undo log is also emptied *after* the
+  clearing writes rather than before, so a second click can't put back the
+  values the first one just cleared.
+
+### 1.3.0
 
 - **The UI is a side panel now.** A popup closes the moment it loses focus, so
   copying details in from another page or tab was impossible and every stray

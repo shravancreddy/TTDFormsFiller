@@ -8,6 +8,9 @@
    "action_clear_fields": {
       "message": "புலங்களை அழி"
    },
+   "action_clear_fields_short": {
+      "message": "அழி"
+   },
    "action_clear_fields_title": {
       "message": "கடைசி நிரப்புதலை மீளமை, அல்லது படிவப் புலங்களை காலி செய்"
    },
@@ -23,14 +26,23 @@
    "action_fill_all_continue": {
       "message": "அனைத்தையும் நிரப்பி தொடரவும்"
    },
+   "action_fill_all_continue_short": {
+      "message": "தொடர்"
+   },
    "action_fill_all_continue_title": {
       "message": "அனைவரையும் நிரப்பிய பின் Continue பொத்தானை அழுத்தவும்"
+   },
+   "action_fill_all_short": {
+      "message": "அனைத்தும்"
    },
    "action_fill_all_title": {
       "message": "சேமித்த அனைத்து யாத்ரீகர்களையும் படிவத்தில் நிரப்பவும்"
    },
    "action_fill_next": {
       "message": "அடுத்த யாத்ரீகரை நிரப்பு"
+   },
+   "action_fill_next_short": {
+      "message": "அடுத்தது"
    },
    "action_fill_next_title": {
       "message": "இன்னும் படிவத்தில் இல்லாத அடுத்த யாத்ரீகரை நிரப்பவும்"

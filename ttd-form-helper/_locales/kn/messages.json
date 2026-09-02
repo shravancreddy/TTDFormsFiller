@@ -8,6 +8,9 @@
    "action_clear_fields": {
       "message": "ಫೀಲ್ಡ್‌ಗಳನ್ನು ಅಳಿಸಿ"
    },
+   "action_clear_fields_short": {
+      "message": "ಅಳಿಸಿ"
+   },
    "action_clear_fields_title": {
       "message": "ಕೊನೆಯ ಭರ್ತಿಯನ್ನು ರದ್ದುಗೊಳಿಸಿ ಅಥವಾ ಫಾರ್ಮ್ ಫೀಲ್ಡ್‌ಗಳನ್ನು ಖಾಲಿ ಮಾಡಿ"
    },
@@ -23,14 +26,23 @@
    "action_fill_all_continue": {
       "message": "ಎಲ್ಲವನ್ನೂ ಭರ್ತಿ ಮಾಡಿ ಮುಂದುವರಿಯಿರಿ"
    },
+   "action_fill_all_continue_short": {
+      "message": "ಮುಂದುವರಿ"
+   },
    "action_fill_all_continue_title": {
       "message": "ಎಲ್ಲರನ್ನೂ ಭರ್ತಿ ಮಾಡಿ, ನಂತರ Continue ಬಟನ್ ಒತ್ತಿ"
+   },
+   "action_fill_all_short": {
+      "message": "ಎಲ್ಲಾ ಭರ್ತಿ"
    },
    "action_fill_all_title": {
       "message": "ಉಳಿಸಿದ ಎಲ್ಲಾ ಯಾತ್ರಿಕರನ್ನು ಫಾರ್ಮ್‌ನಲ್ಲಿ ಭರ್ತಿ ಮಾಡಿ"
    },
    "action_fill_next": {
       "message": "ಮುಂದಿನ ಯಾತ್ರಿಕರನ್ನು ಭರ್ತಿ ಮಾಡಿ"
+   },
+   "action_fill_next_short": {
+      "message": "ಮುಂದಿನದು"
    },
    "action_fill_next_title": {
       "message": "ಇನ್ನೂ ಫಾರ್ಮ್‌ನಲ್ಲಿ ಇಲ್ಲದ ಮುಂದಿನ ಯಾತ್ರಿಕರನ್ನು ಭರ್ತಿ ಮಾಡಿ"

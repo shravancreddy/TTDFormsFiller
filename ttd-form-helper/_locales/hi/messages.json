@@ -8,6 +8,9 @@
    "action_clear_fields": {
       "message": "फ़ील्ड साफ़ करें"
    },
+   "action_clear_fields_short": {
+      "message": "साफ़ करें"
+   },
    "action_clear_fields_title": {
       "message": "पिछली भराई पूर्ववत करें, या फ़ॉर्म के फ़ील्ड खाली करें"
    },
@@ -23,14 +26,23 @@
    "action_fill_all_continue": {
       "message": "सभी भरें और आगे बढ़ें"
    },
+   "action_fill_all_continue_short": {
+      "message": "आगे बढ़ें"
+   },
    "action_fill_all_continue_title": {
       "message": "सभी को भरकर फ़ॉर्म का Continue बटन दबाएँ"
+   },
+   "action_fill_all_short": {
+      "message": "सभी भरें"
    },
    "action_fill_all_title": {
       "message": "सभी सहेजे गए तीर्थयात्रियों को फ़ॉर्म में भरें"
    },
    "action_fill_next": {
       "message": "अगला तीर्थयात्री भरें"
+   },
+   "action_fill_next_short": {
+      "message": "अगला"
    },
    "action_fill_next_title": {
       "message": "अगला ऐसा तीर्थयात्री भरें जो अभी फ़ॉर्म में नहीं है"

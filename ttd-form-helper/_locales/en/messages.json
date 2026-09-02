@@ -8,6 +8,9 @@
    "action_clear_fields": {
       "message": "Clear fields"
    },
+   "action_clear_fields_short": {
+      "message": "Clear"
+   },
    "action_clear_fields_title": {
       "message": "Undo the last fill, or empty the form's fields"
    },
@@ -23,14 +26,23 @@
    "action_fill_all_continue": {
       "message": "Fill all & continue"
    },
+   "action_fill_all_continue_short": {
+      "message": "Continue"
+   },
    "action_fill_all_continue_title": {
       "message": "Fill everyone, then press the form's Continue button"
+   },
+   "action_fill_all_short": {
+      "message": "Fill all"
    },
    "action_fill_all_title": {
       "message": "Fill every saved pilgrim into the form"
    },
    "action_fill_next": {
       "message": "Fill next pilgrim"
+   },
+   "action_fill_next_short": {
+      "message": "Next"
    },
    "action_fill_next_title": {
       "message": "Fill the next pilgrim who isn't on the form yet"
