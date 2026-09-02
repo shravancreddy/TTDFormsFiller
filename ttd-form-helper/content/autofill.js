@@ -5,21 +5,41 @@
   // Chrome/Edge expose `chrome`; Firefox and Safari expose `browser`.
   const chrome = globalThis.chrome ?? globalThis.browser;
 
+  // A real "tab out" of a field, done at full speed.
+  //
+  // React 17+ does not listen for the `blur` event at all — it wires onBlur to
+  // the native, bubbling `focusout`. So `new Event("blur", {bubbles:true})`,
+  // which is what this used to dispatch, never reached the page's validator:
+  // a field could hold the right value while the site still showed "this field
+  // is required" and kept its Continue button disabled, because as far as the
+  // form library was concerned the field had never been visited or re-checked.
+  // Driving focus() → blur() makes the browser emit the genuine
+  // focus/focusin/blur/focusout sequence instead, which is what actually
+  // clears that error. Comboboxes are skipped (focusing one re-opens its
+  // floating list); they get the event pair directly, and selectFromDropdown
+  // does its own blur/outside-click at the end.
+  const tabOut = (el) => {
+    try {
+      if (!looksLikeCombobox(el) && typeof el.focus === "function") {
+        el.focus({ preventScroll: true });
+        if (document.activeElement === el) {
+          el.blur(); // real blur + focusout, straight from the browser
+          return;
+        }
+      }
+    } catch {}
+    // Not focusable (or a combobox): synthesize both, `focusout` being the one
+    // React and most form libraries actually subscribe to.
+    try {
+      el.dispatchEvent(new FocusEvent("blur", { bubbles: false }));
+      el.dispatchEvent(new FocusEvent("focusout", { bubbles: true }));
+    } catch {}
+  };
+
   const dispatchAll = (el) => {
     el.dispatchEvent(new Event("input", { bubbles: true }));
     el.dispatchEvent(new Event("change", { bubbles: true }));
-    // Deferred one frame ("lightning fast tabout" rather than none at all):
-    // firing `blur` in the very same tick as `input`/`change` can race a
-    // framework's own async state commit, so an on-blur "this field is
-    // required" validator sometimes reads the OLD (empty) value and flags a
-    // field that was, in fact, just filled — most visible when a field is
-    // manually cleared and then re-filled by the extension. A one-frame
-    // defer (~16ms, imperceptible) lets that state settle first.
-    requestAnimationFrame(() => {
-      try {
-        el.dispatchEvent(new Event("blur", { bubbles: true }));
-      } catch {}
-    });
+    tabOut(el);
   };
   const norm = (s) => (s ? s.toString().toLowerCase().trim().replace(/\s+/g, " ") : "");
 
@@ -321,17 +341,15 @@
     }
   };
   // ---- Undo log: remember the prior value of each field a fill writes ----
+  // Recording is unconditional. It used to be gated on a `logging` flag that
+  // only the floating button switched on, so a fill started from the popup
+  // left the log empty and "Clear filled fields" reported nothing to clear.
   let fillLog = new Map();
-  let logging = false;
   const beginLog = () => {
     fillLog = new Map();
-    logging = true;
-  };
-  const endLog = () => {
-    logging = false;
   };
   const recordPrev = (el) => {
-    if (!logging || !el || fillLog.has(el)) return;
+    if (!el || fillLog.has(el)) return;
     try {
       fillLog.set(el, el.value ?? "");
     } catch {}
@@ -344,9 +362,22 @@
     if (!el) return false;
     recordPrev(el);
     const target = value == null ? "" : String(value);
+    const previous = el.value ?? "";
     const desc = Object.getOwnPropertyDescriptor(el.constructor.prototype, "value");
     if (desc && desc.set) desc.set.call(el, target);
     else el.value = target;
+    // React keeps a private value tracker on the node and ignores an `input`
+    // event whose value matches what it last recorded. Rewinding the tracker to
+    // the pre-write value guarantees it sees a genuine change and runs its
+    // onChange — without this, a field can carry the right text while React's
+    // own state stays empty, which is what leaves the site's Continue button
+    // disabled and its "required" error showing.
+    try {
+      const tracker = el._valueTracker;
+      if (tracker && typeof tracker.setValue === "function" && previous !== target) {
+        tracker.setValue(previous);
+      }
+    } catch {}
     dispatchAll(el);
     if ((el.value || "") !== target) dispatchReactOnChange(el, target);
     const ok = (el.value || "") === target || (!!el.value && target !== "");
@@ -532,19 +563,17 @@
     return [];
   };
 
-  // If the shared contact block is missing a field, fall back to that same
-  // field on the first pilgrim in this run that set it (the optional
-  // per-pilgrim contact override on the Add Pilgrim form) — so a pilgrim's
-  // own email/city/state/country/pincode still reaches the TTD form even
-  // when the user never filled in the shared Contact section.
-  const CONTACT_FALLBACK_FIELDS = ["email", "city", "state", "country", "pincode"];
+  // Contact details are stored on the pilgrim (TTD asks for one set per
+  // booking, not per person). Whatever the caller passed in wins; anything it
+  // is missing is taken, field by field, from the first pilgrim in this run
+  // who has that field set.
+  const CONTACT_FALLBACK_FIELDS = ["email", "city", "state", "country", "pincode", "gothram"];
   const resolveEffectiveContact = (contact, pilgrims) => {
     const base = { ...(contact || {}) };
-    const donor = (pilgrims || []).find((p) => p && CONTACT_FALLBACK_FIELDS.some((f) => p[f]));
-    if (donor) {
-      for (const f of CONTACT_FALLBACK_FIELDS) {
-        if (!base[f] && donor[f]) base[f] = donor[f];
-      }
+    for (const field of CONTACT_FALLBACK_FIELDS) {
+      if (base[field]) continue;
+      const donor = (pilgrims || []).find((p) => p && p[field]);
+      if (donor) base[field] = donor[field];
     }
     return base;
   };
@@ -821,21 +850,39 @@
   };
 
   // ---- Undo the last fill and generalized Continue handling ----
+  // First choice is an exact undo: put back whatever each field held before
+  // the last fill overwrote it. If there's no usable log — the page re-rendered
+  // and replaced those nodes, or the fill happened in an earlier page load —
+  // fall back to emptying every text-ish field on the form, which is what
+  // "clear the fields" is expected to do at that point.
   const clearFilled = async () => {
-    if (!fillLog.size) {
-      toast("Nothing to clear — no fields have been filled yet.", "warn");
-      return;
-    }
-    let n = 0;
+    let restored = 0;
     for (const [el, prev] of fillLog) {
       if (el && el.isConnected) {
         setControlledValue(el, prev);
-        n++;
-        await sleep(20);
+        restored++;
       }
     }
     fillLog.clear();
-    toast("↩ Cleared " + n + " filled field" + (n === 1 ? "" : "s") + ".", "success");
+    if (restored > 0) {
+      clearQC();
+      toast("↩ Restored " + restored + " field" + (restored === 1 ? "" : "s") + " to their previous values.", "success");
+      return;
+    }
+
+    let cleared = 0;
+    for (const el of collectFormFields()) {
+      if (el.type === "file" || el.type === "checkbox" || el.type === "radio") continue;
+      if (!el.value || !String(el.value).trim()) continue;
+      setControlledValue(el, "");
+      cleared++;
+    }
+    clearQC();
+    if (cleared === 0) {
+      toast("Nothing to clear — every field on this form is already empty.", "warn");
+      return;
+    }
+    toast("🧹 Cleared " + cleared + " field" + (cleared === 1 ? "" : "s") + " on this form.", "success");
   };
 
   // A Continue/Next/Proceed button, by stable id or button text — but never a
@@ -885,6 +932,9 @@
         return true;
       }
       globalFilling = true;
+      // Same fresh undo log the floating button starts, so a fill driven from
+      // the popup can be reverted by "Clear filled fields" as well.
+      beginLog();
       const original = sendResponse;
       // Clear the lock whenever the handler responds (success or error), with a
       // safety timeout in case a handler never replies.
@@ -1811,7 +1861,6 @@
       } catch (err) {
         handleFillError(err);
       } finally {
-        if (log) endLog();
         globalFilling = false;
         setBusy(false);
       }
@@ -1839,7 +1888,9 @@
       else scrollToFirstEmpty('input[name="name"], input[name="fname"]');
     }
 
-    // Fills only the first still-empty pilgrim row, from the first saved pilgrim.
+    // Fills the next still-empty pilgrim row with the next saved pilgrim who
+    // isn't on the page yet. It used to always reach for pilgrims[0], so
+    // clicking it twice just refilled the same person into another row.
     async function runSinglePilgrim() {
       const stored = await loadSavedData();
       const pilgrims = stored.pilgrims || [];
@@ -1854,11 +1905,24 @@
         showToast("No pilgrim rows found on this page.", "error");
         return;
       }
-      let slot = nameInputs.findIndex((el) => !el.value || !el.value.trim());
-      if (slot === -1) slot = nameInputs.length - 1;
-      await fillPilgrim(pilgrims[0], slot, contact.country);
+
+      // Whoever is already typed into the form — by an earlier click, by
+      // "Fill all", or by hand — is skipped.
+      const onPage = new Set(nameInputs.map((el) => norm(el.value)).filter(Boolean));
+      const next = pilgrims.find((p) => p && p.name && !onPage.has(norm(p.name)));
+      if (!next) {
+        showToast("All saved pilgrims are already on this form.", "warn");
+        return;
+      }
+
+      const slot = nameInputs.findIndex((el) => !el.value || !el.value.trim());
+      if (slot === -1) {
+        showToast("Every pilgrim row on this page is already filled.", "warn");
+        return;
+      }
+      await fillPilgrim(next, slot, contact.country);
       await fillContact(contact);
-      showToast("① Filled the next empty pilgrim.", "success");
+      showToast("① Filled " + (next.name || "the next pilgrim") + " into row " + (slot + 1) + ".", "success");
     }
 
     async function runContactOnly() {
@@ -2266,7 +2330,7 @@
         menu.appendChild(menuItem("Open a TTD booking form first", () => {}));
       }
       menu.appendChild(menuSeparator());
-      menu.appendChild(menuItem("↩️ Clear filled fields", () => runGuarded(clearFilled, { log: false })));
+      menu.appendChild(menuItem("↩️ Undo / clear filled fields", () => runGuarded(clearFilled, { log: false })));
       menu.hidden = false;
       menuOpen = true;
       const first = menu.querySelector(".ttdfh-menu-item");

@@ -23,9 +23,6 @@
    "action_update_pilgrim": {
       "message": "భక్తుడిని నవీకరించండి"
    },
-   "contact_apply_to_pilgrims": {
-      "message": "ఈ వివరాలు లేని యాత్రికులకు కూడా నింపండి"
-   },
    "contact_gothram": {
       "message": "గోత్రం: {gothram}"
    },
@@ -419,9 +416,6 @@
    "msg_contact_saved": {
       "message": "సంప్రదింపు వివరాలు సేవ్ అయ్యాయి!"
    },
-   "msg_contact_saved_and_applied": {
-      "message": "సంప్రదింపు సేవ్ చేయబడింది మరియు {count} యాత్రికులకు వర్తింపజేయబడింది!"
-   },
    "msg_error_autofilling_member": {
       "message": "సభ్యుడు {n} భర్తీ చేయడంలో లోపం."
    },
@@ -540,10 +534,10 @@
       "message": "వ్యక్తిగత వివరాలు"
    },
    "pilgrim_contact_heading": {
-      "message": "సంప్రదింపు వివరాలు (ఐచ్ఛికం)"
+      "message": "బుకింగ్ కోసం సంప్రదింపు వివరాలు"
    },
    "pilgrim_contact_hint": {
-      "message": "దిగువ ఉన్న భాగస్వామ్య సంప్రదింపు విభాగం ఖాళీగా ఉంటే, ఫారమ్ నింపడానికి ఈ యాత్రికుడి వివరాలు ఉపయోగించబడతాయి."
+      "message": "ఒక్కో బుకింగ్‌కు ఒకే సంప్రదింపు వివరాలను TTD అడుగుతుంది — ఇవి ఉన్న మొదటి యాత్రికుడి వివరాలే ఉపయోగించబడతాయి."
    },
    "pilgrim_details_line": {
       "message": "{age} సం. • {gender} • {idProof}"

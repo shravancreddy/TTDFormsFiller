@@ -37,7 +37,18 @@ any kind. Key updates:
 - **Options menu & fill modes** — right-click the button (or use the ▾ / long-press) for
   a keyboard-reachable menu: fill only empty rows or overwrite, fill the next empty
   pilgrim, fill contact only, pick a saved set, choose a group Seva member, fill-and-
-  continue, or undo the last fill. `Alt`+`A` fills; `Alt`+`Shift`+`A` overwrites.
+  continue, or undo/clear what was filled. `Alt`+`A` fills; `Alt`+`Shift`+`A` overwrites.
+- **Real tab-outs** — after writing a field the extension drives a genuine
+  focus → blur, so the site's own validation re-runs and clears any stale "this
+  field is required" error instead of leaving Continue disabled.
+
+## Where contact details live
+
+TTD asks for one set of contact details per booking, not per person, so they're
+part of the pilgrim record: each pilgrim has a **Contact details for the booking**
+block (email, city, state, country, PIN, gothram). The first pilgrim who has them
+filled in is the one used for the booking — there's no separate global contact to
+keep in sync, and nothing to tick to make it apply.
 
 Motion is skipped automatically when the browser is set to *reduce motion*.
 
@@ -48,10 +59,10 @@ Motion is skipped automatically when the browser is set to *reduce motion*.
 ### Prebuilt bundle (easiest — no repo clone needed)
 
 Download the ready-to-load zip for your browser from the repository root and unzip it —
-you'll get a `TTD-Form-Helper-v1.2.3` folder with a `HOW-TO-LOAD.txt` inside:
+you'll get a `TTD-Form-Helper-v1.2.4` folder with a `HOW-TO-LOAD.txt` inside:
 
-- `TTD-Form-Helper-v1.2.3-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
-- `TTD-Form-Helper-v1.2.3-firefox-unpacked.zip` — Firefox
+- `TTD-Form-Helper-v1.2.4-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
+- `TTD-Form-Helper-v1.2.4-firefox-unpacked.zip` — Firefox
 
 Then follow the steps below, pointing at the unzipped folder. (These bundles are for
 **loading unpacked**; they are not signed store builds.)
@@ -74,7 +85,7 @@ use the unpacked zip above instead (**Load unpacked**). Rebuild both the zips an
 1. Go to `chrome://extensions` (or `edge://extensions`).
 2. Turn on **Developer mode**.
 3. Click **Load unpacked** and pick this `ttd-form-helper` folder (or the unzipped
-   `TTD-Form-Helper-v1.2.3` folder from the prebuilt bundle).
+   `TTD-Form-Helper-v1.2.4` folder from the prebuilt bundle).
 
 ### Firefox
 
@@ -257,7 +268,39 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ## Version history
 
-### 1.2.3 — current
+### 1.2.4 — current
+
+- **Real tab-outs — fixes stale "this field is required" and a disabled Continue.**
+  React does not listen for the `blur` event at all; it wires `onBlur` to the
+  native, bubbling `focusout`. The synthetic `new Event("blur")` this extension
+  dispatched therefore never reached the page's validator, so a field could hold
+  the right value while the site still showed "this field is required" and kept
+  its Continue button disabled — most visibly after clearing a field by hand and
+  re-running the fill. Writes now drive a genuine `focus()` → `blur()` (skipped
+  for comboboxes, which re-open their list on focus), which emits the real
+  focus/focusin/blur/focusout sequence. The value write also rewinds React's
+  private `_valueTracker` so its `onChange` can't be skipped as a no-op change.
+- **Undo / clear filled fields actually works.** The undo log was only recorded
+  while a flag the floating button set was on, so a fill started from the popup
+  logged nothing and "Clear filled fields" reported nothing to clear. Recording
+  is now unconditional, and when there's no usable log (the page re-rendered, or
+  the fill happened in an earlier page load) the action falls back to emptying
+  every text field on the form instead of doing nothing.
+- **"Fill next pilgrim" is context-aware.** It used to always fill `pilgrims[0]`,
+  so clicking it twice just put the same person in another row. It now skips
+  whoever is already on the page — by name, however they got there — and fills
+  the next saved pilgrim into the next empty row, or says so when everyone is
+  already placed.
+- **One place for contact details.** The separate global Contact section and its
+  "also apply to pilgrims" checkbox are gone — two levels of contact details was
+  confusing, and the checkbox was asking about something that should just happen.
+  Contact details (now including gothram) live on the pilgrim, and the booking
+  uses the first pilgrim who has them. Anything saved in the old global contact
+  is migrated onto existing pilgrims on first load, and the derived contact is
+  still written to the same storage key, so backup/restore, the background
+  worker and the content script are unaffected.
+
+### 1.2.3
 
 - **Self-QC now scans the whole form, not just this run's writes** — the previous
   version only marked fields *this fill attempt* wrote to, so a "Fill Contact"

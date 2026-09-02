@@ -4,17 +4,30 @@ import { sendToActiveTab, describeFillResult, describeThrownError } from "../../
 import { t } from "../../shared/i18n.js";
 import { showMessage } from "../toast.js";
 import { createVaultPicker } from "./vaultPicker.js";
-import { validatePilgrim, validateContact } from "../../shared/validation.js";
+import { validatePilgrim } from "../../shared/validation.js";
 import { liveValidate, buildBadge, buildIssueList } from "../../shared/formValidation.js";
 
 const MAX_PILGRIMS = 6;
+// Contact details live on the pilgrim now. There is no separate global contact
+// record to keep in sync — the booking's contact block is filled from the first
+// pilgrim who has these set, which is the one detail TTD asks for per booking
+// rather than per person.
+const CONTACT_FIELDS = ["email", "city", "state", "country", "pincode", "gothram"];
 const emptyPilgrim = () => ({
   name: "", age: "", gender: "", idProof: "Aadhaar Card", idNumber: "",
   visaNumber: "", visaType: "", visaValidityDate: "", passportCountry: "",
-  // Optional per-pilgrim contact override — see the shared Contact section.
-  email: "", city: "", state: "", country: "", pincode: "",
+  email: "", city: "", state: "", country: "", pincode: "", gothram: "",
 });
-const emptyContact = () => ({ email: "", city: "", state: "", country: "", pincode: "", gothram: "" });
+
+/** The booking contact = the first pilgrim who actually has contact details. */
+function deriveContact(pilgrims) {
+  const out = {};
+  for (const field of CONTACT_FIELDS) {
+    const donor = (pilgrims || []).find((p) => p && p[field]);
+    if (donor) out[field] = donor[field];
+  }
+  return out;
+}
 
 export async function renderPilgrimTab(container) {
   container.innerHTML = "";
@@ -23,17 +36,41 @@ export async function renderPilgrimTab(container) {
   container.appendChild(wrap);
 
   let pilgrims = [];
-  let contact = emptyContact();
   let editingId = null;
   let form = emptyPilgrim();
   let sets = [];
 
   const stored = await storageGet([STORAGE_KEYS.pilgrims, STORAGE_KEYS.contact, STORAGE_KEYS.sets]);
   pilgrims = Array.isArray(stored[STORAGE_KEYS.pilgrims]) ? stored[STORAGE_KEYS.pilgrims] : [];
-  contact = { ...emptyContact(), ...(stored[STORAGE_KEYS.contact] || {}) };
   sets = Array.isArray(stored[STORAGE_KEYS.sets]) ? stored[STORAGE_KEYS.sets] : [];
 
-  const persistPilgrims = () => storageSet({ [STORAGE_KEYS.pilgrims]: pilgrims });
+  // The derived contact is still written to its own storage key: the content
+  // script, the background worker's secure read, and backup/restore all read
+  // it, and keeping it in sync means none of them need to know it moved.
+  const persistPilgrims = () =>
+    storageSet({
+      [STORAGE_KEYS.pilgrims]: pilgrims,
+      [STORAGE_KEYS.contact]: deriveContact(pilgrims),
+    });
+
+  // One-time migration off the old separate contact record: anything it still
+  // holds is copied onto pilgrims that don't have their own value yet, so
+  // nobody loses details they saved before contact moved onto the pilgrim.
+  const legacyContact = stored[STORAGE_KEYS.contact] || {};
+  if (pilgrims.length > 0 && CONTACT_FIELDS.some((f) => legacyContact[f])) {
+    let migrated = false;
+    pilgrims = pilgrims.map((p) => {
+      const next = { ...p };
+      for (const f of CONTACT_FIELDS) {
+        if (!next[f] && legacyContact[f]) {
+          next[f] = legacyContact[f];
+          migrated = true;
+        }
+      }
+      return next;
+    });
+    if (migrated) await persistPilgrims();
+  }
 
   function render() {
     wrap.innerHTML = "";
@@ -199,6 +236,12 @@ export async function renderPilgrimTab(container) {
     formHeading.textContent = t(editingId ? "action_edit_pilgrim" : "action_add_pilgrim");
     formSection.appendChild(formHeading);
 
+    // Open the contact block by default for the pilgrim whose details will
+    // actually be used for the booking (the first one), or when editing
+    // someone who already has them — otherwise keep the form compact.
+    const isFirstPilgrim = editingId ? pilgrims[0]?.id === editingId : pilgrims.length === 0;
+    const contactOpen = isFirstPilgrim || CONTACT_FIELDS.some((f) => form[f]);
+
     const formEl = document.createElement("form");
     formEl.innerHTML = `
       <div class="form-row">
@@ -233,7 +276,7 @@ export async function renderPilgrimTab(container) {
           <div class="form-group"><label>${t("field_country")}</label><input name="passportCountry" placeholder="${t("field_country_placeholder")}" /></div>
         </div>
       </div>
-      <details class="pilgrim-contact-details">
+      <details class="pilgrim-contact-details"${contactOpen ? " open" : ""}>
         <summary>${t("pilgrim_contact_heading")}</summary>
         <small class="field-hint">${t("pilgrim_contact_hint")}</small>
         <div class="form-row">
@@ -244,7 +287,10 @@ export async function renderPilgrimTab(container) {
           <div class="form-group"><label>${t("field_state")}</label><input name="state" /></div>
           <div class="form-group"><label>${t("field_country")}</label><input name="country" placeholder="${t("field_country_placeholder")}" /></div>
         </div>
-        <div class="form-group"><label>${t("field_pincode")}</label><input name="pincode" maxlength="6" /></div>
+        <div class="form-row">
+          <div class="form-group"><label>${t("field_pincode")}</label><input name="pincode" maxlength="6" /></div>
+          <div class="form-group"><label>${t("field_gothram")}</label><input name="gothram" /></div>
+        </div>
       </details>
       <div class="form-actions">
         <button type="submit" class="btn-primary">${t(editingId ? "action_update_pilgrim" : "action_add_pilgrim")}</button>
@@ -308,70 +354,6 @@ export async function renderPilgrimTab(container) {
     formSection.appendChild(formEl);
     wrap.appendChild(formSection);
 
-    // Contact
-    const contactCard = document.createElement("section");
-    contactCard.className = "contact-card";
-    contactCard.innerHTML = `<h3>${t("contact_heading")}</h3>`;
-    const contactForm = document.createElement("form");
-    contactForm.innerHTML = `
-      <div class="form-row">
-        <div class="form-group"><label>${t("field_email")}</label><input name="email" type="email" /></div>
-        <div class="form-group"><label>${t("field_city")}</label><input name="city" /></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>${t("field_state")}</label><input name="state" /></div>
-        <div class="form-group"><label>${t("field_country")}</label><input name="country" placeholder="${t("field_country_placeholder")}" /></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>${t("field_pincode")}</label><input name="pincode" maxlength="6" /></div>
-        <div class="form-group"><label>${t("field_gothram")}</label><input name="gothram" /><small class="field-hint">${t("field_gothram_hint")}</small></div>
-      </div>
-      <label class="checkbox-label" style="margin-bottom: 12px;"><input type="checkbox" name="applyToPilgrims" /> ${t("contact_apply_to_pilgrims")}</label>
-      <button type="submit" class="btn-secondary">${t("action_save")}</button>
-    `;
-    for (const [key, val] of Object.entries(contact)) {
-      const field = contactForm.elements[key];
-      if (field) field.value = val ?? "";
-    }
-    const contactValidator = liveValidate(contactForm, (data) => validateContact(data));
-    contactForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const check = contactValidator.revealAll();
-      if (check.errors.length > 0) {
-        showMessage(t("validation_blocked_toast"), "error");
-        return;
-      }
-      const raw = Object.fromEntries(new FormData(contactForm).entries());
-      const applyToPilgrims = !!raw.applyToPilgrims;
-      delete raw.applyToPilgrims;
-      contact = raw;
-      await storageSet({ [STORAGE_KEYS.contact]: contact });
-
-      // Backfill only — never overwrite a pilgrim's own contact override.
-      if (applyToPilgrims && pilgrims.length > 0) {
-        const CONTACT_FIELDS = ["email", "city", "state", "country", "pincode"];
-        let touched = 0;
-        pilgrims = pilgrims.map((p) => {
-          const next = { ...p };
-          let changed = false;
-          for (const f of CONTACT_FIELDS) {
-            if (!next[f] && contact[f]) {
-              next[f] = contact[f];
-              changed = true;
-            }
-          }
-          if (changed) touched++;
-          return next;
-        });
-        if (touched > 0) await persistPilgrims();
-        showMessage(touched > 0 ? t("msg_contact_saved_and_applied", { count: touched }) : t("msg_contact_saved"));
-      } else {
-        showMessage(t("msg_contact_saved"));
-      }
-      render();
-    });
-    contactCard.appendChild(contactForm);
-    wrap.appendChild(contactCard);
   }
 
   async function onFillOne(pilgrim) {
@@ -381,7 +363,7 @@ export async function renderPilgrimTab(container) {
       return;
     }
     try {
-      const response = await sendToActiveTab({ action: "AUTOFILL", data: { pilgrim, contact } });
+      const response = await sendToActiveTab({ action: "AUTOFILL", data: { pilgrim, contact: deriveContact([pilgrim, ...pilgrims]) } });
       const errorMsg = describeFillResult(response, t);
       showMessage(errorMsg || t("msg_filled"), errorMsg ? "error" : "success");
     } catch (err) {
@@ -399,7 +381,7 @@ export async function renderPilgrimTab(container) {
       return;
     }
     try {
-      const response = await sendToActiveTab({ action: "FILL_ALL", data: { pilgrims, contact } });
+      const response = await sendToActiveTab({ action: "FILL_ALL", data: { pilgrims, contact: deriveContact(pilgrims) } });
       const errorMsg = describeFillResult(response, t);
       showMessage(errorMsg || t("msg_all_filled"), errorMsg ? "error" : "success");
     } catch (err) {
