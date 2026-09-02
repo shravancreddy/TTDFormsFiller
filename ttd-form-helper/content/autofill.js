@@ -871,39 +871,91 @@
   };
 
   // ---- Undo the last fill and generalized Continue handling ----
-  // First choice is an exact undo: put back whatever each field held before
-  // the last fill overwrote it. If there's no usable log — the page re-rendered
-  // and replaced those nodes, or the fill happened in an earlier page load —
-  // fall back to emptying every text-ish field on the form, which is what
-  // "clear the fields" is expected to do at that point.
-  const clearFilled = async () => {
-    let restored = 0;
-    for (const [el, prev] of fillLog) {
-      if (el && el.isConnected) {
-        setControlledValue(el, prev);
-        restored++;
+  // Empties one field for real.
+  //
+  // A plain `setControlledValue(el, "")` isn't enough for the form's
+  // React-controlled comboboxes — Gender and ID type are read-only inputs whose
+  // text comes from component state, not from the DOM node. The native write
+  // leaves `el.value === ""`, which matches the target, so the React fallback
+  // in setControlledValue never fires and the component re-renders its old
+  // label straight back. Driving onChange with an empty value explicitly is
+  // what actually clears those.
+  const clearField = (el) => {
+    if (!el) return false;
+    if (el.tagName === "SELECT") {
+      const blank = Array.from(el.options).findIndex((o) => !o.value);
+      el.selectedIndex = blank >= 0 ? blank : -1;
+      dispatchAll(el);
+      dispatchReactOnChange(el, "");
+      return !el.value;
+    }
+    setControlledValue(el, "");
+    dispatchReactOnChange(el, ""); // unconditional: the DOM may already read ""
+    return !el.value;
+  };
+
+  const isClearable = (el) =>
+    el.type !== "file" && el.type !== "checkbox" && el.type !== "radio";
+  const stillFilled = (el) => el.isConnected && !!el.value && !!String(el.value).trim();
+
+  // Undo the last fill *and* empty anything else the form is holding, in one
+  // pass. This used to restore from the undo log and return early, so a value
+  // the log couldn't shift (see clearField) survived the first click and was
+  // only caught by the fallback sweep on the second — hence "clear needs two
+  // clicks". There is no early return now: whatever is still filled at the end
+  // of the pass gets cleared in the same click.
+  // `restore` distinguishes the two callers: the floating button's menu item is
+  // "Undo / clear", so it puts back anything the user had typed before the fill
+  // overwrote it; the panel's button just says "Clear", so it empties
+  // everything and never resurrects an old value.
+  const clearFilled = async ({ restore = true } = {}) => {
+    const restoreTargets = [];
+    if (restore) {
+      for (const [el, prev] of fillLog) {
+        if (el && el.isConnected && prev && String(prev).trim()) restoreTargets.push([el, prev]);
       }
     }
-    fillLog.clear();
-    if (restored > 0) {
-      clearQC();
-      toast("↩ Restored " + restored + " field" + (restored === 1 ? "" : "s") + " to their previous values.", "success");
-      return;
+    const restoredEls = new Set();
+    for (const [el, prev] of restoreTargets) {
+      setControlledValue(el, prev);
+      restoredEls.add(el);
     }
 
-    let cleared = 0;
-    for (const el of collectFormFields()) {
-      if (el.type === "file" || el.type === "checkbox" || el.type === "radio") continue;
-      if (!el.value || !String(el.value).trim()) continue;
-      setControlledValue(el, "");
-      cleared++;
-    }
+    const sweep = () => {
+      let n = 0;
+      for (const el of collectFormFields()) {
+        if (!isClearable(el) || restoredEls.has(el) || !stillFilled(el)) continue;
+        clearField(el);
+        n++;
+      }
+      return n;
+    };
+
+    const cleared = sweep();
+    // React can put a controlled value back on its next render, so give it a
+    // frame and sweep once more — that second pass is what used to require a
+    // second click.
+    await nextFrame();
+    const leftovers = collectFormFields().filter(
+      (el) => isClearable(el) && !restoredEls.has(el) && stillFilled(el)
+    );
+    for (const el of leftovers) clearField(el);
+
+    // Emptied last, not first: every write above runs through
+    // setControlledValue, which records the pre-write value — so clearing the
+    // log any earlier would leave it holding the values just cleared, and the
+    // next click would put them all back.
+    fillLog.clear();
     clearQC();
-    if (cleared === 0) {
+    const restored = restoredEls.size;
+    if (cleared === 0 && restored === 0) {
       toast("Nothing to clear — every field on this form is already empty.", "warn");
       return;
     }
-    toast("🧹 Cleared " + cleared + " field" + (cleared === 1 ? "" : "s") + " on this form.", "success");
+    const parts = [];
+    if (cleared > 0) parts.push("cleared " + cleared + " field" + (cleared === 1 ? "" : "s"));
+    if (restored > 0) parts.push("restored " + restored + " to their previous value" + (restored === 1 ? "" : "s"));
+    toast("🧹 " + parts.join(", ") + ".", "success");
   };
 
   // A Continue/Next/Proceed button, by stable id or button text — but never a
@@ -1055,7 +1107,9 @@
     if (message.action === "CLEAR_FIELDS") {
       (async () => {
         try {
-          await clearFilled();
+          // The panel's button is labelled "Clear", so it empties the form
+          // outright rather than restoring pre-fill values.
+          await clearFilled({ restore: false });
           sendResponse({ status: "success" });
         } catch (err) {
           sendResponse({ status: "error", message: err.toString() });
