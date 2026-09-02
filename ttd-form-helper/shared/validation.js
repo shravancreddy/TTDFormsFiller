@@ -211,6 +211,11 @@ export function validatePilgrim(pilgrim, { requireIdNumber = true } = {}) {
     fields.idNumber = requireIdNumber ? validateAadhaar(pilgrim.idNumber) : { ok: true };
   }
 
+  // Per-pilgrim contact override — entirely optional (see the shared Contact
+  // section), so only checked for format when the pilgrim actually set it.
+  if (pilgrim.email) fields.email = validateEmail(pilgrim.email);
+  if (pilgrim.pincode) fields.pincode = validatePincode(pilgrim.pincode);
+
   return summarise(fields);
 }
 

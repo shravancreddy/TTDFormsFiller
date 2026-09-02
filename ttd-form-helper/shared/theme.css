@@ -156,6 +156,27 @@ button { font-family: inherit; }
 .field-hint { display: block; margin-top: 4px; font-size: 11px; color: var(--text-muted); }
 .field-highlight { border-color: var(--gold) !important; box-shadow: 0 0 0 3px rgba(216, 154, 42, 0.28) !important; }
 
+/* Collapsible optional-field block (e.g. the per-pilgrim contact override). */
+details.pilgrim-contact-details {
+  margin: 10px 0 14px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+}
+details.pilgrim-contact-details > summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  list-style: none;
+}
+details.pilgrim-contact-details > summary::-webkit-details-marker { display: none; }
+details.pilgrim-contact-details > summary::before { content: "▸ "; }
+details.pilgrim-contact-details[open] > summary::before { content: "▾ "; }
+details.pilgrim-contact-details > .field-hint { margin: 4px 0 10px; }
+details.pilgrim-contact-details > .form-row,
+details.pilgrim-contact-details > .form-group { margin-top: 10px; }
+
 .radio-group, .checkbox-group-inline { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; min-height: 36px; }
 .radio-label, .checkbox-label {
   display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text);

@@ -23,6 +23,9 @@
    "action_update_pilgrim": {
       "message": "ಭಕ್ತರನ್ನು ನವೀಕರಿಸಿ"
    },
+   "contact_apply_to_pilgrims": {
+      "message": "ಈ ವಿವರಗಳನ್ನು ಹೊಂದಿರದ ಯಾತ್ರಿಕರಿಗೂ ಭರ್ತಿ ಮಾಡಿ"
+   },
    "contact_gothram": {
       "message": "ಗೋತ್ರ: {gothram}"
    },
@@ -416,6 +419,9 @@
    "msg_contact_saved": {
       "message": "ಸಂಪರ್ಕ ವಿವರಗಳನ್ನು ಉಳಿಸಲಾಗಿದೆ!"
    },
+   "msg_contact_saved_and_applied": {
+      "message": "ಸಂಪರ್ಕ ಉಳಿಸಲಾಗಿದೆ ಮತ್ತು {count} ಯಾತ್ರಿಕರಿಗೆ ಅನ್ವಯಿಸಲಾಗಿದೆ!"
+   },
    "msg_error_autofilling_member": {
       "message": "ಸದಸ್ಯ {n} ಭರ್ತಿ ಮಾಡುವಲ್ಲಿ ದೋಷ."
    },
@@ -532,6 +538,12 @@
    },
    "personal_details_heading": {
       "message": "ವೈಯಕ್ತಿಕ ವಿವರಗಳು"
+   },
+   "pilgrim_contact_heading": {
+      "message": "ಸಂಪರ್ಕ ವಿವರಗಳು (ಐಚ್ಛಿಕ)"
+   },
+   "pilgrim_contact_hint": {
+      "message": "ಕೆಳಗಿನ ಹಂಚಿದ ಸಂಪರ್ಕ ವಿಭಾಗ ಖಾಲಿಯಿದ್ದರೆ, ಫಾರ್ಮ್ ಭರ್ತಿ ಮಾಡಲು ಈ ಯಾತ್ರಿಕರ ವಿವರಗಳನ್ನು ಬಳಸಲಾಗುತ್ತದೆ."
    },
    "pilgrim_details_line": {
       "message": "{age} ವರ್ಷಗಳು • {gender} • {idProof}"

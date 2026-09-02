@@ -8,7 +8,18 @@
   const dispatchAll = (el) => {
     el.dispatchEvent(new Event("input", { bubbles: true }));
     el.dispatchEvent(new Event("change", { bubbles: true }));
-    el.dispatchEvent(new Event("blur", { bubbles: true }));
+    // Deferred one frame ("lightning fast tabout" rather than none at all):
+    // firing `blur` in the very same tick as `input`/`change` can race a
+    // framework's own async state commit, so an on-blur "this field is
+    // required" validator sometimes reads the OLD (empty) value and flags a
+    // field that was, in fact, just filled — most visible when a field is
+    // manually cleared and then re-filled by the extension. A one-frame
+    // defer (~16ms, imperceptible) lets that state settle first.
+    requestAnimationFrame(() => {
+      try {
+        el.dispatchEvent(new Event("blur", { bubbles: true }));
+      } catch {}
+    });
   };
   const norm = (s) => (s ? s.toString().toLowerCase().trim().replace(/\s+/g, " ") : "");
 
@@ -109,14 +120,35 @@
     (document.head || document.documentElement).appendChild(style);
   };
 
-  // The set of fields the *current* fill run wrote to. A plain module-level Set
-  // is safe because only one fill runs at a time (see `globalFilling`).
-  let qcFields = new Set();
-  const beginQCTrack = () => {
-    qcFields = new Set();
-  };
-  const trackQC = (el) => {
-    if (el) qcFields.add(el);
+  // Fields that make up the booking form: any visible, enabled text-ish
+  // input/select/textarea on the page, plus file inputs (which the site often
+  // hides behind a styled upload button, so those skip the visibility check).
+  // This is a *live* scan of the whole page — not a list of fields this run
+  // happened to write to — so a pilgrim row filled by hand, or left over from
+  // an earlier fill, is checked exactly the same as one this run just wrote.
+  const QC_FIELD_SELECTOR =
+    'input:not([type="hidden"]):not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="image"]):not([type="search"]), select, textarea';
+  const isOwnInjectedNode = (el) => !!el.closest('[id^="ttdfh-"]');
+  const collectFormFields = () => {
+    const out = [];
+    const seenRadioNames = new Set();
+    document.querySelectorAll(QC_FIELD_SELECTOR).forEach((el) => {
+      if (isOwnInjectedNode(el)) return;
+      if (el.type === "file") {
+        if (!el.disabled) out.push(el);
+        return;
+      }
+      if (el.disabled) return;
+      if (el.readOnly && !looksLikeCombobox(el)) return; // static/derived, not user-facing
+      if (!isVisible(el)) return; // not on the currently active step
+      if (el.type === "radio") {
+        const key = el.name || el;
+        if (seenRadioNames.has(key)) return; // one representative per radio group
+        seenRadioNames.add(key);
+      }
+      out.push(el);
+    });
+    return out;
   };
 
   const qcFieldStatus = (el) => {
@@ -155,34 +187,51 @@
     }
   };
 
-  // Marks every tracked field green (has a value) or red (still blank), drops a
-  // small colored dot at its corner, and shows a one-line pass/fail summary.
-  // Marks persist for a while so the user can spot problem fields at a glance,
-  // then clear automatically (or immediately on the next fill).
+  // Scans every field currently on the page, marks each green (has a value)
+  // or red (still blank) with a persistent ring + small dot, and shows a
+  // one-line pass/fail summary. Checkboxes and unselected radio groups are
+  // credited when set but never red-flagged when not — "unchecked" is a
+  // legitimate final state for most of those (optional multi-selects, etc.)
+  // and flagging them all would just be noise. Marks persist for a while so
+  // the user can spot problem fields at a glance, then clear automatically
+  // (or immediately on the next fill).
   const runFieldQC = () => {
     ensureQCStyles();
     clearQC();
 
+    const fields = collectFormFields();
     const entries = [];
+    const marked = [];
     let okCount = 0;
     const missingLabels = [];
     let firstMissingEl = null;
 
-    for (const el of qcFields) {
-      const status = qcFieldStatus(el);
-      if (status === null) continue;
-      el.classList.add(status ? "ttdfh-qc-ok" : "ttdfh-qc-missing");
-      if (status) okCount++;
+    const mark = (el, ok) => {
+      el.classList.add(ok ? "ttdfh-qc-ok" : "ttdfh-qc-missing");
+      marked.push(el);
+      if (ok) okCount++;
       else {
         missingLabels.push(qcFieldLabel(el));
         if (!firstMissingEl) firstMissingEl = el;
       }
       if (isOnScreen(el)) {
         const dot = document.createElement("div");
-        dot.className = "ttdfh-qc-dot " + (status ? "ttdfh-qc-dot-ok" : "ttdfh-qc-dot-missing");
+        dot.className = "ttdfh-qc-dot " + (ok ? "ttdfh-qc-dot-ok" : "ttdfh-qc-dot-missing");
         document.body.appendChild(dot);
         entries.push({ el, dot });
       }
+    };
+
+    for (const el of fields) {
+      if (el.type === "checkbox") {
+        if (el.checked) mark(el, true); // unchecked: optional, not flagged
+        continue;
+      }
+      if (el.type === "radio") {
+        if (qcFieldStatus(el)) mark(el, true); // no selection: optional, not flagged
+        continue;
+      }
+      mark(el, qcFieldStatus(el));
     }
 
     const reposition = () => {
@@ -205,7 +254,7 @@
       window.removeEventListener("scroll", reposition, true);
       window.removeEventListener("resize", reposition);
       entries.forEach(({ dot }) => dot.remove());
-      qcFields.forEach((el) => el.classList.remove("ttdfh-qc-ok", "ttdfh-qc-missing"));
+      marked.forEach((el) => el.classList.remove("ttdfh-qc-ok", "ttdfh-qc-missing"));
     };
     qcCleanup = cleanup;
     setTimeout(() => {
@@ -218,10 +267,10 @@
     const total = okCount + missingLabels.length;
     if (total > 0) {
       if (missingLabels.length === 0) {
-        toast(`✅ Self-QC: all ${okCount} field${okCount === 1 ? "" : "s"} filled.`, "success");
+        toast(`✅ Self-QC: all ${okCount} field${okCount === 1 ? "" : "s"} on this page are filled.`, "success");
       } else {
         const shown = missingLabels.slice(0, 4).join(", ") + (missingLabels.length > 4 ? "…" : "");
-        toast(`⚠ Self-QC: ${okCount}/${total} filled. Missing: ${shown}`, "warn");
+        toast(`⚠ Self-QC: ${okCount}/${total} fields filled. Blank: ${shown}`, "warn");
         if (firstMissingEl) {
           try {
             firstMissingEl.scrollIntoView({ block: "center", behavior: prefersReducedMotion() ? "auto" : "smooth" });
@@ -294,7 +343,6 @@
   const setControlledValue = (el, value) => {
     if (!el) return false;
     recordPrev(el);
-    trackQC(el);
     const target = value == null ? "" : String(value);
     const desc = Object.getOwnPropertyDescriptor(el.constructor.prototype, "value");
     if (desc && desc.set) desc.set.call(el, target);
@@ -335,7 +383,6 @@
   const selectFromDropdown = async (el, label) => {
     if (!el || !label) return false;
     recordPrev(el);
-    trackQC(el);
     if (el.value && el.value.trim().toLowerCase() === label.trim().toLowerCase()) return true;
 
     const setViaReactProps = (node, val) => {
@@ -449,6 +496,11 @@
   };
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  // A single paint's worth of yield (~16ms) — far cheaper than a fixed
+  // 100ms+ sleep, but still gives the page's own React reconciliation a
+  // chance to run before the next synchronous write, which a zero-wait loop
+  // can race (and, on this site, occasionally lose — see fillPilgrim).
+  const nextFrame = () => new Promise((r) => requestAnimationFrame(() => r()));
 
   const findByNameOrLabel = (name, labelText) => {
     let el = document.querySelector(`input[name="${name}"]`);
@@ -478,6 +530,23 @@
       if (nodes.length > 0) return Array.from(nodes);
     }
     return [];
+  };
+
+  // If the shared contact block is missing a field, fall back to that same
+  // field on the first pilgrim in this run that set it (the optional
+  // per-pilgrim contact override on the Add Pilgrim form) — so a pilgrim's
+  // own email/city/state/country/pincode still reaches the TTD form even
+  // when the user never filled in the shared Contact section.
+  const CONTACT_FALLBACK_FIELDS = ["email", "city", "state", "country", "pincode"];
+  const resolveEffectiveContact = (contact, pilgrims) => {
+    const base = { ...(contact || {}) };
+    const donor = (pilgrims || []).find((p) => p && CONTACT_FALLBACK_FIELDS.some((f) => p[f]));
+    if (donor) {
+      for (const f of CONTACT_FALLBACK_FIELDS) {
+        if (!base[f] && donor[f]) base[f] = donor[f];
+      }
+    }
+    return base;
   };
 
   const fillContact = async (contact) => {
@@ -535,15 +604,19 @@
   const fillPilgrim = async (pilgrim, index, contactCountry) => {
     const byIndex = (name) => document.querySelectorAll(`input[name="${name}"]`)[index];
 
-    // Plain inputs settle synchronously on the write itself (setControlledValue
-    // already dispatches input/change/blur before returning), so back-to-back
-    // writes don't need a sleep between them — only the dropdown/popup flows
-    // below do, because those wait on the page's own async rendering.
+    // Plain inputs write and dispatch their events synchronously, so a fixed
+    // 100ms+ pause between them was dead time — but a *zero*-wait loop can
+    // still race a re-render the page's own listeners trigger off that
+    // dispatch, silently losing a write. A single-frame yield (~16ms) splits
+    // the difference: still 6-9x faster than the old fixed sleeps, but gives
+    // the page a paint cycle between writes so nothing gets dropped.
     const nameEl = nthByNames(index, "name", "fname");
     if (nameEl) setNativeValue(nameEl, pilgrim.name);
+    await nextFrame();
 
     const ageEl = byIndex("age");
     if (ageEl) setNativeValue(ageEl, pilgrim.age);
+    await nextFrame();
 
     const genderEl = byIndex("gender");
     if (genderEl) await selectFromDropdown(genderEl, pilgrim.gender);
@@ -561,6 +634,7 @@
       if (idNumberEl.disabled) idNumberEl.disabled = false;
       setNativeValue(idNumberEl, pilgrim.idNumber);
     }
+    await nextFrame();
 
     if (norm(pilgrim.idProof) === "passport") {
       // Wait for the modal to be present *and* mounted (a field rendered),
@@ -714,6 +788,7 @@
 
   const fillAllPilgrims = async (pilgrims, contact, opts = {}) => {
     const { onProgress, overwrite = false } = opts;
+    contact = resolveEffectiveContact(contact, pilgrims);
     let nameInputs = Array.from(document.querySelectorAll('input[name="name"]'));
     if (nameInputs.length === 0) nameInputs = Array.from(document.querySelectorAll('input[name="fname"]'));
     if (nameInputs.length === 0) return { status: "error", message: "Name inputs not found" };
@@ -736,10 +811,10 @@
       if (typeof onProgress === "function") onProgress(i + 1, count);
       announce("Filling pilgrim " + (i + 1) + " of " + count);
       await fillPilgrim(pilgrims[i], slots[i], contact ? contact.country : undefined);
-      // A short yield (not a fixed 150ms) — each pilgrim row is a static,
-      // already-rendered field set, so there's nothing to wait for beyond
-      // giving the page's own listeners a tick to run between rows.
-      await sleep(30);
+      // A single-frame yield (not a fixed 150ms) — each pilgrim row is a
+      // static, already-rendered field set, so there's nothing to wait for
+      // beyond giving the page's own listeners one paint cycle between rows.
+      await nextFrame();
     }
     if (contact) await fillContact(contact);
     return { status: "success", filled: count };
@@ -810,7 +885,6 @@
         return true;
       }
       globalFilling = true;
-      beginQCTrack();
       const original = sendResponse;
       // Clear the lock whenever the handler responds (success or error), with a
       // safety timeout in case a handler never replies.
@@ -830,7 +904,8 @@
     }
 
     if (message.action === "AUTOFILL") {
-      const { pilgrim, contact } = message.data;
+      const { pilgrim } = message.data;
+      const contact = resolveEffectiveContact(message.data.contact, [pilgrim]);
       (async () => {
         try {
           let nameInputs = Array.from(document.querySelectorAll('input[name="name"]'));
@@ -963,7 +1038,6 @@
     const checkRadioGroupByValue = (name, value) => {
       if (!value) return;
       const group = scope.querySelectorAll(`input[name="${name}"]`);
-      if (group.length) trackQC(group[0]); // one representative field per radio group
       group.forEach((el) => {
         if (el.value.toLowerCase() === value.toLowerCase()) {
           el.checked = true;
@@ -1316,7 +1390,6 @@
     };
     const setFileInput = async (input, fileMeta) => {
       if (!input || !fileMeta || !fileMeta.data) return false;
-      trackQC(input);
       try {
         applyFile(input, fileMeta);
         await sleep(80);
@@ -1732,7 +1805,6 @@
       setBusy(true);
       globalFilling = true;
       if (log) beginLog();
-      if (qc) beginQCTrack();
       try {
         await fn();
         if (qc) runFieldQC();
@@ -1771,7 +1843,7 @@
     async function runSinglePilgrim() {
       const stored = await loadSavedData();
       const pilgrims = stored.pilgrims || [];
-      const contact = stored.contact || {};
+      const contact = resolveEffectiveContact(stored.contact || {}, pilgrims);
       if (!pilgrims.length) {
         showToast("No pilgrims saved — open the extension to add them.", "warn");
         return;
@@ -1791,7 +1863,7 @@
 
     async function runContactOnly() {
       const stored = await loadSavedData();
-      await fillContact(stored.contact || {});
+      await fillContact(resolveEffectiveContact(stored.contact || {}, stored.pilgrims || []));
       showToast("✉️ Contact details filled.", "success");
     }
 

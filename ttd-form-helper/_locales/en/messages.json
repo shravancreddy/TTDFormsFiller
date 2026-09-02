@@ -26,6 +26,9 @@
    "action_update_pilgrim": {
       "message": "Update Pilgrim"
    },
+   "contact_apply_to_pilgrims": {
+      "message": "Also fill in any saved pilgrims that are missing these details"
+   },
    "contact_gothram": {
       "message": "Gothram: {gothram}"
    },
@@ -457,6 +460,9 @@
    },
    "msg_contact_saved": {
       "message": "Contact details saved!"
+   },
+   "msg_contact_saved_and_applied": {
+      "message": "Contact saved and applied to {count} pilgrim(s)!"
    },
    "msg_error_autofilling_member": {
       "message": "Error autofilling Member {n}."
@@ -916,6 +922,12 @@
    },
    "personal_details_heading": {
       "message": "Personal Details"
+   },
+   "pilgrim_contact_heading": {
+      "message": "Contact details (optional)"
+   },
+   "pilgrim_contact_hint": {
+      "message": "Leave blank to use the shared Contact section below. If that's also blank, this pilgrim's details are used as a fallback when filling the form."
    },
    "pilgrim_details_line": {
       "message": "{age} yrs • {gender} • {idProof}"
