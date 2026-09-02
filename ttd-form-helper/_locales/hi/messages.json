@@ -23,9 +23,6 @@
    "action_update_pilgrim": {
       "message": "तीर्थयात्री अपडेट करें"
    },
-   "contact_apply_to_pilgrims": {
-      "message": "इन विवरणों को उन तीर्थयात्रियों में भी भरें जिनमें ये मौजूद नहीं हैं"
-   },
    "contact_gothram": {
       "message": "गोत्र: {gothram}"
    },
@@ -419,9 +416,6 @@
    "msg_contact_saved": {
       "message": "संपर्क विवरण सहेजे गए!"
    },
-   "msg_contact_saved_and_applied": {
-      "message": "संपर्क सहेजा गया और {count} तीर्थयात्री(यों) पर लागू किया गया!"
-   },
    "msg_error_autofilling_member": {
       "message": "सदस्य {n} भरने में त्रुटि।"
    },
@@ -540,10 +534,10 @@
       "message": "व्यक्तिगत विवरण"
    },
    "pilgrim_contact_heading": {
-      "message": "संपर्क विवरण (वैकल्पिक)"
+      "message": "बुकिंग के लिए संपर्क विवरण"
    },
    "pilgrim_contact_hint": {
-      "message": "यदि नीचे दिया गया साझा संपर्क अनुभाग खाली है, तो फ़ॉर्म भरने के लिए इस तीर्थयात्री के विवरण का उपयोग किया जाएगा।"
+      "message": "TTD प्रति बुकिंग एक ही संपर्क विवरण मांगता है — जिस पहले तीर्थयात्री के पास ये होंगे, उसी का उपयोग किया जाएगा।"
    },
    "pilgrim_details_line": {
       "message": "{age} वर्ष • {gender} • {idProof}"
