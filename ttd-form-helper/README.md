@@ -43,10 +43,10 @@ Motion is skipped automatically when the browser is set to *reduce motion*.
 ### Prebuilt bundle (easiest — no repo clone needed)
 
 Download the ready-to-load zip for your browser from the repository root and unzip it —
-you'll get a `TTD-Form-Helper-v1.2.0` folder with a `HOW-TO-LOAD.txt` inside:
+you'll get a `TTD-Form-Helper-v1.2.1` folder with a `HOW-TO-LOAD.txt` inside:
 
-- `TTD-Form-Helper-v1.2.0-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
-- `TTD-Form-Helper-v1.2.0-firefox-unpacked.zip` — Firefox
+- `TTD-Form-Helper-v1.2.1-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
+- `TTD-Form-Helper-v1.2.1-firefox-unpacked.zip` — Firefox
 
 Then follow the steps below, pointing at the unzipped folder. (These bundles are for
 **loading unpacked**; they are not signed store builds.)
@@ -69,7 +69,7 @@ use the unpacked zip above instead (**Load unpacked**). Rebuild both the zips an
 1. Go to `chrome://extensions` (or `edge://extensions`).
 2. Turn on **Developer mode**.
 3. Click **Load unpacked** and pick this `ttd-form-helper` folder (or the unzipped
-   `TTD-Form-Helper-v1.2.0` folder from the prebuilt bundle).
+   `TTD-Form-Helper-v1.2.1` folder from the prebuilt bundle).
 
 ### Firefox
 
@@ -252,7 +252,15 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ## Version history
 
-### 1.2.0 — current
+### 1.2.1 — current
+
+- **Version bump only** — the Chrome Web Store rejects an upload whose
+  `manifest.json` version is not strictly greater than the currently published
+  version. 1.2.0 was already published, so this release only bumps `version` to
+  `1.2.1` (in both `manifest.json` and `manifest.firefox.json`) to unblock the
+  next upload; no functional changes.
+
+### 1.2.0
 
 - **Ship fresh unpacked bundles** — rebuilt the Chrome/Edge/Brave/Opera and Firefox
   zips under the `v1.2.0` naming and dropped the stale root zip that no longer
