@@ -1,6 +1,7 @@
 """Generates TTD Form Helper app icons (rounded-square gradient badge with a
 flat stepped-gopuram silhouette + a small check badge) at all required sizes.
-The 128 px icons follow the Chrome Web Store layout: 96x96 art + 16 px padding.
+The 128 px badge follows the Chrome Web Store layout: 96x96 art + 16 px padding.
+icon-128.png itself is the text icon: see tools/render-store-icon.js.
 Run once; output PNGs are committed, this script is not shipped."""
 import math
 from PIL import Image, ImageDraw
@@ -162,8 +163,10 @@ def store_icon(master):
 
 def main():
     master = build_master()
-    # The 128 px icon is the one the Chrome Web Store checks (96 + 16 px padding).
-    for name in ("icon-128.png", "chrome_store_icon_128_clean.png"):
+    # icon-128.png (the manifest / Web Store icon) is the TEXT icon now, rendered
+    # from icon-text-store.html by tools/render-store-icon.js — never written here.
+    # The gopuram badge is still produced in the same store layout (96 + 16 px).
+    for name in ("chrome_store_icon_128_clean.png",):
         store_icon(master).save(name)
         print("wrote", name, "(96x96 art + 16 px transparent padding)")
     # Toolbar sizes stay full-bleed: at 16-48 px every pixel of badge counts.
