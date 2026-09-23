@@ -93,10 +93,10 @@ Motion is skipped automatically when the browser is set to *reduce motion*.
 ### Prebuilt bundle (easiest — no repo clone needed)
 
 Download the ready-to-load zip for your browser from the repository root and unzip it —
-you'll get a `TTD-Form-Helper-v1.4.1` folder with a `HOW-TO-LOAD.txt` inside:
+you'll get a `TTD-Form-Helper-v1.4.2` folder with a `HOW-TO-LOAD.txt` inside:
 
-- `TTD-Form-Helper-v1.4.1-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
-- `TTD-Form-Helper-v1.4.1-firefox-unpacked.zip` — Firefox
+- `TTD-Form-Helper-v1.4.2-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
+- `TTD-Form-Helper-v1.4.2-firefox-unpacked.zip` — Firefox
 
 Then follow the steps below, pointing at the unzipped folder. (These bundles are for
 **loading unpacked**; they are not signed store builds.)
@@ -125,7 +125,7 @@ use the unpacked zip above instead (**Load unpacked**). Rebuild both the zips an
 1. Go to `chrome://extensions` (or `edge://extensions`).
 2. Turn on **Developer mode**.
 3. Click **Load unpacked** and pick this `ttd-form-helper` folder (or the unzipped
-   `TTD-Form-Helper-v1.4.1` folder from the prebuilt bundle).
+   `TTD-Form-Helper-v1.4.2` folder from the prebuilt bundle).
 
 ### Firefox
 
@@ -324,7 +324,19 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ## Version history
 
-### 1.4.1 — current
+### 1.4.2 — current
+
+- **The 128 px extension / Web Store icon now spells out what the extension
+  does**, in words rather than symbols: *TTD Form Helper — auto-fill bookings ·
+  Fills pilgrim details · Darshan, Seva, Srivani · Senior Citizen booking ·
+  Uploads age proof · Checks Aadhaar & age · Data stays local.* It keeps the
+  store layout: 96×96 art in 16 px of transparent padding, PNG, legible on light
+  and dark backgrounds. The source is `icons/icon-text-store.html`. Re-render it
+  with `node tools/render-store-icon.js`, which fails if any line no longer
+  fits. The 16/32/48 px toolbar icons keep the gopuram badge, since text cannot
+  be read at those sizes.
+
+### 1.4.1
 
 - **Store-compliant 128 px icon.** The Chrome Web Store wants the 128×128 icon
   to be 96×96 art centred in 16 px of transparent padding. Ours filled the whole
