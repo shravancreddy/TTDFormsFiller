@@ -12,7 +12,9 @@ import { api } from "./shared/browser.js";
 import { secureGet, getVaultState } from "./shared/secureStore.js";
 
 const ALLOWED_ORIGINS = ["https://tirupatibalaji.ap.gov.in", "https://ttdevasthanams.ap.gov.in"];
-const ALLOWED_KEYS = ["pilgrims", "contact"];
+// seniorProof is the Senior Citizen age proof (an Aadhaar scan) the on-page
+// button attaches to the PLD upload field.
+const ALLOWED_KEYS = ["pilgrims", "contact", "seniorProof"];
 
 // The UI runs in the side panel rather than a popup: a popup closes the moment
 // you click anything outside it, which made copying details in from another
@@ -72,7 +74,7 @@ api.runtime.onMessage.addListener((message, sender, sendResponse) => {
         sendResponse({ ok: false, error: "VAULT_LOCKED" });
         return;
       }
-      // Only ever hand back the two booking keys, whatever was asked for.
+      // Only ever hand back the booking keys, whatever was asked for.
       const keys = (message.keys || []).filter((k) => ALLOWED_KEYS.includes(k));
       const data = await secureGet(keys);
       sendResponse({ ok: true, data });

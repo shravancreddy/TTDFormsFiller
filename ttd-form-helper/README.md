@@ -4,7 +4,8 @@ A free browser extension that fills your saved details into TTD (Tirumala Tirupa
 Devasthanams) Darshan, Srivari Seva and Srivani booking forms.
 
 **Everything is stored only in your own browser.** There is no server, no account,
-no sync and no analytics. Nothing is ever uploaded. Your details are typed into the
+no sync and no analytics. Nothing is ever uploaded to us. Your details (and, for Senior
+Citizen bookings, the age-proof file) are put into the
 TTD page only at the moment you click Fill.
 
 This is an independent tool. It is not affiliated with or endorsed by TTD, it never
@@ -92,10 +93,10 @@ Motion is skipped automatically when the browser is set to *reduce motion*.
 ### Prebuilt bundle (easiest — no repo clone needed)
 
 Download the ready-to-load zip for your browser from the repository root and unzip it —
-you'll get a `TTD-Form-Helper-v1.3.1` folder with a `HOW-TO-LOAD.txt` inside:
+you'll get a `TTD-Form-Helper-v1.4.0` folder with a `HOW-TO-LOAD.txt` inside:
 
-- `TTD-Form-Helper-v1.3.1-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
-- `TTD-Form-Helper-v1.3.1-firefox-unpacked.zip` — Firefox
+- `TTD-Form-Helper-v1.4.0-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
+- `TTD-Form-Helper-v1.4.0-firefox-unpacked.zip` — Firefox
 
 Then follow the steps below, pointing at the unzipped folder. (These bundles are for
 **loading unpacked**; they are not signed store builds.)
@@ -124,7 +125,7 @@ use the unpacked zip above instead (**Load unpacked**). Rebuild both the zips an
 1. Go to `chrome://extensions` (or `edge://extensions`).
 2. Turn on **Developer mode**.
 3. Click **Load unpacked** and pick this `ttd-form-helper` folder (or the unzipped
-   `TTD-Form-Helper-v1.3.1` folder from the prebuilt bundle).
+   `TTD-Form-Helper-v1.4.0` folder from the prebuilt bundle).
 
 ### Firefox
 
@@ -323,7 +324,34 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ## Version history
 
-### 1.3.1 — current
+### 1.4.0 — current
+
+- **Senior Citizen darshan (TTD's PLD flow).** A new 👴 **Senior Citizen** tab
+  holds the one thing this category needs that no other does: the senior
+  citizen's **Aadhaar age proof** (PDF, PNG or JPEG, at most 1 MB, TTD's own
+  limit). The file is checked by its content, not its name, and is stored like
+  every other personal record: in this browser only, and encrypted when at-rest
+  encryption is on.
+- **One click fills the pilgrim-details page and attaches the proof.** On
+  `/pld/…` pages the floating button becomes **Fill Senior Citizen**. It fills
+  the first two booking pilgrims (the senior citizen, then their spouse; TTD
+  allows no one else) plus the contact block, and puts the saved file on the
+  page's **Upload Document** field. The page's own handler then shows the file
+  name and enables Continue. A pilgrim-1 age that the slot step has already
+  locked is left alone.
+- **It says what it could not do.** Warnings cover: a first pilgrim under 65, more
+  than two pilgrims in the booking, no proof saved, a proof over 1 MB, or a file
+  that did not attach. **Fill & Continue** will not press Continue while the proof
+  is missing or failed to attach.
+- The side panel's tab sends `FILL_SENIOR`. The background worker may now hand
+  `seniorProof`, decrypted, to the TTD page, as it already does for pilgrims.
+  Backups include it.
+- `tests/senior-citizen.test.js` (repository root, outside the packaged folder)
+  loads the unpacked extension in Chromium against a **real React 18** stand-in
+  for the PLD page. That is how it proves the file reaches the page's React
+  `onChange` from the content script's isolated world.
+
+### 1.3.1
 
 - **Fill actions fit on one row.** The four buttons were a 2x2 grid until the
   panel was dragged past ~520px. They're now a single row of four at any width
@@ -508,7 +536,8 @@ manifest.json          Chrome / Edge / Safari
 manifest.firefox.json  Firefox variant (background.scripts)
 background.js          Serves decrypted data to the on-page Fill button when locked
 content/autofill.js    The actual form-filling logic, injected on TTD pages
-popup/                 Toolbar popup: the four booking tabs
+                       (incl. Senior Citizen: pilgrims + age-proof upload)
+popup/                 Side panel: the five booking tabs (Pilgrim, Seva, Group, Srivani, Senior Citizen)
 options/               Settings: saved pilgrims, sets, tabs, backup, security
 shared/                Storage, crypto, validation, i18n, reference data
 _locales/              English, Hindi, Kannada, Malayalam, Tamil, Telugu

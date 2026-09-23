@@ -16,6 +16,7 @@ const TAB_DEFS = [
   { id: "seva", icon: "🙏", labelKey: "tab_seva" },
   { id: "group", icon: "👥", labelKey: "tab_seva_group" },
   { id: "srivani", icon: "🪔", labelKey: "tab_srivani" },
+  { id: "senior", icon: "👴", labelKey: "tab_senior" },
 ];
 const DEFAULT_TAB_ORDER = TAB_DEFS.map((d) => d.id);
 
@@ -510,7 +511,7 @@ async function renderTabsScreen(main) {
 const BACKUP_KEYS = [
   STORAGE_KEYS.pilgrims, STORAGE_KEYS.contact, STORAGE_KEYS.vault, STORAGE_KEYS.sets,
   STORAGE_KEYS.sevakData, STORAGE_KEYS.groupSevaData, STORAGE_KEYS.groupVisibleCount,
-  STORAGE_KEYS.srivaniPeople, STORAGE_KEYS.tabOrder, STORAGE_KEYS.hiddenTabs,
+  STORAGE_KEYS.srivaniPeople, STORAGE_KEYS.seniorProof, STORAGE_KEYS.tabOrder, STORAGE_KEYS.hiddenTabs,
   STORAGE_KEYS.theme, STORAGE_KEYS.locale,
 ];
 

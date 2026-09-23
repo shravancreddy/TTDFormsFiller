@@ -868,5 +868,8 @@
    },
    "yes_label": {
       "message": "हाँ"
+   },
+   "tab_senior": {
+      "message": "👴 वरिष्ठ नागरिक"
    }
 }

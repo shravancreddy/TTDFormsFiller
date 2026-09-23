@@ -7,12 +7,14 @@ import { renderPilgrimTab } from "./tabs/pilgrimTab.js";
 import { renderSevaTab } from "./tabs/sevaTab.js";
 import { renderGroupTab } from "./tabs/groupTab.js";
 import { renderSrivaniTab } from "./tabs/srivaniTab.js";
+import { renderSeniorTab } from "./tabs/seniorTab.js";
 
 const TAB_DEFS = [
   { id: "pilgrim", icon: "🛕", labelKey: "tab_pilgrim", render: renderPilgrimTab },
   { id: "seva", icon: "🙏", labelKey: "tab_seva", render: renderSevaTab },
   { id: "group", icon: "👥", labelKey: "tab_seva_group", render: renderGroupTab },
   { id: "srivani", icon: "🪔", labelKey: "tab_srivani", render: renderSrivaniTab },
+  { id: "senior", icon: "👴", labelKey: "tab_senior", render: renderSeniorTab },
 ];
 const DEFAULT_ORDER = TAB_DEFS.map((d) => d.id);
 
