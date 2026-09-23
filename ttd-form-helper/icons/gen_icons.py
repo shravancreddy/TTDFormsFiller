@@ -1,5 +1,6 @@
 """Generates TTD Form Helper app icons (rounded-square gradient badge with a
 flat stepped-gopuram silhouette + a small check badge) at all required sizes.
+The 128 px icons follow the Chrome Web Store layout: 96x96 art + 16 px padding.
 Run once; output PNGs are committed, this script is not shipped."""
 import math
 from PIL import Image, ImageDraw
@@ -136,11 +137,37 @@ def build_master():
     return canvas
 
 
+def store_icon(master):
+    """128x128 icon laid out the way the Chrome Web Store asks for it: the art at
+    96x96, centred, with 16 px of transparent padding on every side. The padding
+    carries only a soft drop shadow, which the store guidelines allow, so the
+    badge separates from both light and dark page backgrounds.
+    https://developer.chrome.com/docs/webstore/images#icon-size"""
+    from PIL import ImageFilter
+    art, pad, size = 96, 16, 128
+    big = size * SS
+    art_big = master.resize((art * SS, art * SS), Image.LANCZOS)
+    alpha = art_big.split()[3]
+    shadow = Image.new("RGBA", (big, big), (0, 0, 0, 0))
+    shadow_alpha = Image.new("L", (big, big), 0)
+    shadow_alpha.paste(alpha.point(lambda a: a * 0.32), (pad * SS, pad * SS + 2 * SS))
+    shadow.putalpha(shadow_alpha.filter(ImageFilter.GaussianBlur(3 * SS)))
+    out = Image.new("RGBA", (big, big), (0, 0, 0, 0))
+    out = Image.alpha_composite(out, shadow)
+    layer = Image.new("RGBA", (big, big), (0, 0, 0, 0))
+    layer.paste(art_big, (pad * SS, pad * SS), art_big)
+    out = Image.alpha_composite(out, layer)
+    return out.resize((size, size), Image.LANCZOS)
+
+
 def main():
     master = build_master()
+    # The 128 px icon is the one the Chrome Web Store checks (96 + 16 px padding).
+    for name in ("icon-128.png", "chrome_store_icon_128_clean.png"):
+        store_icon(master).save(name)
+        print("wrote", name, "(96x96 art + 16 px transparent padding)")
+    # Toolbar sizes stay full-bleed: at 16-48 px every pixel of badge counts.
     for name, size in [
-        ("icon-128.png", 128),
-        ("chrome_store_icon_128_clean.png", 128),
         ("icon-48.png", 48),
         ("icon-32.png", 32),
         ("icon-16.png", 16),
