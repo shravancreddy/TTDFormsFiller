@@ -93,10 +93,10 @@ Motion is skipped automatically when the browser is set to *reduce motion*.
 ### Prebuilt bundle (easiest — no repo clone needed)
 
 Download the ready-to-load zip for your browser from the repository root and unzip it —
-you'll get a `TTD-Form-Helper-v1.4.0` folder with a `HOW-TO-LOAD.txt` inside:
+you'll get a `TTD-Form-Helper-v1.4.1` folder with a `HOW-TO-LOAD.txt` inside:
 
-- `TTD-Form-Helper-v1.4.0-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
-- `TTD-Form-Helper-v1.4.0-firefox-unpacked.zip` — Firefox
+- `TTD-Form-Helper-v1.4.1-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
+- `TTD-Form-Helper-v1.4.1-firefox-unpacked.zip` — Firefox
 
 Then follow the steps below, pointing at the unzipped folder. (These bundles are for
 **loading unpacked**; they are not signed store builds.)
@@ -125,7 +125,7 @@ use the unpacked zip above instead (**Load unpacked**). Rebuild both the zips an
 1. Go to `chrome://extensions` (or `edge://extensions`).
 2. Turn on **Developer mode**.
 3. Click **Load unpacked** and pick this `ttd-form-helper` folder (or the unzipped
-   `TTD-Form-Helper-v1.4.0` folder from the prebuilt bundle).
+   `TTD-Form-Helper-v1.4.1` folder from the prebuilt bundle).
 
 ### Firefox
 
@@ -324,7 +324,17 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ## Version history
 
-### 1.4.0 — current
+### 1.4.1 — current
+
+- **Store-compliant 128 px icon.** The Chrome Web Store wants the 128×128 icon
+  to be 96×96 art centred in 16 px of transparent padding. Ours filled the whole
+  canvas edge to edge. `icons/icon-128.png` (the manifest icon, and so the one in
+  the upload ZIP) and `chrome_store_icon_128_clean.png` are now drawn that way by
+  `icons/gen_icons.py`. The padding holds only a soft drop shadow, so the badge
+  stands out on both light and dark backgrounds. The 16/32/48 px toolbar icons
+  are unchanged.
+
+### 1.4.0
 
 - **Senior Citizen darshan (TTD's PLD flow).** A new 👴 **Senior Citizen** tab
   holds the one thing this category needs that no other does: the senior
