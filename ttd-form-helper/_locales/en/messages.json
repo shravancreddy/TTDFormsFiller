@@ -1288,5 +1288,89 @@
    },
    "yes_label": {
       "message": "Yes"
+   },
+   "tab_senior": {
+      "message": "👴 Senior Citizen"
+   },
+   "senior_fill": {
+      "message": "👴 Fill senior citizen + spouse, attach age proof"
+   },
+   "senior_fill_continue": {
+      "message": "⏭️ Fill, attach & Continue"
+   },
+   "senior_check_title": {
+      "message": "Check before filling"
+   },
+   "senior_need_pilgrim": {
+      "message": "Add the senior citizen in the 🛕 Pilgrim tab first. They are the first pilgrim of this booking."
+   },
+   "senior_age_too_low": {
+      "message": "{name} is {age}. TTD needs the first pilgrim to be {min} or older."
+   },
+   "senior_too_many": {
+      "message": "{count} pilgrims are in this booking, but this category takes 2: the senior citizen and their spouse. Only the first two are filled."
+   },
+   "senior_no_proof": {
+      "message": "No age proof saved yet. TTD requires the Aadhaar of the senior citizen as a PDF, PNG or JPEG of at most 1 MB."
+   },
+   "senior_pilgrims_heading": {
+      "message": "Who is booked"
+   },
+   "senior_no_pilgrims": {
+      "message": "No pilgrims in this booking yet."
+   },
+   "senior_role_senior": {
+      "message": "senior citizen (65+)"
+   },
+   "senior_role_spouse": {
+      "message": "spouse"
+   },
+   "senior_pilgrims_hint": {
+      "message": "These come from the 🛕 Pilgrim tab's booking list, in its order: the first is the senior citizen and the second, if any, is their spouse."
+   },
+   "senior_proof_heading": {
+      "message": "Age proof (Aadhaar)"
+   },
+   "senior_proof_none": {
+      "message": "No file saved."
+   },
+   "senior_proof_saved": {
+      "message": "{name} · {type} · {size} · saved {when}"
+   },
+   "senior_proof_choose": {
+      "message": "📎 Choose PDF / PNG…"
+   },
+   "senior_proof_replace": {
+      "message": "📎 Replace file…"
+   },
+   "senior_proof_remove": {
+      "message": "Remove"
+   },
+   "senior_proof_removed": {
+      "message": "Age proof removed."
+   },
+   "senior_proof_stored": {
+      "message": "Saved {name}. It is attached to the page's Upload Document field on every fill."
+   },
+   "senior_proof_too_big": {
+      "message": "{name} is {size}. TTD accepts at most 1 MB (1,024,000 bytes). Compress or re-scan it."
+   },
+   "senior_proof_bad_type": {
+      "message": "{name} is not a PDF, PNG or JPEG. It was checked by its content, not its name."
+   },
+   "senior_proof_note": {
+      "message": "Stored only in this browser, and encrypted there too if Settings → Security is on. It goes to TTD only when you fill the page, and TTD receives it only when you press Continue."
+   },
+   "senior_filled": {
+      "message": "Filled {count} pilgrim(s)."
+   },
+   "senior_filled_attached": {
+      "message": "Filled {count} pilgrim(s) and attached the age proof."
+   },
+   "senior_filled_no_proof": {
+      "message": "Filled {count} pilgrim(s), but no age proof is saved. Choose it below, or pick it on the page."
+   },
+   "senior_filled_proof_failed": {
+      "message": "Filled {count} pilgrim(s), but the age proof could not be attached. Pick it on the page yourself."
    }
 }

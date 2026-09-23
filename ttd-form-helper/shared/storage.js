@@ -36,6 +36,7 @@ export const STORAGE_KEYS = {
   groupSevaData: "groupSevaData",
   groupVisibleCount: "groupVisibleCount",
   srivaniPeople: "srivaniPeople",
+  seniorProof: "seniorProof",
   tabOrder: "tabOrder",
   hiddenTabs: "hiddenTabs",
   theme: "theme",

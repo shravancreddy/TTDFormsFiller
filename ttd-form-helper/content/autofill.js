@@ -644,7 +644,10 @@
     await nextFrame();
 
     const ageEl = byIndex("age");
-    if (ageEl) setNativeValue(ageEl, pilgrim.age);
+    // A disabled age that already holds a value was set by an earlier step (the
+    // Senior Citizen slot page carries pilgrim 1's age forward); writing over it
+    // would only fight the page.
+    if (ageEl && !(ageEl.disabled && ageEl.value)) setNativeValue(ageEl, pilgrim.age);
     await nextFrame();
 
     const genderEl = byIndex("gender");
@@ -870,6 +873,66 @@
     return { status: "success", filled: 1, name: next.name, slot };
   };
 
+  // ---- Senior Citizen darshan (PLD, category "sc") ----
+  // The pilgrim-details step at /pld/pilgrim-details uses the same pilgrim
+  // component as the other darshan flows (name / age / gender / idType /
+  // idNumber, contact as pilgrimCity / pilgrimState / pilgrimPincode ...), plus
+  // one "Upload Document" file input (accept ".jpeg,.png,.pdf") for the Aadhaar
+  // age proof. The site's rules, from its own page code: the first pilgrim must be
+  // 65-150, only the spouse may be the second, and the file must be at most
+  // 1,024,000 bytes (it rejects `size > 1024e3`).
+  const SENIOR_MAX_PILGRIMS = 2;
+  const SENIOR_MIN_AGE = 65;
+  const SENIOR_PROOF_MAX = 1024000;
+  const isSeniorPage = () => /^\/pld\//i.test(location.pathname || "");
+  const findSeniorProofInput = () => {
+    const inputs = Array.from(document.querySelectorAll('input[type="file"]')).filter((i) => !isOwnInjectedNode(i));
+    return inputs.find((i) => /pdf/i.test(i.accept || "")) || inputs[0] || null;
+  };
+  const seniorWarnings = (pilgrims) => {
+    const named = (pilgrims || []).filter((p) => p && p.name && String(p.name).trim());
+    const out = [];
+    if (named.length > SENIOR_MAX_PILGRIMS) {
+      out.push("Only the first " + SENIOR_MAX_PILGRIMS + " pilgrims are used: the senior citizen and their spouse.");
+    }
+    const first = named[0];
+    const age = first ? parseInt(first.age, 10) : NaN;
+    if (first && (!isFinite(age) || age < SENIOR_MIN_AGE)) {
+      out.push(first.name + " is " + (first.age || "?") + ". TTD needs the first pilgrim to be " + SENIOR_MIN_AGE + " or older.");
+    }
+    return out;
+  };
+
+  // Fills the (up to two) pilgrim rows and the contact block, then attaches the
+  // stored age proof. Never presses Continue on its own; the caller decides.
+  // proofState: attached | failed | missing (page wants one, none saved) |
+  //             too_big | no_input (a proof is saved, but this step has no upload) | none
+  const fillSeniorForm = async (pilgrims, contact, proof, opts = {}) => {
+    const list = (pilgrims || []).filter((p) => p && p.name && String(p.name).trim()).slice(0, SENIOR_MAX_PILGRIMS);
+    contact = resolveEffectiveContact(contact, list);
+    let result = { status: "success", filled: 0 };
+    if (document.querySelector('input[name="name"], input[name="fname"]')) {
+      result = await fillAllPilgrims(list, contact, { overwrite: !!opts.overwrite, onProgress: opts.onProgress });
+    } else if (contact) {
+      await fillContact(contact);
+    }
+    const input = findSeniorProofInput();
+    let proofState;
+    if (!proof || !proof.data) proofState = input ? "missing" : "none";
+    else if (proof.size > SENIOR_PROOF_MAX) proofState = "too_big";
+    else if (!input) proofState = "no_input";
+    else proofState = (await setFileInput(input, proof)) ? "attached" : "failed";
+    return { ...result, proofState, warnings: seniorWarnings(pilgrims) };
+  };
+  const SENIOR_PROOF_TEXT = {
+    attached: "📎 Age proof attached.",
+    failed: "⚠️ Could not attach the age proof. Pick the file on the page yourself.",
+    missing: "⚠️ No age proof saved. Add the Aadhaar PDF/PNG in the extension's Senior Citizen tab, or pick it on the page.",
+    too_big: "⚠️ The saved age proof is over 1 MB, and TTD will refuse it. Replace it in the Senior Citizen tab.",
+    no_input: "",
+    none: "",
+  };
+
   // ---- Undo the last fill and generalized Continue handling ----
   // Empties one field for real.
   //
@@ -994,7 +1057,7 @@
 
   // One fill at a time, whether triggered from the popup or the on-page button.
   const FILL_ACTIONS = new Set([
-    "AUTOFILL", "FILL_SEVA", "FILL_ALL", "FILL_CONTACT", "FILL_SRIVANI", "FILL_NEXT", "CLEAR_FIELDS",
+    "AUTOFILL", "FILL_SEVA", "FILL_ALL", "FILL_CONTACT", "FILL_SRIVANI", "FILL_NEXT", "CLEAR_FIELDS", "FILL_SENIOR",
   ]);
   let globalFilling = false;
 
@@ -1131,6 +1194,25 @@
       return true;
     }
 
+    if (message.action === "FILL_SENIOR") {
+      const { pilgrims, contact, proof, thenContinue, overwrite } = message.data || {};
+      (async () => {
+        try {
+          const result = await fillSeniorForm(pilgrims, contact, proof, { overwrite });
+          const qc = runFieldQC();
+          const notes = [...(result.warnings || []), SENIOR_PROOF_TEXT[result.proofState]].filter(Boolean);
+          if (notes.length) toast(notes.join(" "), result.proofState === "attached" && !(result.warnings || []).length ? "success" : "warn");
+          if (thenContinue && result.status === "success" && result.proofState !== "failed" && result.proofState !== "missing") {
+            await clickContinueGeneric();
+          }
+          sendResponse({ ...result, qc });
+        } catch (err) {
+          sendResponse({ status: "error", message: err.toString() });
+        }
+      })();
+      return true;
+    }
+
     if (message.action === "FILL_SRIVANI") {
       const { members } = message.data;
       (async () => {
@@ -1144,6 +1226,47 @@
       return true;
     }
   });
+
+  // ---- File inputs (Seva photo/ID uploads, Senior Citizen age proof) ----
+  // A stored {data: dataURL, name, type} is rebuilt as a File and put on the
+  // input through a DataTransfer, then React's onChange is driven, since the site
+  // reads event.target.files[0] from its own handler.
+  const dataUrlToFile = (dataUrl, name, type) => {
+    const binary = atob(dataUrl.split(",")[1]);
+    const buffer = new ArrayBuffer(binary.length);
+    const bytes = new Uint8Array(buffer);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new File([buffer], name, { type });
+  };
+  const applyFile = (input, fileMeta) => {
+    const file = dataUrlToFile(fileMeta.data, fileMeta.name, fileMeta.type);
+    const dt = new DataTransfer();
+    dt.items.add(file); // a fresh DataTransfer replaces any previously staged file
+    const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "files")?.set;
+    if (setter) setter.call(input, dt.files);
+    else input.files = dt.files;
+    dispatchReactOnChange(input, fileMeta.name, { files: dt.files, type: "file" });
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    dispatchAll(input);
+  };
+  const setFileInput = async (input, fileMeta) => {
+    if (!input || !fileMeta || !fileMeta.data) return false;
+    try {
+      applyFile(input, fileMeta);
+      await sleep(80);
+      // Verify the file actually attached; retry once if the UI dropped it.
+      if (!(input.files && input.files.length === 1)) {
+        applyFile(input, fileMeta);
+        await sleep(120);
+      }
+      const ok = !!(input.files && input.files.length >= 1);
+      flashField(input, ok);
+      return ok;
+    } catch {
+      flashField(input, false);
+      return false;
+    }
+  };
 
   // ---- Seva (Srivari Seva / Group) form filler ----
   const fillSevaForm = async (data) => {
@@ -1530,43 +1653,6 @@
       }
     }
 
-    const dataUrlToFile = (dataUrl, name, type) => {
-      const binary = atob(dataUrl.split(",")[1]);
-      const buffer = new ArrayBuffer(binary.length);
-      const bytes = new Uint8Array(buffer);
-      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-      return new File([buffer], name, { type });
-    };
-    const applyFile = (input, fileMeta) => {
-      const file = dataUrlToFile(fileMeta.data, fileMeta.name, fileMeta.type);
-      const dt = new DataTransfer();
-      dt.items.add(file); // a fresh DataTransfer replaces any previously staged file
-      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "files")?.set;
-      if (setter) setter.call(input, dt.files);
-      else input.files = dt.files;
-      dispatchReactOnChange(input, fileMeta.name, { files: dt.files, type: "file" });
-      input.dispatchEvent(new Event("change", { bubbles: true }));
-      dispatchAll(input);
-    };
-    const setFileInput = async (input, fileMeta) => {
-      if (!input || !fileMeta || !fileMeta.data) return false;
-      try {
-        applyFile(input, fileMeta);
-        await sleep(80);
-        // Verify the file actually attached; retry once if the UI dropped it.
-        if (!(input.files && input.files.length === 1)) {
-          applyFile(input, fileMeta);
-          await sleep(120);
-        }
-        const ok = !!(input.files && input.files.length >= 1);
-        flashField(input, ok);
-        return ok;
-      } catch {
-        flashField(input, false);
-        return false;
-      }
-    };
-
     if (data.photo && data.photo.data) {
       const containers = Array.from(
         scope.querySelectorAll('[class*="profile_photo-container"], [class*="photo-container"], [class*="photo-upload-container"]')
@@ -1861,6 +1947,8 @@
     function detectFormType() {
       if (document.querySelector('input[name="fName0"], input[name="fName1"]')) return "srivani";
       if (document.querySelector('input[name="sevakName"], input[name="spvrName"], [class*="sevakContainer"]')) return "seva";
+      // Senior Citizen pilgrim-details step: same pilgrim rows, plus the age-proof upload.
+      if (isSeniorPage() && document.querySelector('input[name="name"], input[name="fname"], input[type="file"]')) return "senior";
       if (document.querySelector('input[name="name"], input[name="fname"]')) return "pilgrim";
       return null;
     }
@@ -1871,6 +1959,7 @@
       pilgrim: "Fill Pilgrims",
       seva: "Fill Sevak",
       srivani: "Fill Srivani",
+      senior: "Fill Senior Citizen",
     };
     function formLabel(type) {
       return FORM_LABELS[type] || "Fill Details";
@@ -2084,6 +2173,55 @@
       if (opts.thenContinue) await clickContinueGeneric();
     }
 
+    // The age proof is personal data, so with at-rest encryption on it is
+    // ciphertext here and has to come through the background worker, like the
+    // pilgrims do.
+    async function loadSeniorProof() {
+      const stored = await chrome.storage.local.get(["seniorProof"]);
+      if (!isEncryptedValue(stored.seniorProof)) return stored.seniorProof || null;
+      const response = await new Promise((resolve) => {
+        try {
+          chrome.runtime.sendMessage({ type: "TFH_SECURE_GET", keys: ["seniorProof"] }, (r) => {
+            if (chrome.runtime.lastError) resolve(null);
+            else resolve(r);
+          });
+        } catch {
+          resolve(null);
+        }
+      });
+      if (!response || !response.ok) throw new Error(response && response.error === "VAULT_LOCKED" ? "VAULT_LOCKED" : "READ_FAILED");
+      return (response.data && response.data.seniorProof) || null;
+    }
+
+    async function runSeniorFill(opts = {}) {
+      const stored = await loadSavedData();
+      const pilgrims = stored.pilgrims || [];
+      if (!pilgrims.length) {
+        showToast("No pilgrims saved. Open the extension and add the senior citizen (and spouse) first.", "warn");
+        return;
+      }
+      const proof = await loadSeniorProof();
+      const result = await fillSeniorForm(pilgrims, stored.contact || {}, proof, {
+        overwrite: !!opts.overwrite,
+        onProgress: (done, total) => setProgress(done + "/" + total + " pilgrims…"),
+      });
+      if (result.status !== "success") {
+        showToast(result.message || "Could not fill this page.", "error");
+        return;
+      }
+      const notes = [
+        "👴 Filled " + result.filled + " pilgrim" + (result.filled === 1 ? "" : "s") + ".",
+        ...(result.warnings || []),
+        SENIOR_PROOF_TEXT[result.proofState],
+      ].filter(Boolean);
+      const clean = !(result.warnings || []).length && (result.proofState === "attached" || result.proofState === "none" || result.proofState === "no_input");
+      // Self-QC first: its own summary toast would otherwise replace this one,
+      // and the proof / age warnings are the part that must stay on screen.
+      runFieldQC();
+      showToast(notes.join(" "), clean ? "success" : "warn");
+      if (opts.thenContinue && result.proofState !== "failed" && result.proofState !== "missing") await clickContinueGeneric();
+    }
+
     const sevakHasData = (m) => !!m && (m.sevakName || m.spvrName || m.mobileNo);
     // A group booking page shows more than one sevak block at once.
     const isGroupSevaPage = () => document.querySelectorAll('[class*="sevakContainer"]').length > 1;
@@ -2152,8 +2290,9 @@
       runGuarded(() => {
         if (type === "srivani") return runSrivaniFill();
         if (type === "seva") return runSevaFill();
+        if (type === "senior") return runSeniorFill({ overwrite: !!opts.overwrite });
         return runPilgrimFill({ overwrite: !!opts.overwrite });
-      });
+      }, { qc: type !== "senior" });
     }
 
     const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform || "") || /mac/i.test((navigator.userAgentData && navigator.userAgentData.platform) || "");
@@ -2402,6 +2541,11 @@
             menu.appendChild(menuItem(star + "👥 " + (s.name || "Unnamed set"), () => runGuarded(() => runFillFromSet(s.id, false))));
           });
         }
+      } else if (type === "senior") {
+        menu.appendChild(menuItem("👴 Fill senior citizen + spouse, attach age proof", () => onFillClick()));
+        menu.appendChild(menuItem("♻️ Fill (overwrite)", () => onFillClick({ overwrite: true })));
+        menu.appendChild(menuItem("⏭️ Fill & Continue", () => runGuarded(() => runSeniorFill({ thenContinue: true }), { qc: false })));
+        menu.appendChild(menuItem("✉️ Fill contact only", () => runGuarded(runContactOnly)));
       } else if (type === "srivani") {
         menu.appendChild(menuItem("🪔 Fill Srivani", () => runGuarded(runSrivaniFill)));
         menu.appendChild(menuItem("⏭️ Fill Srivani & Continue", () => runGuarded(() => runSrivaniFill({ thenContinue: true }))));

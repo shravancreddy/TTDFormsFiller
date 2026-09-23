@@ -27,6 +27,7 @@ export const SENSITIVE_KEYS = [
   "sevakData",
   "groupSevaData",
   "srivaniPeople",
+  "seniorProof",
 ];
 
 let cachedKey = null;
