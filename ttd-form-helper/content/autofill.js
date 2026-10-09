@@ -318,6 +318,32 @@
   };
   const waitForElement = (selector, opts) => waitFor(() => document.querySelector(selector), opts);
 
+  // ---- Trusted-event fallback (content/page-bridge.js, MAIN world) ----
+  // TTD's shared text field ignores events the browser did not generate (see
+  // page-bridge.js). When a write or click doesn't take, ask the bridge to call
+  // the element's own React handler. Synchronous: the bridge's listener runs
+  // inside dispatchEvent and leaves its answer on the element.
+  const pageOp = (el, op, value) => {
+    if (!el || !el.isConnected) return false;
+    try {
+      el.removeAttribute("data-ttdfh-op");
+      el.dispatchEvent(
+        new CustomEvent("ttdfh:page-op", { bubbles: true, composed: true, detail: JSON.stringify({ op, value }) })
+      );
+      const answer = el.getAttribute("data-ttdfh-op");
+      el.removeAttribute("data-ttdfh-op");
+      return answer === "ok";
+    } catch {
+      return false;
+    }
+  };
+  // Clicks a checkbox; if the page put it straight back, clicks it through the bridge.
+  const clickCheckbox = (cb) => {
+    const before = cb.checked;
+    cb.click();
+    if (cb.checked === before) pageOp(cb, "click");
+  };
+
   // ---- Unified controlled-input setter ----
   // Drives the React synthetic onChange a controlled input attaches, if present.
   const dispatchReactOnChange = (el, value, extra) => {
@@ -378,8 +404,13 @@
         tracker.setValue(previous);
       }
     } catch {}
-    dispatchAll(el);
-    if ((el.value || "") !== target) dispatchReactOnChange(el, target);
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+    el.dispatchEvent(new Event("change", { bubbles: true }));
+    // A field that refuses untrusted events has already put its old value back
+    // by now; hand the write to the page bridge, and only then tab out, so the
+    // site's onBlur check sees the new value rather than the reverted one.
+    if ((el.value || "") !== target && !pageOp(el, "change", target)) dispatchReactOnChange(el, target);
+    tabOut(el);
     const ok = (el.value || "") === target || (!!el.value && target !== "");
     flashField(el, ok);
     return ok;
@@ -456,6 +487,7 @@
     await sleep(10);
     el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window, clientX: cx, clientY: cy }));
 
+    let bridgedOpen = false;
     for (let attempt = 0; attempt < 8; attempt++) {
       await sleep(40);
       const items = Array.from(
@@ -463,7 +495,11 @@
           '[class*="floatingDropdown_listItem"], [class*="dropdown_scroll"] li, .dropdown_scroll li, ul[style*="list-style-type: none"] li'
         )
       );
-      if (items.length === 0) continue;
+      if (items.length === 0) {
+        // The opener ignored the synthetic click (untrusted); open it for real.
+        if (attempt >= 1 && !bridgedOpen) bridgedOpen = pageOp(el, "click");
+        continue;
+      }
 
       const cleanText = (s) =>
         s
@@ -492,6 +528,9 @@
       match.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", code: "Enter", keyCode: 13, bubbles: true }));
       match.dispatchEvent(new KeyboardEvent("keyup", { key: "Enter", code: "Enter", keyCode: 13, bubbles: true }));
       await sleep(30);
+      if (cleanText(el.value || "") !== cleanText(matchedText) && match.isConnected && pageOp(match, "click")) {
+        await sleep(30);
+      }
 
       if (!el.value || el.value.trim() === "") {
         setViaReactProps(el, matchedText);
@@ -578,33 +617,45 @@
     return base;
   };
 
+  // TTD's General Details handlers (email, city, pincode on the darshan
+  // pilgrim-details step) store `{ ...stateFromLastRender, [name]: value }`,
+  // and its pincode onBlur validates that last-render state rather than the
+  // input. Writing the five fields back to back in one task, as this used to,
+  // let each write wipe the one before it and left a stale "valid pincode"
+  // error behind, so Continue reported email/city/state/country as blank.
+  // So: one frame between writes (React commits, the next handler sees the new
+  // state), then put back anything that was still lost and tab out of each
+  // field once more so the onBlur checks run against the committed values.
   const fillContact = async (contact) => {
     if (!contact) return;
-    if (contact.email) {
-      const nodes = findAllByNames("pilgrimEmail", "emailId", "email");
-      const el = nodes[nodes.length - 1];
-      if (el) setNativeValue(el, contact.email);
-    }
-    if (contact.city) {
-      const nodes = findAllByNames("pilgrimCity", "city");
-      const el = nodes[nodes.length - 1];
-      if (el) setNativeValue(el, contact.city);
-    }
-    if (contact.state) {
-      const nodes = findAllByNames("pilgrimState", "state");
-      const el = nodes[nodes.length - 1];
-      if (el) setNativeValue(el, contact.state);
-    }
-    if (contact.country) {
-      const nodes = findAllByNames("pilgrimCountry", "country");
-      if (nodes.length > 0) {
-        const el = nodes[nodes.length - 1];
-        if (el) setNativeValue(el, contact.country);
+    const written = [];
+    const write = async (el, value) => {
+      if (!el) return;
+      setNativeValue(el, value);
+      written.push([el, String(value)]);
+      await nextFrame();
+    };
+    const lastOf = (...names) => {
+      const nodes = findAllByNames(...names);
+      return nodes[nodes.length - 1];
+    };
+    if (contact.email) await write(lastOf("pilgrimEmail", "emailId", "email"), contact.email);
+    if (contact.city) await write(lastOf("pilgrimCity", "city"), contact.city);
+    if (contact.state) await write(lastOf("pilgrimState", "state"), contact.state);
+    if (contact.country) await write(lastOf("pilgrimCountry", "country"), contact.country);
+    if (contact.pincode) await write(findFirstByNames("pilgrimPincode", "pincode"), contact.pincode);
+    if (written.length) {
+      await nextFrame();
+      for (const [el, value] of written) {
+        if (el.isConnected && (el.value || "") !== value) {
+          setNativeValue(el, value);
+          await nextFrame();
+        }
       }
-    }
-    if (contact.pincode) {
-      const el = findFirstByNames("pilgrimPincode", "pincode");
-      if (el) setNativeValue(el, contact.pincode);
+      for (const [el] of written) {
+        if (el.isConnected) tabOut(el);
+      }
+      await nextFrame();
     }
     if (contact.gothram) {
       // The gothram field name varies across booking flows (the Homam / arjitha
@@ -1574,6 +1625,7 @@
           if (trigger) {
             trigger.click();
             await sleep(150);
+            if (!document.querySelector('[class*="checkboxListItem"]') && pageOp(trigger, "click")) await sleep(150);
             const options = document.querySelectorAll('[class*="checkboxListItem"], .floatingDropdown_checkboxListItem__AJXt6');
             for (const opt of options) {
               const label = opt.textContent?.trim();
@@ -1585,7 +1637,7 @@
               if (isMatch) {
                 const cb = opt.querySelector('input[type="checkbox"]');
                 if (cb && !cb.checked) {
-                  cb.click();
+                  clickCheckbox(cb);
                   await sleep(100);
                 }
               }
@@ -1635,13 +1687,14 @@
         trigger.click();
         trigger.focus();
         await sleep(200);
+        if (!document.querySelector('[class*="checkboxListItem"]') && pageOp(trigger, "click")) await sleep(200);
         for (const lang of data.languages) {
           const options = document.querySelectorAll('[class*="checkboxListItem"], li');
           for (const opt of options) {
             if (opt.textContent?.trim() === lang) {
               const cb = opt.querySelector('input[type="checkbox"]');
               if (cb && !cb.checked) {
-                cb.click();
+                clickCheckbox(cb);
                 await sleep(100);
               }
               break;

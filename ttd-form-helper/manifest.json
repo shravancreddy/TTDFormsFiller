@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_extension_name__",
   "description": "__MSG_extension_description__",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "default_locale": "en",
   "minimum_chrome_version": "114",
   "icons": {
@@ -43,6 +43,18 @@
     "type": "module"
   },
   "content_scripts": [
+    {
+      "matches": [
+        "https://tirupatibalaji.ap.gov.in/*",
+        "https://ttdevasthanams.ap.gov.in/*"
+      ],
+      "js": [
+        "content/page-bridge.js"
+      ],
+      "world": "MAIN",
+      "run_at": "document_idle",
+      "all_frames": false
+    },
     {
       "matches": [
         "https://tirupatibalaji.ap.gov.in/*",
