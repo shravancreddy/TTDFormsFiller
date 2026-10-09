@@ -93,10 +93,10 @@ Motion is skipped automatically when the browser is set to *reduce motion*.
 ### Prebuilt bundle (easiest — no repo clone needed)
 
 Download the ready-to-load zip for your browser from the repository root and unzip it —
-you'll get a `TTD-Form-Helper-v1.4.2` folder with a `HOW-TO-LOAD.txt` inside:
+you'll get a `TTD-Form-Helper-v1.4.3` folder with a `HOW-TO-LOAD.txt` inside:
 
-- `TTD-Form-Helper-v1.4.2-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
-- `TTD-Form-Helper-v1.4.2-firefox-unpacked.zip` — Firefox
+- `TTD-Form-Helper-v1.4.3-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
+- `TTD-Form-Helper-v1.4.3-firefox-unpacked.zip` — Firefox
 
 Then follow the steps below, pointing at the unzipped folder. (These bundles are for
 **loading unpacked**; they are not signed store builds.)
@@ -125,7 +125,7 @@ use the unpacked zip above instead (**Load unpacked**). Rebuild both the zips an
 1. Go to `chrome://extensions` (or `edge://extensions`).
 2. Turn on **Developer mode**.
 3. Click **Load unpacked** and pick this `ttd-form-helper` folder (or the unzipped
-   `TTD-Form-Helper-v1.4.2` folder from the prebuilt bundle).
+   `TTD-Form-Helper-v1.4.3` folder from the prebuilt bundle).
 
 ### Firefox
 
@@ -138,8 +138,8 @@ cp manifest.json manifest.chrome.json && cp manifest.firefox.json manifest.json
 Then go to `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on** → pick
 `manifest.json`. (For a permanent install the add-on has to be signed by Mozilla.)
 
-Requires Firefox 115+ (that's when `storage.session` landed, which the optional
-encryption feature needs).
+Requires Firefox 128+ (that's when content scripts could run in the page's own
+`MAIN` world, which `content/page-bridge.js` needs; see 1.4.3 below).
 
 ### Safari
 
@@ -198,7 +198,7 @@ kept at `dist/signing.pem` (gitignored) so rebuilds keep a stable extension id.
 | Settings page, 6 languages | ✅ | ✅ | ✅ |
 | Floating Fill button (auto-detects form type) | ✅ | ✅ | ✅ |
 | Encrypted backup export / import | ✅ | ✅ | ✅ |
-| Optional at-rest encryption | ✅ | ✅ 115+ | ✅ 16.4+ |
+| Optional at-rest encryption | ✅ | ✅ 128+ | ✅ 16.4+ |
 | Install as unpacked / temporary | ✅ | ⚠ temporary only | ❌ needs Xcode |
 
 The code itself is browser-neutral: it prefers the `browser.*` namespace when
@@ -271,6 +271,16 @@ verify `sender.id` matches this extension, and the background worker additionall
 requires the sender tab to be a TTD origin and will only ever return the two booking
 keys — never the whole store.
 
+### The page bridge
+
+`content/page-bridge.js` runs in the TTD page's own JavaScript world (manifest
+`"world": "MAIN"`), on the same two TTD origins only. It holds no data and has no
+extension APIs. It does one thing: when the content script asks it to, through a
+DOM event on a form field, it calls that field's own React `onChange` / `onClick`.
+TTD's form ignores input that the browser itself did not generate, and this is
+how a fill reaches it (see 1.4.3). Page scripts can already call those handlers
+themselves, so the bridge gives the page nothing it did not have.
+
 ### No third-party code
 
 Zero dependencies: no framework, no analytics SDK, no CDN, no npm supply chain. Every
@@ -324,7 +334,29 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ## Version history
 
-### 1.4.2 — current
+### 1.4.3 — current
+
+- **Fills work again after TTD's October 2026 form change.** The site's shared
+  form field now ignores every event that the browser itself did not generate.
+  That covers typed text, opening the Gender / Photo ID dropdowns, picking an
+  option, and multi-select checkboxes. It also puts the old value back into the
+  input. So every value the extension wrote disappeared, and Continue reported
+  the pilgrim and General Details fields as blank. A new page-world script,
+  `content/page-bridge.js`, now passes the value to the field's own handler. It
+  is used only when a field rejects the normal write, so fields that still
+  accept it behave as before.
+- **General Details fill one field at a time.** On the darshan pilgrim-details
+  step the email, city and pincode handlers each save the whole contact block
+  from the page's last render. Writes made back to back wiped each other, and
+  only the pincode survived. The pincode check also read that old copy and
+  showed "Please enter valid pincode". The fill now waits one frame between
+  fields, writes again any field that was lost, and leaves each field again so
+  the site re-checks the values it actually holds.
+- Firefox now needs version 128 or newer, for the page-world script.
+- `tests/spat-contact.test.js` reproduces both problems with a stand-in for the
+  site's form.
+
+### 1.4.2
 
 - **The 128 px extension / Web Store icon now spells out what the extension
   does**, in words rather than symbols: *TTD Form Helper — auto-fill bookings ·
@@ -559,6 +591,8 @@ manifest.firefox.json  Firefox variant (background.scripts)
 background.js          Serves decrypted data to the on-page Fill button when locked
 content/autofill.js    The actual form-filling logic, injected on TTD pages
                        (incl. Senior Citizen: pilgrims + age-proof upload)
+content/page-bridge.js Runs in the page's world; delivers a fill to fields that
+                       ignore untrusted events (see 1.4.3)
 popup/                 Side panel: the five booking tabs (Pilgrim, Seva, Group, Srivani, Senior Citizen)
 options/               Settings: saved pilgrims, sets, tabs, backup, security
 shared/                Storage, crypto, validation, i18n, reference data
