@@ -617,6 +617,33 @@
     return base;
   };
 
+  // Two frames: enough for React to commit an update a page-bridge write
+  // scheduled (that one is not flushed inside the event, as a real keystroke is).
+  const settle = async () => {
+    await nextFrame();
+    await nextFrame();
+  };
+  // Many TTD handlers save a copy of the form from the page's last render
+  // (`setPilgrims(pilgrims.map(...))`, `{ ...contact, [name]: value }`), and
+  // their onBlur checks read that copy, not the input. So a write can be wiped
+  // by the next one, and a field tabbed out of before React commits is marked
+  // "This field is required" while it shows the right value. After a group of
+  // writes: let React commit, write again whatever was lost, and tab out of
+  // every field once more so the checks run against what the page now holds.
+  const recheckFields = async (written) => {
+    const live = written.filter(([el]) => el && el.isConnected);
+    if (!live.length) return;
+    await settle();
+    for (const [el, value] of live) {
+      if ((el.value || "") !== value) {
+        setNativeValue(el, value);
+        await settle();
+      }
+    }
+    for (const [el] of live) tabOut(el);
+    await nextFrame();
+  };
+
   // TTD's General Details handlers (email, city, pincode on the darshan
   // pilgrim-details step) store `{ ...stateFromLastRender, [name]: value }`,
   // and its pincode onBlur validates that last-render state rather than the
@@ -633,7 +660,7 @@
       if (!el) return;
       setNativeValue(el, value);
       written.push([el, String(value)]);
-      await nextFrame();
+      await settle();
     };
     const lastOf = (...names) => {
       const nodes = findAllByNames(...names);
@@ -644,19 +671,6 @@
     if (contact.state) await write(lastOf("pilgrimState", "state"), contact.state);
     if (contact.country) await write(lastOf("pilgrimCountry", "country"), contact.country);
     if (contact.pincode) await write(findFirstByNames("pilgrimPincode", "pincode"), contact.pincode);
-    if (written.length) {
-      await nextFrame();
-      for (const [el, value] of written) {
-        if (el.isConnected && (el.value || "") !== value) {
-          setNativeValue(el, value);
-          await nextFrame();
-        }
-      }
-      for (const [el] of written) {
-        if (el.isConnected) tabOut(el);
-      }
-      await nextFrame();
-    }
     if (contact.gothram) {
       // The gothram field name varies across booking flows (the Homam / arjitha
       // seva form in particular), and on some pages it is a searchable
@@ -669,8 +683,10 @@
       if (el) {
         const ok = await smartSet(el, contact.gothram);
         if (!ok) flashField(el, false);
+        else if (!looksLikeCombobox(el)) written.push([el, String(contact.gothram)]);
       }
     }
+    await recheckFields(written);
   };
 
   const nthByNames = (index, ...names) => {
@@ -690,16 +706,26 @@
     // dispatch, silently losing a write. A single-frame yield (~16ms) splits
     // the difference: still 6-9x faster than the old fixed sleeps, but gives
     // the page a paint cycle between writes so nothing gets dropped.
+    // Each write waits for React to commit (settle) because the seva rows'
+    // handler rebuilds the row list from its last render; see recheckFields.
+    const written = [];
     const nameEl = nthByNames(index, "name", "fname");
-    if (nameEl) setNativeValue(nameEl, pilgrim.name);
-    await nextFrame();
+    if (nameEl && pilgrim.name) {
+      setNativeValue(nameEl, pilgrim.name);
+      written.push([nameEl, String(pilgrim.name)]);
+    }
+    await settle();
 
     const ageEl = byIndex("age");
     // A disabled age that already holds a value was set by an earlier step (the
     // Senior Citizen slot page carries pilgrim 1's age forward); writing over it
     // would only fight the page.
-    if (ageEl && !(ageEl.disabled && ageEl.value)) setNativeValue(ageEl, pilgrim.age);
-    await nextFrame();
+    if (ageEl && pilgrim.age && !(ageEl.disabled && ageEl.value)) {
+      setNativeValue(ageEl, pilgrim.age);
+      written.push([ageEl, String(pilgrim.age)]);
+    }
+    // The seva form keeps Photo ID Proof disabled until the age is committed.
+    await settle();
 
     const genderEl = byIndex("gender");
     if (genderEl) await selectFromDropdown(genderEl, pilgrim.gender);
@@ -712,14 +738,17 @@
       await sleep(300);
     }
 
+    const isPassport = norm(pilgrim.idProof) === "passport";
     const idNumberEl = nthByNames(index, "idNumber", "idProofNumber");
     if (idNumberEl) {
       if (idNumberEl.disabled) idNumberEl.disabled = false;
       setNativeValue(idNumberEl, pilgrim.idNumber);
+      // A passport number goes through the visa popup below instead.
+      if (pilgrim.idNumber && !isPassport) written.push([idNumberEl, String(pilgrim.idNumber)]);
     }
-    await nextFrame();
+    await recheckFields(written);
 
-    if (norm(pilgrim.idProof) === "passport") {
+    if (isPassport) {
       // Wait for the modal to be present *and* mounted (a field rendered),
       // rather than a fixed sleep that can fire before React fills it in.
       const popup = await waitFor(() => {

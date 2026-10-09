@@ -93,10 +93,10 @@ Motion is skipped automatically when the browser is set to *reduce motion*.
 ### Prebuilt bundle (easiest — no repo clone needed)
 
 Download the ready-to-load zip for your browser from the repository root and unzip it —
-you'll get a `TTD-Form-Helper-v1.4.3` folder with a `HOW-TO-LOAD.txt` inside:
+you'll get a `TTD-Form-Helper-v1.4.4` folder with a `HOW-TO-LOAD.txt` inside:
 
-- `TTD-Form-Helper-v1.4.3-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
-- `TTD-Form-Helper-v1.4.3-firefox-unpacked.zip` — Firefox
+- `TTD-Form-Helper-v1.4.4-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
+- `TTD-Form-Helper-v1.4.4-firefox-unpacked.zip` — Firefox
 
 Then follow the steps below, pointing at the unzipped folder. (These bundles are for
 **loading unpacked**; they are not signed store builds.)
@@ -125,7 +125,7 @@ use the unpacked zip above instead (**Load unpacked**). Rebuild both the zips an
 1. Go to `chrome://extensions` (or `edge://extensions`).
 2. Turn on **Developer mode**.
 3. Click **Load unpacked** and pick this `ttd-form-helper` folder (or the unzipped
-   `TTD-Form-Helper-v1.4.3` folder from the prebuilt bundle).
+   `TTD-Form-Helper-v1.4.4` folder from the prebuilt bundle).
 
 ### Firefox
 
@@ -276,7 +276,8 @@ keys — never the whole store.
 `content/page-bridge.js` runs in the TTD page's own JavaScript world (manifest
 `"world": "MAIN"`), on the same two TTD origins only. It holds no data and has no
 extension APIs. It does one thing: when the content script asks it to, through a
-DOM event on a form field, it calls that field's own React `onChange` / `onClick`.
+DOM event on a form field, it replays that input or click through React's own event
+handling, with only that field's handler told the event is trusted.
 TTD's form ignores input that the browser itself did not generate, and this is
 how a fill reaches it (see 1.4.3). Page scripts can already call those handlers
 themselves, so the bridge gives the page nothing it did not have.
@@ -334,7 +335,31 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ## Version history
 
-### 1.4.3 — current
+### 1.4.4 — current
+
+- **Seva, Homam, Angapradakshinam, Senior Citizen / Differently Abled, APD,
+  Infant and Virtual Seva fills no longer end in "This field is required".**
+  These flows share one pilgrim-row component. Its handler rebuilds the
+  pilgrim list from the page's last render, and its onBlur check reads that
+  same old list. 1.4.3 handed each value straight to the handler. React then
+  applied it a moment later, so the extension's tab-out found the field still
+  empty and marked it required, and in some flows the next write wiped the one
+  before. The Srivari Seva sevak form, which saves the whole profile from the
+  last render on every keystroke, kept only one field for the same reason.
+- `content/page-bridge.js` now replays each change through React's own event
+  handling, with only the field's handler told the event is trusted. React
+  commits it at once, exactly as it does for a real keystroke, so every later
+  handler and check sees it. Pilgrim rows and General Details also wait for
+  React between fields, write again anything that was lost, and tab out again
+  at the end.
+- Checked against every booking page in TTD's current build. The pilgrim
+  details of all darshan, seva, Homam, Angapradakshinam, Senior Citizen /
+  Differently Abled, APD, Infant, Virtual Seva and accommodation flows come
+  from two components, and both are covered. `tests/seva-flows.test.js` fills
+  a copy of each flow and of the sevak form: 1.4.3 fails 17 of its 34 checks,
+  this release passes all of them.
+
+### 1.4.3
 
 - **Fills work again after TTD's October 2026 form change.** The site's shared
   form field now ignores every event that the browser itself did not generate.
