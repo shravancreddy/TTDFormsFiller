@@ -777,6 +777,13 @@
     }
     // The seva form keeps Photo ID Proof disabled until the age is committed.
     await settle();
+    // Name and age are checked, and tabbed out of, here and never again: on the
+    // Seva Electronic DIP form, tabbing out of Age once the ID type is Passport
+    // always shows "The valid age allowed to book is 12 to 120 years" (its
+    // onBlur ends with `if (idType === "passport") setError(field, ageMessage)`),
+    // however valid the age is. Someone typing by hand fills Age before the ID
+    // type and does not come back to it; the fill must not either.
+    await recheckFields(written.splice(0));
 
     const genderEl = byIndex("gender");
     if (genderEl) await selectFromDropdown(genderEl, pilgrim.gender);

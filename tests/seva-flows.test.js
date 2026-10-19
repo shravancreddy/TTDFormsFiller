@@ -25,6 +25,10 @@
  *     render. State is a read-only dropdown (Oct 2026), like Gender.
  *   - Srivari Seva sevak form: handler `ip` saves `{ ...sevakFromLastRender,
  *     [name]: value }`; onBlur `iw` reads that copy.
+ *   - Seva Electronic DIP (/seva-dip/seva-dip-form): its row onBlur `X` ends with
+ *     `if (row.idType === "passport" && t) setError(field, t)`, and for Age `t`
+ *     is always "The valid age allowed to book is 12 to 120 years". So tabbing
+ *     out of a valid age after the ID type is Passport shows that error.
  */
 'use strict';
 const fs = require('fs');
@@ -75,6 +79,8 @@ const SEVA_PAGE = `<!doctype html><html><body><div id="root"></div>
 const GENDERS = [{ id: 'Male', title: 'Male' }, { id: 'Female', title: 'Female' }, { id: 'Transgender', title: 'Transgender' }];
 const IDS = [{ id: 'aadhaar', title: 'Aadhaar Card' }, { id: 'passport', title: 'Passport' }];
 const STATES = ['Andhra Pradesh', 'Karnataka', 'Odisha', 'Tamil Nadu', 'Telangana'].map(t => ({ id: t, title: t }));
+const DIP = location.pathname.startsWith('/seva-dip/');
+const AGE_MSG = 'The valid age allowed to book is 12 to 120 years';
 function App() {
   const blank = id => ({ id, name: '', age: '', gender: '', idType: '', idNumber: '' });
   const [J, K] = React.useState([blank(0), blank(1)]);
@@ -91,6 +97,7 @@ function App() {
   };
   // ec: row onBlur, reads the list from the last render.
   const ec = (name, msg, i) => { if (!J[i][name]) return et(x => Object.assign({}, x, { [name + '-' + i]: 'This field is required' }));
+    if (DIP && J[i].idType === 'passport' && msg) return et(x => Object.assign({}, x, { [name + '-' + i]: msg }));
     et(x => Object.assign({}, x, { [name + '-' + i]: '' })); };
   // eo: functional update; es: contact onBlur, reads the object from the last render.
   const eo = (ev, kind) => { const n = ev.target.name, v = ev.target.value; let okv = true;
@@ -106,7 +113,7 @@ function App() {
   return e('div', null,
     J.map((r, i) => e('div', { key: i, className: 'row' },
       e(Field, { name: 'name', value: r.name, error: ee['name-' + i], onChange: ev => ea(ev, i, 'textWithSpace'), onBlur: ev => ec('name', '', i) }),
-      e(Field, { name: 'age', type: 'tel', maxLength: 3, value: r.age, error: ee['age-' + i], onChange: ev => ea(ev, i, 'number'), onBlur: () => ec('age', '', i) }),
+      e(Field, { name: 'age', type: 'tel', maxLength: 3, value: r.age, error: ee['age-' + i], onChange: ev => ea(ev, i, 'number'), onBlur: () => ec('age', AGE_MSG, i) }),
       e(Field, { name: 'gender', value: title(GENDERS, r.gender), list: GENDERS, selectedItem: it => ea('', i, '', true, it, 'gender') }),
       e(Field, { name: 'idType', value: title(IDS, r.idType), list: IDS, disabled: !r.age, selectedItem: it => ea('', i, '', true, it, 'idType') }),
       e(Field, { name: 'idNumber', value: r.idNumber, maxLength: 12, disabled: !r.idType, error: ee['idNumber-' + i],
@@ -205,6 +212,19 @@ const FLOWS = [
     await page.waitForFunction(() => window.__verdict, null, { timeout: 3000 }).catch(() => {});
     const v = await page.evaluate(() => ({ verdict: window.__verdict, err: window.__err }));
     ok(v.verdict === 'ok', 'Continue passes the page\'s own check', { verdict: v.verdict, err: shown(v.err) });
+    await page.close();
+  }
+
+  G('Seva Electronic DIP — a Passport pilgrim keeps a clean Age');
+  {
+    const page = await open('/seva-dip/seva-dip-form?flow=seva-dip&flowIdentifier=seva-dip&section=seva-dip-process');
+    const nri = [Object.assign({}, PILGRIMS[0], { name: 'Ravi Kumar', age: '34', idProof: 'Passport', idNumber: '12345678' }), PILGRIMS[1]];
+    const resp = await send('FILL_ALL', { pilgrims: nri, contact: CONTACT });
+    ok(resp && resp.status === 'success' && resp.filled === 2, 'responds filled=2', resp && { s: resp.status, f: resp.filled, m: resp.message });
+    const s = await page.evaluate(() => ({ rows: window.__rows, err: window.__err }));
+    ok(s.rows[0].age === '34' && s.rows[0].idType === 'passport', 'row 1 holds age 34 and ID type Passport', s.rows[0]);
+    ok(!s.err['age-0'], 'no "valid age ... 12 to 120 years" under the valid age', s.err['age-0']);
+    ok(shown(s.err).length === 0, 'no error left under a filled field', shown(s.err));
     await page.close();
   }
 
