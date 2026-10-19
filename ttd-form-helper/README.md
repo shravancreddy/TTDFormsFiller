@@ -93,10 +93,10 @@ Motion is skipped automatically when the browser is set to *reduce motion*.
 ### Prebuilt bundle (easiest — no repo clone needed)
 
 Download the ready-to-load zip for your browser from the repository root and unzip it —
-you'll get a `TTD-Form-Helper-v1.4.4` folder with a `HOW-TO-LOAD.txt` inside:
+you'll get a `TTD-Form-Helper-v1.4.6` folder with a `HOW-TO-LOAD.txt` inside:
 
-- `TTD-Form-Helper-v1.4.4-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
-- `TTD-Form-Helper-v1.4.4-firefox-unpacked.zip` — Firefox
+- `TTD-Form-Helper-v1.4.6-chrome-edge-brave-opera-unpacked.zip` — Chrome / Edge / Brave / Opera
+- `TTD-Form-Helper-v1.4.6-firefox-unpacked.zip` — Firefox
 
 Then follow the steps below, pointing at the unzipped folder. (These bundles are for
 **loading unpacked**; they are not signed store builds.)
@@ -125,7 +125,7 @@ use the unpacked zip above instead (**Load unpacked**). Rebuild both the zips an
 1. Go to `chrome://extensions` (or `edge://extensions`).
 2. Turn on **Developer mode**.
 3. Click **Load unpacked** and pick this `ttd-form-helper` folder (or the unzipped
-   `TTD-Form-Helper-v1.4.4` folder from the prebuilt bundle).
+   `TTD-Form-Helper-v1.4.6` folder from the prebuilt bundle).
 
 ### Firefox
 
@@ -335,7 +335,18 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ## Version history
 
-### 1.4.5 — current
+### 1.4.6 — current
+
+- **No more "The valid age allowed to book is 12 to 120 years" under a valid
+  age on the Seva Electronic DIP form.** That form's own check shows the
+  message every time Age loses focus while the pilgrim's ID type is Passport,
+  however valid the age is. The fill used to tab out of Name and Age once more
+  after picking Gender and ID type, which triggered it for Passport pilgrims.
+  It now checks Name and Age before choosing the dropdowns and doesn't come
+  back to them, just as you would when typing by hand. Aadhaar and Voter ID
+  pilgrims were never affected.
+
+### 1.4.5
 
 - **State is filled again now that TTD made it a dropdown.** The General
   Details State field (`pilgrimState`) on the darshan and seva pilgrim-details
