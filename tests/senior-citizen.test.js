@@ -16,6 +16,7 @@
  * TTD/SeniorCitizen/SeniorCitizen_Success23_SEp.zip):
  *   - pilgrim rows: input[name=name] / [name=age] / [name=idNumber]
  *   - contact: pilgrimEmail / pilgrimCity / pilgrimState / pilgrimCountry / pilgrimPincode
+ *     (State a read-only dropdown since Oct 2026)
  *   - "Upload Document": a hidden <input type=file accept=".jpeg,.png,.pdf"> whose
  *     onChange reads target.files[0] and rejects size > 1024e3
  * Gender / ID-type dropdowns are left out: that code is shared with every other
@@ -54,6 +55,17 @@ function Row({ i, ageLocked }) {
     e('input', Object.assign(f('age'), { disabled: !!ageLocked && i === 0 })),
     e('input', f('idNumber')));
 }
+// State is a read-only dropdown (Oct 2026): it opens, and an option is taken,
+// only on a trusted click; typing into it does nothing.
+function StateField({ value, pick }) {
+  const [open, setOpen] = React.useState(false);
+  return e('div', null,
+    e('input', { name: 'pilgrimState', label: 'State', className: 'floating-input', readOnly: true, value: value || '',
+      onChange: () => {}, onClick: ev => { ev.nativeEvent.isTrusted && setOpen(true); } }),
+    open && e('div', { className: 'dropdown_scroll' }, e('ul', { style: { listStyleType: 'none' } },
+      ['Andhra Pradesh', 'Karnataka', 'Tamil Nadu', 'Telangana'].map(t => e('li', { key: t,
+        onClick: ev => { if (ev.nativeEvent.isTrusted) { pick(t); setOpen(false); } } }, t)))));
+}
 function App() {
   const [c, setC] = React.useState({ pilgrimEmail: '', pilgrimCity: '', pilgrimState: '', pilgrimCountry: '', pilgrimPincode: '' });
   const [doc, setDoc] = React.useState(null);
@@ -65,7 +77,8 @@ function App() {
     if (x.size > 1024e3) { setErr('Max. file size is 1 MB'); setDoc(null); } else { setErr(''); setDoc(x); } };
   return e('div', null,
     e(Row, { i: 0, ageLocked: '66' }), e(Row, { i: 1 }),
-    e('input', f('pilgrimEmail')), e('input', f('pilgrimCity')), e('input', f('pilgrimState')),
+    e('input', f('pilgrimEmail')), e('input', f('pilgrimCity')), e(StateField, { value: c.pilgrimState,
+      pick: v => setC(p => Object.assign({}, p, { pilgrimState: v })) }),
     e('input', f('pilgrimCountry')), e('input', f('pilgrimPincode')),
     e('label', null, 'Upload Document', e('input', { type: 'file', style: { display: 'none' }, accept: '.jpeg,.png,.pdf', onChange: onFile })),
     e('span', { id: 'docName' }, doc ? doc.name : ''),
@@ -126,7 +139,8 @@ const PILGRIMS = [
   ok(s.r0.name === 'Ramaiah Sastry' && s.r1.name === 'Kamala Sastry', 'both rows reach React state', { r0: s.r0, r1: s.r1 });
   ok(s.r0.idNumber === '999988887777' && s.r1.idNumber === '888877776666' && s.r1.age === '58', 'ID numbers and the spouse\'s age too');
   ok(s.r0.age === '66', 'the locked (disabled) age carried from the slot step is left alone', s.r0.age);
-  ok(s.c.pilgrimCity === 'Hyderabad' && s.c.pilgrimPincode === '500068' && s.c.pilgrimEmail === 'who@example.com', 'contact block filled', s.c);
+  ok(s.c.pilgrimCity === 'Hyderabad' && s.c.pilgrimPincode === '500068' && s.c.pilgrimEmail === 'who@example.com' &&
+     s.c.pilgrimState === 'Telangana', 'contact block filled, State picked from its dropdown', s.c);
   ok(s.doc && s.doc.name === 'Aadhaar_Synthetic.pdf' && s.doc.size === pdf.length && s.doc.type === 'application/pdf',
      'the age proof reached React\'s onChange (from an isolated world, via the native change event)', s.doc);
   ok(s.shown === 'Aadhaar_Synthetic.pdf' && s.cont === false, 'the page shows the file name and enables Continue', { shown: s.shown, cont: s.cont });
@@ -144,6 +158,7 @@ const PILGRIMS = [
   ok(resp && resp.status === 'success' && resp.filled === 2 && resp.proofState === 'attached', 'responds filled=2, proofState=attached', resp && { s: resp.status, f: resp.filled, p: resp.proofState });
   s = await state(page);
   ok(s.doc && s.doc.name === 'Aadhaar_Synthetic.pdf', 'file on the page');
+  ok(s.c.pilgrimState === 'Telangana' && s.c.pilgrimCity === 'Hyderabad', 'State picked from its dropdown', s.c);
   await page.close();
 
   G('Proof states the fill reports');

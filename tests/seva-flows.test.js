@@ -22,7 +22,7 @@
  *     "This field is required" if the field is empty there.
  *   - General Details: gothram (letters only), pilgrimEmail / City / State /
  *     Country / Pincode; the onBlur `es` reads the contact object from the last
- *     render.
+ *     render. State is a read-only dropdown (Oct 2026), like Gender.
  *   - Srivari Seva sevak form: handler `ip` saves `{ ...sevakFromLastRender,
  *     [name]: value }`; onBlur `iw` reads that copy.
  */
@@ -74,6 +74,7 @@ const SEVA_PAGE = `<!doctype html><html><body><div id="root"></div>
 <script>${FIELD}
 const GENDERS = [{ id: 'Male', title: 'Male' }, { id: 'Female', title: 'Female' }, { id: 'Transgender', title: 'Transgender' }];
 const IDS = [{ id: 'aadhaar', title: 'Aadhaar Card' }, { id: 'passport', title: 'Passport' }];
+const STATES = ['Andhra Pradesh', 'Karnataka', 'Odisha', 'Tamil Nadu', 'Telangana'].map(t => ({ id: t, title: t }));
 function App() {
   const blank = id => ({ id, name: '', age: '', gender: '', idType: '', idNumber: '' });
   const [J, K] = React.useState([blank(0), blank(1)]);
@@ -111,7 +112,9 @@ function App() {
       e(Field, { name: 'idNumber', value: r.idNumber, maxLength: 12, disabled: !r.idType, error: ee['idNumber-' + i],
         onChange: ev => ea(ev, i, 'number'), onBlur: ev => ec('idNumber', '', i) }))),
     c('gothram', 'text'), c('pilgrimEmail', 'textSpecial'), c('pilgrimCity', 'textWithSpace'),
-    c('pilgrimState', 'textWithSpace'), c('pilgrimCountry', 'textWithSpace'), c('pilgrimPincode', 'number'),
+    e(Field, { name: 'pilgrimState', value: U.pilgrimState, error: ee.pilgrimState, list: STATES,
+      selectedItem: it => { G(p => Object.assign({}, p, { pilgrimState: it.title })); et(x => Object.assign({}, x, { pilgrimState: '' })); } }),
+    c('pilgrimCountry', 'textWithSpace'), c('pilgrimPincode', 'number'),
     e('button', { id: 'cont', onClick: cont }, 'Continue'));
 }
 ReactDOM.createRoot(document.getElementById('root')).render(e(App));

@@ -14,7 +14,8 @@
  *     index; the handler copies the array but mutates the row object in place.
  *   - General Details: emailId / city / pincode handlers do
  *       setContact({ ...contactFromLastRender, [name]: value })
- *     while state / country use the functional form. So writes made in one task
+ *     while state / country use the functional form. State is now a read-only
+ *     dropdown (Oct 2026): it only takes an option picked with a trusted click. So writes made in one task
  *     overwrite each other: only what the last stale write carried survives.
  *   - pincode onBlur validates contactFromLastRender.pincode, not the input, and
  *     leaves "Please enter valid pincode" if that is not 6 digits.
@@ -98,7 +99,10 @@ function App() {
       e(Field, { name: 'photoIdType', id: i, value: r.photoIdType, list: ['Aadhaar Card', 'Passport', 'Voter ID'], selectedItem: pick(i, 'photoIdType') }),
       e(Field, { name: 'idProofNumber', id: i, value: r.idProofNumber, onChange: onRow, maxLength: 12 }))),
     e('div', { id: 'generalDetailsError' },
-      cf('emailId', stale()), cf('city', stale(/^[a-zA-Z ]*$/)), cf('state', fresh), cf('country', fresh)),
+      cf('emailId', stale()), cf('city', stale(/^[a-zA-Z ]*$/)),
+      cf('state', fresh, { list: ['Andhra Pradesh', 'Karnataka', 'Odisha', 'Tamil Nadu', 'Telangana'],
+        selectedItem: it => setC(p => Object.assign({}, p, { state: it })) }),
+      cf('country', fresh)),
     cf('pincode', stale(/^[0-9 ]*$/), { onBlur: pinBlur, maxLength: 6 }),
     e('button', { id: 'cont', onClick: cont }, 'Continue'));
 }
@@ -172,6 +176,18 @@ const WANT = { emailId: 'who@example.com', city: 'Hyderabad', state: 'Telangana'
   v = await pressContinue(page);
   ok(v.verdict === 'ok', 'Continue passes', v);
   await page.close();
+
+  G('A saved state worded differently from the list (AP / Orissa)');
+  for (const [saved, want] of [['AP', 'Andhra Pradesh'], ['Orissa', 'Odisha'], ['telangana ', 'Telangana']]) {
+    page = await open();
+    const tid = await sw.evaluate(async () => (await chrome.tabs.query({ url: 'https://ttdevasthanams.ap.gov.in/*' })).pop().id);
+    const c2 = Object.assign({}, CONTACT, { state: saved });
+    await sw.evaluate(([tabId, pilgrims, contact]) => new Promise(res =>
+      chrome.tabs.sendMessage(tabId, { action: 'FILL_ALL', data: { pilgrims, contact } }, res)), [tid, PILGRIMS, c2]);
+    s = await state(page);
+    ok(s.c.state === want && s.c.city === 'Hyderabad' && s.c.pincode === '500068', 'saved "' + saved + '" picks "' + want + '"', s.c);
+    await page.close();
+  }
 
   await ctx.close();
   console.log('\nspat-contact: ' + pass + ' passed, ' + fail + ' failed');

@@ -335,7 +335,22 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ## Version history
 
-### 1.4.4 — current
+### 1.4.5 — current
+
+- **State is filled again now that TTD made it a dropdown.** The General
+  Details State field (`pilgrimState`) on the darshan and seva pilgrim-details
+  steps is now a read-only list, so the typed value 1.4.4 wrote was ignored and
+  Continue reported State as blank. The extension now opens the list and picks
+  the matching state on every flow that uses it: Special Entry Darshan (SED /
+  SPAT), Arjitha Seva incl. Homam, Angapradakshinam, Senior Citizen /
+  Differently Abled, APD, Infant and Virtual Seva, and "Fill contact only".
+  A saved state that is worded differently from TTD's list still matches:
+  case and spacing are ignored, "&" equals "and", common abbreviations (AP,
+  TS, TN, KA ...) and old names (Orissa, Pondicherry, Uttaranchal) map to the
+  listed state. The Srivari Seva sevak form's State dropdown uses the same
+  matching. Country is now written before State, and City after it.
+
+### 1.4.4
 
 - **Seva, Homam, Angapradakshinam, Senior Citizen / Differently Abled, APD,
   Infant and Virtual Seva fills no longer end in "This field is required".**

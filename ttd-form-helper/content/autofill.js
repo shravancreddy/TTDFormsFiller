@@ -442,10 +442,14 @@
 
   // Fills a React-controlled "combobox" style input: click it open, wait for the
   // floating option list to render, and click the option whose text matches.
-  const selectFromDropdown = async (el, label) => {
+  // `opts.matches(text)` is a fallback for options whose wording differs from
+  // the saved value (see stateMatcher); an exact match is always preferred.
+  // `opts.attempts` widens the wait for a list the page builds slowly.
+  const selectFromDropdown = async (el, label, opts = {}) => {
     if (!el || !label) return false;
     recordPrev(el);
     if (el.value && el.value.trim().toLowerCase() === label.trim().toLowerCase()) return true;
+    if (el.value && opts.matches && opts.matches(el.value)) return true;
 
     const setViaReactProps = (node, val) => {
       const propsKey = Object.keys(node).find(
@@ -488,7 +492,8 @@
     el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window, clientX: cx, clientY: cy }));
 
     let bridgedOpen = false;
-    for (let attempt = 0; attempt < 8; attempt++) {
+    const attempts = opts.attempts || 8;
+    for (let attempt = 0; attempt < attempts; attempt++) {
       await sleep(40);
       const items = Array.from(
         document.querySelectorAll(
@@ -508,10 +513,16 @@
           .replace(/["“”]/g, '"')
           .replace(/\s+/g, " ")
           .trim();
-      const match = items.find((it) => {
-        const txt = it.innerText?.trim();
-        return txt && cleanText(txt) === cleanText(label);
-      });
+      const match =
+        items.find((it) => {
+          const txt = it.innerText?.trim();
+          return txt && cleanText(txt) === cleanText(label);
+        }) ||
+        (opts.matches &&
+          items.find((it) => {
+            const txt = it.innerText?.trim();
+            return txt && opts.matches(txt);
+          }));
       if (!match) continue;
 
       const matchedText = match.innerText?.trim();
@@ -563,6 +574,34 @@
       return true;
     }
     return false;
+  };
+
+  // Indian state names as people save them vs as TTD lists them: TTD's lists
+  // have used both old and new names (Orissa / Odisha, Pondicherry /
+  // Puducherry), "&" or "and", and people often save an abbreviation. Each
+  // group below is one state; a saved value matches an option when both land
+  // in the same group, or when they are equal once case, spacing and
+  // punctuation are ignored.
+  const STATE_GROUPS = [
+    ["andhra pradesh", "ap"], ["telangana", "ts", "tg"], ["tamil nadu", "tamilnadu", "tn"], ["karnataka", "ka"],
+    ["kerala", "kl"], ["maharashtra", "mh"], ["odisha", "orissa", "od", "or"], ["puducherry", "pondicherry", "py"],
+    ["uttarakhand", "uttaranchal", "uk"], ["uttar pradesh", "up"], ["madhya pradesh", "mp"], ["west bengal", "wb"],
+    ["himachal pradesh", "hp"], ["arunachal pradesh", "ar"], ["jammu and kashmir", "j and k", "jk"],
+    ["andaman and nicobar", "andaman and nicobar islands", "an"], ["delhi", "new delhi", "nct of delhi", "dl"],
+    ["dadra and nagar haveli", "dadra and nagar haveli and daman and diu", "dnh"], ["chhattisgarh", "chattisgarh", "cg"],
+    ["gujarat", "gj"], ["rajasthan", "rj"], ["punjab", "pb"], ["haryana", "hr"], ["bihar", "br"], ["jharkhand", "jh"],
+    ["goa", "ga"], ["assam", "as"],
+  ];
+  const stateKey = (s) => norm(s).replace(/&/g, " and ").replace(/[^a-z]/g, "");
+  const STATE_GROUP_OF = new Map();
+  STATE_GROUPS.forEach((group, i) => group.forEach((name) => STATE_GROUP_OF.set(stateKey(name), i)));
+  const stateMatcher = (saved) => {
+    const key = stateKey(saved);
+    const group = STATE_GROUP_OF.get(key);
+    return (text) => {
+      const k = stateKey(text);
+      return !!k && (k === key || (group !== undefined && STATE_GROUP_OF.get(k) === group));
+    };
   };
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -656,8 +695,17 @@
   const fillContact = async (contact) => {
     if (!contact) return;
     const written = [];
-    const write = async (el, value) => {
+    // TTD has turned some of these into read-only dropdowns (State, on every
+    // flow that uses the shared General Details block); those take the
+    // floating-list flow, the rest a direct write.
+    const write = async (el, value, matches) => {
       if (!el) return;
+      if (looksLikeCombobox(el)) {
+        const ok = await selectFromDropdown(el, String(value), { matches, attempts: 25 });
+        if (!ok || !(el.value || "").trim()) flashField(el, false);
+        await settle();
+        return;
+      }
       setNativeValue(el, value);
       written.push([el, String(value)]);
       await settle();
@@ -667,9 +715,12 @@
       return nodes[nodes.length - 1];
     };
     if (contact.email) await write(lastOf("pilgrimEmail", "emailId", "email"), contact.email);
-    if (contact.city) await write(lastOf("pilgrimCity", "city"), contact.city);
-    if (contact.state) await write(lastOf("pilgrimState", "state"), contact.state);
+    // Country before State, and State before City, so a list that depends on
+    // the field above it is ready, and a dependent field the page clears on a
+    // new pick is written after that pick (recheckFields restores it anyway).
     if (contact.country) await write(lastOf("pilgrimCountry", "country"), contact.country);
+    if (contact.state) await write(lastOf("pilgrimState", "state"), contact.state, stateMatcher(contact.state));
+    if (contact.city) await write(lastOf("pilgrimCity", "city"), contact.city);
     if (contact.pincode) await write(findFirstByNames("pilgrimPincode", "pincode"), contact.pincode);
     if (contact.gothram) {
       // The gothram field name varies across booking flows (the Homam / arjitha
@@ -1490,7 +1541,7 @@
       const stateEl = pick('input[name="state"]');
       if (stateEl) {
         if (stateEl.readOnly) {
-          await selectFromDropdown(stateEl, data.state);
+          await selectFromDropdown(stateEl, data.state, { matches: stateMatcher(data.state), attempts: 25 });
           document.body.click();
           stateEl.dispatchEvent(new FocusEvent("blur", { bubbles: true }));
           await sleep(200);
