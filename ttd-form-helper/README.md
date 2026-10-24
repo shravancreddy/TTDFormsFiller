@@ -198,6 +198,7 @@ kept at `dist/signing.pem` (gitignored) so rebuilds keep a stable extension id.
 | Settings page, 6 languages | ✅ | ✅ | ✅ |
 | Floating Fill button (auto-detects form type) | ✅ | ✅ | ✅ |
 | Encrypted backup export / import | ✅ | ✅ | ✅ |
+| Pilgrims & sets CSV import / export | ✅ | ✅ | ✅ |
 | Optional at-rest encryption | ✅ | ✅ 128+ | ✅ 16.4+ |
 | Install as unpacked / temporary | ✅ | ⚠ temporary only | ❌ needs Xcode |
 
@@ -335,7 +336,25 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ## Version history
 
-### 1.4.6 — current
+### 1.4.7 — current
+
+- **Import and export pilgrims and pilgrim sets as CSV.** Settings → Saved
+  pilgrims (and Backup & Restore) has Import CSV / Export CSV buttons. The
+  file uses the same columns other TTD autofill tools export (`book, label,
+  mobile, email, name, age, gender, id_type, id_number, pp_*, …, wa_phone,
+  dob`), so a list kept in one of them comes straight across. `pilgrim` rows
+  become saved pilgrims (gender `0`/`1`/`2` = Male/Female/Transgender, id_type
+  `0`/`1` = Aadhaar/Passport, passport rows bring their visa details, dates in
+  `YYYY-MM-DD`); `pair` rows become pilgrim sets, matched to pilgrims by name.
+  Importing adds to what you have: a pilgrim with the same name and ID number
+  is updated rather than copied, and a set that already exists is skipped, so
+  importing the same file twice changes nothing. Export writes the same
+  layout — two-person sets as `pair`, larger ones as `set` rows with every
+  member's name — plus relationship, notes and contact columns at the end, so
+  an export imports back without losing anything. Unlike an encrypted backup,
+  the CSV holds ID numbers in plain text.
+
+### 1.4.6
 
 - **No more "The valid age allowed to book is 12 to 120 years" under a valid
   age on the Seva Electronic DIP form.** That form's own check shows the
