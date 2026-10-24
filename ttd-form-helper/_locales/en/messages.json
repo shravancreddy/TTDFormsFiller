@@ -719,6 +719,30 @@
    "opt_backup_wrong_passphrase": {
       "message": "Wrong passphrase, or the file has been modified."
    },
+   "opt_csv_export": {
+      "message": "⬇ Export CSV"
+   },
+   "opt_csv_exported": {
+      "message": "CSV downloaded."
+   },
+   "opt_csv_hint": {
+      "message": "Bring in a pilgrim list from a spreadsheet or another TTD autofill tool, or take yours out. Uses their columns (book, label, name, age, gender, id_type, id_number, passport/visa, dob); \"pilgrim\" rows are people and \"pair\" rows are sets, with the member names after the label. Importing adds to what you have: a pilgrim with the same name and ID number is updated, not copied. The file holds ID numbers unencrypted — keep it private."
+   },
+   "opt_csv_import": {
+      "message": "⬆ Import CSV"
+   },
+   "opt_csv_imported": {
+      "message": "Imported {added} new pilgrims, updated {updated}, and added {sets} sets."
+   },
+   "opt_csv_invalid": {
+      "message": "This doesn't look like a pilgrim CSV — it needs a header row with \"book\" and \"name\" columns."
+   },
+   "opt_csv_missing_members": {
+      "message": "Left out of sets because no pilgrim has that name: {names}."
+   },
+   "opt_csv_title": {
+      "message": "📄 Pilgrims & sets as CSV"
+   },
    "opt_lang_subtitle": {
       "message": "Changes the popup and settings page language."
    },

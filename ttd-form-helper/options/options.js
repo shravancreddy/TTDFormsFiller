@@ -10,6 +10,7 @@ import { validatePilgrim } from "../shared/validation.js";
 import { buildBadge } from "../shared/formValidation.js";
 import { buildPilgrimForm, emptyPilgrim, CONTACT_FIELDS } from "../shared/pilgrimForm.js";
 import { api } from "../shared/browser.js";
+import { importPilgrimCsv, exportPilgrimCsv } from "../shared/pilgrimCsv.js";
 
 const TAB_DEFS = [
   { id: "pilgrim", icon: "🛕", labelKey: "tab_pilgrim" },
@@ -156,6 +157,7 @@ async function renderVaultScreen(main) {
   screen.innerHTML = `<h1>${t("opt_nav_vault").replace(/^\S+\s/, "")}</h1><p class="opt-subtitle">${t("opt_vault_subtitle")}</p>`;
   main.appendChild(screen);
   screen.appendChild(buildPrivacyCallout());
+  screen.appendChild(buildCsvCard({ onImported: () => switchScreen("vault") }));
 
   const listCard = document.createElement("div");
   listCard.className = "opt-card";
@@ -263,6 +265,86 @@ async function renderVaultScreen(main) {
 
   renderList();
   renderForm();
+}
+
+// ------------------------------------------------------------------ CSV ----
+// Pilgrims and sets as a spreadsheet, in the column layout other TTD autofill
+// tools use (see shared/pilgrimCsv.js). Shown on Saved pilgrims and on Backup.
+function buildCsvCard({ onImported }) {
+  const card = document.createElement("div");
+  card.className = "opt-card";
+  card.innerHTML = `<h2>${t("opt_csv_title")}</h2><p class="opt-subtitle" style="margin-bottom:12px;">${t("opt_csv_hint")}</p>`;
+
+  const actions = document.createElement("div");
+  actions.className = "form-actions";
+  card.appendChild(actions);
+
+  const exportBtn = document.createElement("button");
+  exportBtn.type = "button";
+  exportBtn.className = "btn-primary";
+  exportBtn.textContent = t("opt_csv_export");
+  exportBtn.addEventListener("click", async () => {
+    let stored;
+    try {
+      stored = await storageGet([STORAGE_KEYS.vault, STORAGE_KEYS.sets]);
+    } catch {
+      showToast(t("lock_title"), "error");
+      return;
+    }
+    const vault = stored[STORAGE_KEYS.vault] || [];
+    if (vault.length === 0) {
+      showToast(t("opt_vault_empty"), "warn");
+      return;
+    }
+    const csv = exportPilgrimCsv({ vault, sets: stored[STORAGE_KEYS.sets] || [] });
+    const date = new Date().toISOString().slice(0, 10);
+    downloadFile(`ttd-pilgrims-${date}.csv`, csv, "text/csv");
+    showToast(t("opt_csv_exported"));
+  });
+  actions.appendChild(exportBtn);
+
+  const importBtn = document.createElement("button");
+  importBtn.type = "button";
+  importBtn.className = "btn-secondary";
+  importBtn.textContent = t("opt_csv_import");
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = "text/csv,.csv";
+  fileInput.className = "opt-file-input";
+  importBtn.addEventListener("click", () => fileInput.click());
+  actions.appendChild(importBtn);
+  card.appendChild(fileInput);
+
+  fileInput.addEventListener("change", async () => {
+    const file = fileInput.files[0];
+    fileInput.value = "";
+    if (!file) return;
+    let result;
+    try {
+      const stored = await storageGet([STORAGE_KEYS.vault, STORAGE_KEYS.sets]);
+      result = importPilgrimCsv(await file.text(), {
+        vault: stored[STORAGE_KEYS.vault] || [],
+        sets: stored[STORAGE_KEYS.sets] || [],
+        makeId: uid,
+      });
+    } catch {
+      showToast(t("opt_csv_invalid"), "error");
+      return;
+    }
+    await storageSet({ [STORAGE_KEYS.vault]: result.vault, [STORAGE_KEYS.sets]: result.sets });
+    const { stats } = result;
+    let summary = t("opt_csv_imported", {
+      added: stats.added, updated: stats.updated, sets: stats.setsAdded,
+    });
+    if (stats.missingMembers.length > 0) {
+      summary += " " + t("opt_csv_missing_members", { names: [...new Set(stats.missingMembers)].join(", ") });
+    }
+    // Long enough that a toast would vanish before it's read.
+    alert(summary);
+    await onImported();
+  });
+
+  return card;
 }
 
 // ----------------------------------------------------------------- Sets ----
@@ -516,7 +598,11 @@ const BACKUP_KEYS = [
 ];
 
 function downloadJson(filename, obj) {
-  const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
+  downloadFile(filename, JSON.stringify(obj, null, 2), "application/json");
+}
+
+function downloadFile(filename, text, type) {
+  const blob = new Blob([text], { type });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -707,6 +793,8 @@ async function renderBackupScreen(main) {
   importCard.appendChild(chooseBtn);
   importCard.appendChild(fileInput);
   screen.appendChild(importCard);
+
+  screen.appendChild(buildCsvCard({ onImported: () => {} }));
 }
 
 // -------------------------------------------------------------- Security ----
