@@ -90,7 +90,39 @@
     return called;
   };
 
+  // The passport popup's Visa Validity Date (build a341e02f, chunk
+  // 2cb82321011sz, module 69899) is a read-only MUI field that opens a
+  // calendar, so nothing can be typed into it. Its component takes
+  // onChange(Date) and the popup stores that as DD/MM/YYYY. Walk up the input's
+  // fiber to the component whose props carry a `format` and an `onChange`, and
+  // call that with the date.
+  const fiberOf = (el) => {
+    const key = el && Object.keys(el).find((k) => k.startsWith("__reactFiber$"));
+    return key ? el[key] : null;
+  };
+  const parseDate = (v) => {
+    const s = String(v || "").trim();
+    let m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+    if (m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    m = /^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})$/.exec(s);
+    if (m) return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+    return null;
+  };
+  const setPickerDate = (el, value) => {
+    const date = parseDate(value);
+    if (!date || isNaN(date.getTime())) return false;
+    for (let f = fiberOf(el), depth = 0; f && depth < 30; f = f.return, depth++) {
+      const p = f.memoizedProps;
+      if (p && typeof p.onChange === "function" && typeof p.format === "string") {
+        p.onChange(date);
+        return true;
+      }
+    }
+    return false;
+  };
+
   const run = (el, op, value) => {
+    if (op === "date") return setPickerDate(el, value);
     if (op === "change") {
       // A read-only combobox takes its value from the option click, not from here.
       const props = propsOf(el);

@@ -336,7 +336,20 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ## Version history
 
-### 1.4.7 — current
+### 1.4.8 — current
+
+- **Passport pilgrims fill again on the Arjitha Seva form.** Choosing Passport
+  opens TTD's "Photo ID Proof Instructions" popup. The October 2026 build
+  renamed its classes, and made Visa Validity Date a read-only calendar that
+  cannot be typed into. So the popup stayed open with "still missing Visa
+  validity" and was never submitted. The helper now finds the popup by its
+  Passport Number field and its Submit button. It sets the date through the
+  calendar's own component and cleans each value to what the popup accepts:
+  letters and digits for the visa number, hyphens for spaces in the visa type.
+  Then it presses Submit once the site enables it. Covered by
+  `tests/passport-popup.test.js`.
+
+### 1.4.7
 
 - **Import and export pilgrims and pilgrim sets as CSV.** Settings → Saved
   pilgrims (and Backup & Restore) has Import CSV / Export CSV buttons. The

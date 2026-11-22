@@ -809,48 +809,98 @@
     if (isPassport) {
       // Wait for the modal to be present *and* mounted (a field rendered),
       // rather than a fixed sleep that can fire before React fills it in.
-      const popup = await waitFor(() => {
-        const p =
-          document.querySelector('[class*="passportVisaPopup"]') ||
-          document.querySelector('[class*="popup"]') ||
-          document.querySelector('[class*="modal"]');
-        return p && p.querySelector("input") ? p : null;
-      }, { timeout: 4000, interval: 150 });
-      if (popup) {
-        const field = (name) => popup.querySelector(`input[name="${name}"]`);
-        const passportCountry = pilgrim.passportCountry || contactCountry;
-        const wanted = [
-          ["passportNumber", pilgrim.idNumber, "Passport number"],
-          ["country", passportCountry, "Country"],
-          ["visaNumber", pilgrim.visaNumber, "Visa number"],
-          ["visaType", pilgrim.visaType, "Visa type"],
-          ["visaValidityDate", pilgrim.visaValidityDate, "Visa validity"],
-        ];
-        for (const [name, value] of wanted) {
-          if (!value) continue;
-          const el = field(name);
-          if (el) {
-            await smartSet(el, value);
-            await sleep(120);
-          }
-        }
-        // Confirm each value actually took before trying to submit.
-        const missing = wanted
-          .filter(([name, value]) => value && (() => { const el = field(name); return !el || !el.value || !el.value.trim(); })())
-          .map(([, , label]) => label);
-        await sleep(300);
-        const submitBtn =
-          popup.querySelector('button[type="submit"]') ||
-          popup.querySelector('button[class*="continueBtn"]') ||
-          Array.from(popup.querySelectorAll("button")).find((b) => b.innerText?.toLowerCase().includes("submit"));
-        if (submitBtn && !submitBtn.disabled && missing.length === 0) {
-          submitBtn.click();
-          await sleep(1000);
-        } else if (missing.length > 0) {
-          toast("Passport popup: still missing " + missing.join(", ") + ". Please review before submitting.", "warn");
+      const popup = await waitFor(findPassportPopup, { timeout: 6000, interval: 150 });
+      if (!popup) {
+        toast("Passport popup did not open. Choose Passport again, or fill the passport details by hand.", "warn");
+        return;
+      }
+      const field = (name) => popup.querySelector(`input[name="${name}"]`);
+      const passportCountry = pilgrim.passportCountry || contactCountry;
+      const wanted = [
+        ["passportNumber", PASSPORT_CLEAN.number(pilgrim.idNumber), "Passport number"],
+        ["country", PASSPORT_CLEAN.country(passportCountry), "Country"],
+        ["visaNumber", PASSPORT_CLEAN.visaNumber(pilgrim.visaNumber), "Visa number"],
+        ["visaType", PASSPORT_CLEAN.visaType(pilgrim.visaType), "Visa type"],
+      ];
+      for (const [name, value] of wanted) {
+        if (!value) continue;
+        const el = field(name);
+        if (el) {
+          await smartSet(el, value);
+          await settle();
         }
       }
+      // Visa Validity Date is a read-only calendar field on the current build:
+      // it is set through its own component (the bridge's `date` op). An older
+      // popup with a typed date still takes text.
+      const dateEl = field("visaValidityDate");
+      const dateWanted = toDdMmYyyy(pilgrim.visaValidityDate);
+      if (dateEl && dateWanted) {
+        if (dateEl.readOnly) pageOp(dateEl, "date", dateWanted);
+        else await smartSet(dateEl, dateWanted);
+        await settle();
+      }
+      // Confirm each value actually took before trying to submit.
+      const missing = [...wanted, ["visaValidityDate", dateWanted, "Visa validity"]]
+        .filter(([name, value]) => value && (() => { const el = field(name); return !el || !el.value || !el.value.trim(); })())
+        .map(([, , label]) => label);
+      // Submit enables itself once every rule the popup checks holds.
+      let submitBtn = passportSubmit(popup);
+      for (let i = 0; i < 25 && submitBtn && submitBtn.disabled; i++) {
+        await sleep(80);
+        submitBtn = passportSubmit(popup);
+      }
+      if (submitBtn && !submitBtn.disabled && missing.length === 0) {
+        submitBtn.click();
+        await sleep(250);
+        // A Submit that did not take (an untrusted click) goes through the page.
+        if (findPassportPopup() && submitBtn.isConnected) pageOp(submitBtn, "click");
+        await sleep(750);
+      } else if (missing.length > 0) {
+        toast("Passport popup: still missing " + missing.join(", ") + ". Please review before submitting.", "warn");
+      } else {
+        toast("Passport popup: the site has not accepted these details yet. Check the highlighted field, then press Submit.", "warn");
+      }
     }
+  };
+
+  // The passport / visa popup, found by what it holds rather than by class:
+  // build a341e02f (Oct 2026) renamed its CSS-module classes (ZWYkFG_*), and
+  // the old `[class*="popup"]` / `[class*="modal"]` guesses only ever checked
+  // the FIRST element each selector matched. The popup is the one visible
+  // passportNumber field and the nearest ancestor that also holds Submit.
+  const findPassportPopup = () => {
+    const pn = Array.from(document.querySelectorAll('input[name="passportNumber"]')).find((el) => isVisible(el));
+    if (!pn) return null;
+    for (let node = pn.parentElement, depth = 0; node && depth < 12; node = node.parentElement, depth++) {
+      if (Array.from(node.querySelectorAll("button")).some((b) => /^submit$/i.test((b.textContent || "").trim()))) return node;
+    }
+    return pn.closest('[role="dialog"], [class*="contentWrapper"], [class*="modal"]') || pn.parentElement;
+  };
+  const passportSubmit = (popup) =>
+    (popup &&
+      (Array.from(popup.querySelectorAll("button")).find((b) => /^submit$/i.test((b.textContent || "").trim())) ||
+        popup.querySelector('button[class*="continueBtn"]') ||
+        popup.querySelector('button[type="submit"]'))) ||
+    null;
+  // What each popup field accepts (its validators, build a341e02f): passport
+  // 7-10 letters/digits, country 3-60 letters/spaces, visa number 3-30
+  // letters/digits, visa type 3-30 letters/digits/hyphens. Its onKeyDown filter
+  // drops other characters as they are typed, but never sees a bridged write.
+  const PASSPORT_CLEAN = {
+    number: (v) => String(v || "").replace(/[^A-Za-z0-9]/g, "").toUpperCase(),
+    country: (v) => String(v || "").replace(/[^A-Za-z ]/g, " ").replace(/\s{2,}/g, " ").trim().slice(0, 60),
+    visaNumber: (v) => String(v || "").replace(/[^A-Za-z0-9]/g, "").slice(0, 30),
+    visaType: (v) => String(v || "").trim().replace(/\s+/g, "-").replace(/[^A-Za-z0-9-]/g, "").slice(0, 30),
+  };
+  // Saved dates may be DD/MM/YYYY (the form's own placeholder) or YYYY-MM-DD.
+  const toDdMmYyyy = (v) => {
+    const s = String(v || "").trim();
+    let m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+    if (m) return `${m[3]}/${m[2]}/${m[1]}`;
+    m = /^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})$/.exec(s);
+    if (m) return `${m[1].padStart(2, "0")}/${m[2].padStart(2, "0")}/${m[3]}`;
+    return "";
   };
 
   const setSelectByLabel = (selectEl, label) => {
