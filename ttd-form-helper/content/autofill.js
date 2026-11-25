@@ -98,27 +98,244 @@
     } catch {}
   };
   // A single on-page toast helper shared by the fillers and the floating button.
+  // ---- On-page UI preferences (Settings → On-page button & messages) ----
+  // fabPosition: bottom-right | bottom-left | top-right | top-left | free | hidden
+  // fabFreePos / toastFreePos: {x, y} in px, saved when the user drags them.
+  // toastMode: show | hidden (hidden still announces to screen readers).
+  // allowPaste: let pasted text into TTD fields (see the paste handler below).
+  const UI_PREF_DEFAULTS = {
+    fabPosition: "bottom-right",
+    fabFreePos: null,
+    toastMode: "show",
+    toastFreePos: null,
+    allowPaste: true,
+  };
+  const uiPrefs = { ...UI_PREF_DEFAULTS };
+  const uiPrefListeners = [];
+  const applyUiPrefs = (items) => {
+    for (const k of Object.keys(UI_PREF_DEFAULTS)) {
+      if (k in items) uiPrefs[k] = items[k] == null || items[k] === "" ? UI_PREF_DEFAULTS[k] : items[k];
+    }
+    uiPrefListeners.forEach((fn) => {
+      try {
+        fn();
+      } catch {}
+    });
+  };
+  try {
+    chrome.storage.local.get(Object.keys(UI_PREF_DEFAULTS), (items) => applyUiPrefs(items || {}));
+    chrome.storage.onChanged.addListener((changes, area) => {
+      if (area !== "local") return;
+      const next = {};
+      for (const k of Object.keys(UI_PREF_DEFAULTS)) if (k in changes) next[k] = changes[k].newValue;
+      if (Object.keys(next).length) applyUiPrefs(next);
+    });
+  } catch {}
+  const saveUiPref = (items) => {
+    try {
+      chrome.storage.local.set(items);
+    } catch {}
+  };
+  // Keeps a dragged element fully on screen after a resize or a smaller window.
+  const clampToViewport = (pos, w, h) => ({
+    x: Math.max(4, Math.min(window.innerWidth - w - 4, Math.round(pos.x))),
+    y: Math.max(4, Math.min(window.innerHeight - h - 4, Math.round(pos.y))),
+  });
+  // Drag `node` by pointer from `handle`. Movements under 6px stay clicks.
+  // onDrop(pos) runs once a real drag ends; returns a "did that just drag?" probe
+  // so a click handler on the same handle can ignore the click a drag ends with.
+  const makeDraggable = (node, handle, onDrop) => {
+    let start = null;
+    let dragged = false;
+    let justDragged = false;
+    handle.addEventListener("pointerdown", (e) => {
+      if (e.button !== 0) return;
+      const r = node.getBoundingClientRect();
+      start = { px: e.clientX, py: e.clientY, x: r.left, y: r.top, w: r.width, h: r.height, id: e.pointerId };
+      dragged = false;
+      // Capture now, so a quick drag that leaves the element at once is still followed.
+      try {
+        handle.setPointerCapture(e.pointerId);
+      } catch {}
+    });
+    handle.addEventListener("pointermove", (e) => {
+      if (!start || e.pointerId !== start.id) return;
+      const dx = e.clientX - start.px;
+      const dy = e.clientY - start.py;
+      if (!dragged && Math.hypot(dx, dy) < 6) return;
+      if (!dragged) {
+        dragged = true;
+        node.classList.add("ttdfh-dragging");
+      }
+      const p = clampToViewport({ x: start.x + dx, y: start.y + dy }, start.w, start.h);
+      Object.assign(node.style, { left: p.x + "px", top: p.y + "px", right: "auto", bottom: "auto" });
+    });
+    const end = (e) => {
+      if (!start || (e && e.pointerId !== start.id)) return;
+      const s = start;
+      start = null;
+      node.classList.remove("ttdfh-dragging");
+      if (!dragged) return;
+      justDragged = true;
+      setTimeout(() => (justDragged = false), 0);
+      const r = node.getBoundingClientRect();
+      onDrop(clampToViewport({ x: r.left, y: r.top }, s.w, s.h));
+    };
+    handle.addEventListener("pointerup", end);
+    handle.addEventListener("pointercancel", end);
+    return () => justDragged;
+  };
+
+  // A single on-page toast helper shared by the fillers and the floating button.
+  // It used to sit fixed just above the ⚡ button, where it covered TTD's own
+  // Continue button for 4.5 s after every fill. Now it can be closed (✕),
+  // dragged anywhere (the spot is remembered), stays up while hovered, and can
+  // be switched off in Settings.
   const PAGE_TOAST_ID = "ttdfh-fill-toast";
+  // Where the toast sits when the user has not dragged it: next to the ⚡
+  // button's corner, on the side away from the page edge.
+  const toastAnchor = () => {
+    const pos = uiPrefs.fabPosition;
+    const wrap = document.getElementById("ttdfh-fab-wrap");
+    if (pos === "free" && wrap) {
+      const r = wrap.getBoundingClientRect();
+      const top = r.top + r.height / 2 < window.innerHeight / 2;
+      const left = r.left + r.width / 2 < window.innerWidth / 2;
+      return {
+        [top ? "top" : "bottom"]: (top ? r.bottom + 12 : window.innerHeight - r.top + 12) + "px",
+        [left ? "left" : "right"]: (left ? Math.max(8, r.left) : Math.max(8, window.innerWidth - r.right)) + "px",
+      };
+    }
+    const corner = pos === "free" || pos === "hidden" ? "bottom-right" : pos;
+    const gap = pos === "hidden" ? "22px" : "96px";
+    return {
+      [corner.startsWith("top") ? "top" : "bottom"]: gap,
+      [corner.endsWith("left") ? "left" : "right"]: "22px",
+    };
+  };
   const toast = (message, kind) => {
     try {
       const existing = document.getElementById(PAGE_TOAST_ID);
       if (existing) existing.remove();
+      announce(message);
+      if (uiPrefs.toastMode === "hidden") return;
       const color = kind === "error" ? "#DC2626" : kind === "warn" ? "#D97706" : "#1E9E5C";
       const node = document.createElement("div");
       node.id = PAGE_TOAST_ID;
       node.setAttribute("role", "status");
-      node.textContent = message;
+      node.title = "Drag to move · ✕ to close";
       node.style.cssText =
-        "position:fixed;bottom:96px;right:22px;z-index:2147483647;background:" +
+        "position:fixed;z-index:2147483647;display:flex;align-items:flex-start;gap:10px;background:" +
         color +
-        ";color:#fff;font:600 13px/1.4 system-ui,-apple-system,sans-serif;padding:11px 16px;border-radius:12px;max-width:320px;box-shadow:0 10px 30px rgba(0,0,0,.3);";
+        ";color:#fff;font:600 13px/1.4 system-ui,-apple-system,sans-serif;padding:11px 10px 11px 16px;border-radius:12px;max-width:340px;box-shadow:0 10px 30px rgba(0,0,0,.3);cursor:grab;touch-action:none;user-select:none;";
+      const text = document.createElement("span");
+      text.textContent = message;
+      text.style.cssText = "flex:1;min-width:0;";
+      const close = document.createElement("button");
+      close.type = "button";
+      close.textContent = "✕";
+      close.setAttribute("aria-label", "Close message");
+      close.style.cssText =
+        "flex:none;border:0;background:rgba(255,255,255,.22);color:#fff;width:22px;height:22px;border-radius:50%;font:700 12px/1 system-ui,sans-serif;cursor:pointer;padding:0;";
+      close.addEventListener("pointerdown", (e) => e.stopPropagation());
+      close.addEventListener("click", () => node.remove());
+      node.appendChild(text);
+      node.appendChild(close);
+
+      const saved = uiPrefs.toastFreePos;
+      if (saved && typeof saved.x === "number") {
+        Object.assign(node.style, { left: saved.x + "px", top: saved.y + "px" });
+      } else {
+        Object.assign(node.style, toastAnchor());
+      }
       document.body.appendChild(node);
-      announce(message);
-      setTimeout(() => {
-        if (document.getElementById(PAGE_TOAST_ID) === node) node.remove();
-      }, 4500);
+      if (saved && typeof saved.x === "number") {
+        const r = node.getBoundingClientRect();
+        const p = clampToViewport(saved, r.width, r.height);
+        Object.assign(node.style, { left: p.x + "px", top: p.y + "px" });
+      }
+      makeDraggable(node, node, (pos) => saveUiPref({ toastFreePos: pos }));
+
+      // Auto-hide after 4.5 s, but not while the pointer is on it.
+      let timer = null;
+      const arm = (ms) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          if (document.getElementById(PAGE_TOAST_ID) === node && !node.matches(":hover")) node.remove();
+        }, ms);
+      };
+      node.addEventListener("pointerenter", () => clearTimeout(timer));
+      node.addEventListener("pointerleave", () => arm(2500));
+      arm(4500);
     } catch {}
   };
+
+  // ---- Pasting into TTD's fields ----
+  // People copy names, Aadhaar numbers and addresses from WhatsApp, Excel or
+  // the side panel and paste them into the TTD form. That often did nothing:
+  // some TTD fields cancel the paste outright, and the rest reject the whole
+  // value when it carries anything their check does not allow, such as a
+  // trailing space or newline, "1234 5678 9012" in a digits-only Aadhaar box,
+  // or a "+91" mobile. This runs before the page sees the paste, cleans the
+  // text for the field, and types it in with insertText, which the browser
+  // reports as a real (trusted) input event, so TTD's guard accepts it.
+  // OTP boxes (maxLength 1), passwords, read-only dropdowns and our own UI are
+  // left to the page. It can be turned off in Settings.
+  const PASTE_SKIP_TYPES = /^(checkbox|radio|file|button|submit|reset|image|range|color|hidden|password|date|time|datetime-local|month|week)$/i;
+  const cleanPasted = (raw, el) => {
+    let v = String(raw).replace(/[​-‍⁠﻿­]/g, "").replace(/ /g, " ");
+    if (el.tagName !== "TEXTAREA") v = v.replace(/\s*[\r\n]+\s*/g, " ");
+    v = v.replace(/[ \t]+/g, " ").trim();
+    const name = (el.name || el.id || "").toLowerCase();
+    const digitsOnly = /^[+\d\s().\-]+$/.test(v);
+    if (digitsOnly && /aadh|aadhar|idnumber|idproofnumber|proofid|mobile|phone|pincode|pin$|zip|age$|^age/.test(name)) {
+      let d = v.replace(/\D/g, "");
+      if (/mobile|phone/.test(name)) {
+        if (d.length === 12 && d.startsWith("91")) d = d.slice(2);
+        else if (d.length === 11 && d.startsWith("0")) d = d.slice(1);
+      }
+      v = d;
+    } else if (/email/.test(name)) {
+      v = v.replace(/\s+/g, "");
+    }
+    return v;
+  };
+  window.addEventListener(
+    "paste",
+    (e) => {
+      if (!uiPrefs.allowPaste) return;
+      const el = e.target;
+      const isInput = el instanceof HTMLInputElement;
+      if (!isInput && !(el instanceof HTMLTextAreaElement)) return;
+      if (el.readOnly || el.disabled || el.closest('[id^="ttdfh-"]')) return;
+      if (isInput && PASTE_SKIP_TYPES.test(el.type || "text")) return;
+      if (el.maxLength === 1) return;
+      const raw = e.clipboardData && e.clipboardData.getData("text/plain");
+      if (!raw) return;
+      const text = cleanPasted(raw, el);
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      if (!text) return;
+      if (document.activeElement !== el) el.focus();
+      let ok = false;
+      try {
+        ok = document.execCommand("insertText", false, text);
+      } catch {}
+      if (!ok) {
+        // insertText unavailable: replace the selection ourselves and go
+        // through the same write path the fill uses.
+        let next = text;
+        try {
+          const s = el.selectionStart;
+          const t = el.selectionEnd;
+          if (typeof s === "number" && typeof t === "number") next = el.value.slice(0, s) + text + el.value.slice(t);
+        } catch {}
+        if (el.maxLength > 0) next = next.slice(0, el.maxLength);
+        setControlledValue(el, next);
+      }
+    },
+    true
+  );
 
   // ---- Self-QC: track every field a fill touches, then mark filled (green) vs
   // blank/failed (red) once the run finishes, with a small on-page summary. ----
@@ -740,6 +957,36 @@
     await recheckFields(written);
   };
 
+  // TTD words the Photo ID Proof options differently per flow: "Aadhaar Card"
+  // on most darshan pages, plain "Aadhaar" on Arjitha Seva (Sri Srinivasa
+  // Divyanugraha Homam included), and sometimes "Aadhar". An exact-text match
+  // found nothing there, so the ID type stayed blank and the ID number field,
+  // which the page keeps disabled until an ID type is chosen, never took the
+  // Aadhaar. Match by kind of ID instead.
+  const ID_KIND_PATTERNS = [
+    ["aadhaar", /aadh?aa?r|\buid\b/],
+    ["passport", /passport/],
+    ["voter", /voter|epic/],
+    ["pan", /\bpan\b/],
+    ["driving", /driv/],
+  ];
+  const idKind = (s) => {
+    const v = norm(s);
+    const hit = ID_KIND_PATTERNS.find(([, re]) => re.test(v));
+    return hit ? hit[0] : v;
+  };
+  const idTypeMatcher = (label) => {
+    const want = idKind(label);
+    return (text) => idKind(text) === want;
+  };
+  // Aadhaar is saved and shown in groups ("1234 5678 9012") but TTD's field is
+  // digits only, 12 long, and rejects the whole write if anything else is in it.
+  const cleanIdNumber = (idProof, value) => {
+    const v = String(value ?? "").trim();
+    if (idKind(idProof || "Aadhaar") !== "aadhaar") return v;
+    return /^[\d\s.\-]+$/.test(v) ? v.replace(/\D/g, "") : v;
+  };
+
   const nthByNames = (index, ...names) => {
     for (const n of names) {
       const nodes = document.querySelectorAll(`input[name="${n}"]`);
@@ -792,17 +1039,22 @@
     const idTypeEl = nthByNames(index, "idType", "photoIdType");
     if (idTypeEl) {
       const idProof = (pilgrim.idProof || "Aadhaar Card").trim();
-      await selectFromDropdown(idTypeEl, idProof);
-      await sleep(300);
+      await selectFromDropdown(idTypeEl, idProof, { matches: idTypeMatcher(idProof) });
+      // The ID number stays disabled until React commits the ID type.
+      await settle();
+      const idNumberNow = nthByNames(index, "idNumber", "idProofNumber");
+      if (idNumberNow && idNumberNow.disabled) await waitFor(() => !idNumberNow.disabled, { timeout: 1500 });
+      else await sleep(150);
     }
 
     const isPassport = norm(pilgrim.idProof) === "passport";
     const idNumberEl = nthByNames(index, "idNumber", "idProofNumber");
+    const idNumber = cleanIdNumber(pilgrim.idProof, pilgrim.idNumber);
     if (idNumberEl) {
       if (idNumberEl.disabled) idNumberEl.disabled = false;
-      setNativeValue(idNumberEl, pilgrim.idNumber);
+      setNativeValue(idNumberEl, idNumber);
       // A passport number goes through the visa popup below instead.
-      if (pilgrim.idNumber && !isPassport) written.push([idNumberEl, String(pilgrim.idNumber)]);
+      if (idNumber && !isPassport) written.push([idNumberEl, idNumber]);
     }
     await recheckFields(written);
 
@@ -938,7 +1190,7 @@
     }
 
     const idEl = document.querySelector(`input[name="proofId${index}"]`);
-    if (idEl && person.idNumber) setNativeValue(idEl, person.idNumber);
+    if (idEl && person.idNumber) setNativeValue(idEl, cleanIdNumber(person.idProof, person.idNumber));
   };
 
   // Fills up to nine Srivani members, keeping the Continue button watched while
@@ -2501,6 +2753,19 @@
           z-index: 2147483646;
           font-family: system-ui, -apple-system, sans-serif;
         }
+        #ttdfh-fab-wrap.ttdfh-dragging, #ttdfh-fab-wrap.ttdfh-dragging #${BTN_ID} { cursor: grabbing; }
+        #ttdfh-fab-wrap.ttdfh-dragging .ttdfh-pop { display: none; }
+        #${BTN_ID} { touch-action: none; }
+        /* The button can sit in any corner (or anywhere, dragged): the menu,
+           progress pill and hover card open towards the middle of the page. */
+        #ttdfh-fab-wrap.ttdfh-at-top #ttdfh-menu { bottom: auto; top: 68px; }
+        #ttdfh-fab-wrap.ttdfh-at-top #ttdfh-progress { bottom: auto; top: 66px; }
+        #ttdfh-fab-wrap.ttdfh-at-left #ttdfh-menu,
+        #ttdfh-fab-wrap.ttdfh-at-left #ttdfh-progress { right: auto; left: 0; }
+        #ttdfh-fab-wrap.ttdfh-at-left .ttdfh-pop { right: auto; left: 72px; transform: translateX(-12px); }
+        #ttdfh-fab-wrap.ttdfh-at-left:hover .ttdfh-pop,
+        #ttdfh-fab-wrap.ttdfh-at-left:focus-within .ttdfh-pop { transform: translateX(0); }
+        #ttdfh-fab-wrap.ttdfh-at-top .ttdfh-pop { bottom: auto; top: 0; }
         #${BTN_ID} {
           position: relative;
           width: 58px;
@@ -2854,15 +3119,70 @@
       wrap.appendChild(pop);
 
       document.body.appendChild(wrap);
+
+      // Drag the button anywhere; it stays there (Settings → "Free") until a
+      // corner is picked again. A drag never counts as a click.
+      const wasDrag = makeDraggable(wrap, btn, (pos) => {
+        uiPrefs.fabPosition = "free";
+        uiPrefs.fabFreePos = pos;
+        saveUiPref({ fabPosition: "free", fabFreePos: pos });
+        placeFab();
+      });
+      btn.addEventListener(
+        "click",
+        (e) => {
+          if (wasDrag()) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+          }
+        },
+        true
+      );
+      placeFab();
+    }
+
+    function placeFab() {
+      const wrap = document.getElementById("ttdfh-fab-wrap");
+      if (!wrap) return;
+      const pos = uiPrefs.fabPosition;
+      const free = uiPrefs.fabFreePos;
+      Object.assign(wrap.style, { top: "", left: "", right: "", bottom: "" });
+      let atTop;
+      let atLeft;
+      if (pos === "free" && free && typeof free.x === "number") {
+        const r = wrap.getBoundingClientRect();
+        const p = clampToViewport(free, r.width || 58, r.height || 58);
+        Object.assign(wrap.style, { left: p.x + "px", top: p.y + "px", right: "auto", bottom: "auto" });
+        atTop = p.y + 29 < window.innerHeight / 2;
+        atLeft = p.x + 29 < window.innerWidth / 2;
+      } else {
+        const corner = /^(top|bottom)-(left|right)$/.test(pos) ? pos : "bottom-right";
+        atTop = corner.startsWith("top");
+        atLeft = corner.endsWith("left");
+        Object.assign(wrap.style, {
+          top: atTop ? "22px" : "auto",
+          bottom: atTop ? "auto" : "22px",
+          left: atLeft ? "22px" : "auto",
+          right: atLeft ? "auto" : "22px",
+        });
+      }
+      wrap.classList.toggle("ttdfh-at-top", atTop);
+      wrap.classList.toggle("ttdfh-at-left", atLeft);
     }
 
     // Re-runs on DOM changes so the button stays correct as the SPA moves
     // between booking steps (pilgrim → seva → srivani) without a full reload.
     function sync() {
       const type = detectFormType();
-      if (type) injectButton(type);
+      // "Hidden" in Settings removes the button only; Alt+A still fills.
+      if (type && uiPrefs.fabPosition !== "hidden") injectButton(type);
       else removeButton();
     }
+    uiPrefListeners.push(() => {
+      sync();
+      placeFab();
+    });
+    window.addEventListener("resize", () => placeFab());
 
     window.addEventListener("keydown", (e) => {
       // Alt+A = normal fill (empty rows); Alt+Shift+A = overwrite existing values.

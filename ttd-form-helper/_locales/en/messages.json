@@ -762,7 +762,7 @@
       "message": "🗂️ Pilgrim Sets"
    },
    "opt_nav_tabs": {
-      "message": "🧭 Tabs"
+      "message": "🧭 Tabs & display"
    },
    "opt_nav_vault": {
       "message": "👨‍👩‍👧 Saved Pilgrims"
@@ -937,6 +937,54 @@
    },
    "opt_tabs_title": {
       "message": "Tabs"
+   },
+   "opt_onpage_fab_label": {
+      "message": "⚡ Fill button"
+   },
+   "opt_onpage_hidden_note": {
+      "message": "The button is hidden. Alt+A (Option+A on a Mac) still fills, Alt+Shift+A overwrites, and the side panel has every action."
+   },
+   "opt_onpage_paste_label": {
+      "message": "Help pasting into TTD's fields (trims spaces and line breaks, and makes pastes the site would refuse go in)"
+   },
+   "opt_onpage_pos_bottom_left": {
+      "message": "↙ Bottom left"
+   },
+   "opt_onpage_pos_bottom_right": {
+      "message": "↘ Bottom right"
+   },
+   "opt_onpage_pos_free": {
+      "message": "✋ Free (drag it)"
+   },
+   "opt_onpage_pos_hidden": {
+      "message": "🚫 Hidden (Alt+A only)"
+   },
+   "opt_onpage_pos_top_left": {
+      "message": "↖ Top left"
+   },
+   "opt_onpage_pos_top_right": {
+      "message": "↗ Top right"
+   },
+   "opt_onpage_reset": {
+      "message": "Reset positions"
+   },
+   "opt_onpage_reset_done": {
+      "message": "Button and message are back in their default spots."
+   },
+   "opt_onpage_subtitle": {
+      "message": "Where the ⚡ fill button sits on TTD's pages, and whether fill messages pop up there. You can also drag the button or a message anywhere on the page; it stays where you drop it."
+   },
+   "opt_onpage_title": {
+      "message": "On-page button & messages"
+   },
+   "opt_onpage_toast_hidden": {
+      "message": "🔕 Hide"
+   },
+   "opt_onpage_toast_label": {
+      "message": "Fill messages (Self-QC and others)"
+   },
+   "opt_onpage_toast_show": {
+      "message": "💬 Show"
    },
    "opt_theme_dark": {
       "message": "🌙 Dark"

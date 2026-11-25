@@ -39,6 +39,15 @@ any kind. Key updates:
   a keyboard-reachable menu: fill only empty rows or overwrite, fill the next empty
   pilgrim, fill contact only, pick a saved set, choose a group Seva member, fill-and-
   continue, or undo/clear what was filled. `Alt`+`A` fills; `Alt`+`Shift`+`A` overwrites.
+- **Put the button and messages where they don't get in the way** — drag the ⚡
+  button or any fill message anywhere on the page and it stays there. Each
+  message has a ✕. In Settings → Tabs & display, pin the button to any corner,
+  leave it free, or hide it and use `Alt`+`A` alone; fill messages can be
+  switched off too.
+- **Pasting into TTD's fields works** — text pasted into the booking form is
+  tidied for the field (spaces, line breaks, `1234 5678 9012` → 12 digits,
+  `+91` dropped from a mobile) and typed in as a real input, even where the page
+  cancels pastes. It can be switched off in the same Settings card.
 - **Real tab-outs** — after writing a field the extension drives a genuine
   focus → blur, so the site's own validation re-runs and clears any stale "this
   field is required" error instead of leaving Continue disabled.
@@ -336,7 +345,44 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ## Version history
 
-### 1.4.8 — current
+### 1.4.9 — current
+
+- **Aadhaar fills again on Arjitha Seva, Sri Srinivasa Divyanugraha Homam
+  included.** These pages list the Photo ID option as plain "Aadhaar". The fill
+  only picked an option whose text was exactly "Aadhaar Card", so the ID type
+  stayed blank. The page keeps Photo ID Number disabled until an ID type is
+  chosen, so the Aadhaar never went in, and Continue reported both fields
+  required. The ID type is now matched by kind (Aadhaar / Aadhar / UID,
+  Passport, Voter ...). The fill also waits for the number field to unlock
+  before writing it.
+- **An Aadhaar saved with spaces or dashes fills.** "1234 5678 9012" (common
+  after a CSV import) is written as 12 digits. TTD's field rejected the whole
+  value before.
+- **The Self-QC message no longer hides Continue.** It sat fixed just above the
+  ⚡ button, on top of TTD's Continue button, for 4.5 s after every fill. Every
+  on-page message now has a ✕, stays up while the pointer is on it, and can be
+  dragged anywhere. The spot it is dropped on is remembered.
+- **The ⚡ button can go anywhere, or nowhere.** Settings → Tabs & display →
+  *On-page button & messages*: bottom right (default), bottom left, top right,
+  top left, free, or hidden. Hidden leaves `Alt`+`A` / `Alt`+`Shift`+`A` and the
+  side panel. Dragging the button switches to free and remembers the spot. Its
+  menu and hover card open towards the middle of the page from any corner.
+  Fill messages can be hidden too (screen readers still hear them). *Reset
+  positions* puts both back. Open TTD tabs follow these settings at once.
+- **Pasting into TTD's fields.** 1.3.0 made the side panel stay open so details
+  can be pasted *into the extension*. Pasting straight into TTD's form still
+  failed. Some fields cancel the paste, and the rest drop the whole value when
+  any character fails their check: a trailing space or newline from WhatsApp or
+  Excel, a grouped Aadhaar, a `+91` mobile. The extension now catches the paste
+  first and tidies the text for that field. It then types the text in with
+  `insertText`, which the browser reports as real input, so TTD's trusted-event
+  guard accepts it. OTP boxes, passwords, dropdowns and date fields are left to
+  the page. There is a Settings switch to turn this off.
+- `tests/onpage-ui.test.js` covers the message, the button placements, hidden +
+  `Alt`+`A`, and pasting. `tests/seva-flows.test.js` now gives the Arjitha page
+  TTD's "Aadhaar" wording and a grouped Aadhaar: 1.4.8 fails it, 1.4.9 passes.
+
+### 1.4.8
 
 - **Passport pilgrims fill again on the Arjitha Seva form.** Choosing Passport
   opens TTD's "Photo ID Proof Instructions" popup. The October 2026 build
