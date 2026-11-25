@@ -77,7 +77,12 @@ const SEVA_PAGE = `<!doctype html><html><body><div id="root"></div>
 <script>${REACT}</script><script>${REACT_DOM}</script>
 <script>${FIELD}
 const GENDERS = [{ id: 'Male', title: 'Male' }, { id: 'Female', title: 'Female' }, { id: 'Transgender', title: 'Transgender' }];
-const IDS = [{ id: 'aadhaar', title: 'Aadhaar Card' }, { id: 'passport', title: 'Passport' }];
+// Arjitha Seva (Sri Srinivasa Divyanugraha Homam included) lists plain
+// "Aadhaar" (and Voter ID); the other flows say "Aadhaar Card".
+const ARJITHA = location.pathname.startsWith('/arjitha-seva/');
+const IDS = ARJITHA
+  ? [{ id: 'aadhaar', title: 'Aadhaar' }, { id: 'passport', title: 'Passport' }, { id: 'voter', title: 'Voter' }]
+  : [{ id: 'aadhaar', title: 'Aadhaar Card' }, { id: 'passport', title: 'Passport' }];
 const STATES = ['Andhra Pradesh', 'Karnataka', 'Odisha', 'Tamil Nadu', 'Telangana'].map(t => ({ id: t, title: t }));
 const DIP = location.pathname.startsWith('/seva-dip/');
 const AGE_MSG = 'The valid age allowed to book is 12 to 120 years';
@@ -149,7 +154,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(e(App));
 const PILGRIMS = [
   { id: 'a', name: 'Ramaiah Sastry', age: '66', gender: 'Male', idProof: 'Aadhaar Card', idNumber: '999988887777',
     email: 'who@example.com', city: 'Hyderabad', state: 'Telangana', country: 'India', pincode: '500068', gothram: 'Kashyapa' },
-  { id: 'b', name: 'Kamala Sastry', age: '62', gender: 'Female', idProof: 'Aadhaar Card', idNumber: '888877776666' }
+  // Saved the way people often type it, in groups; TTD's field is digits only.
+  { id: 'b', name: 'Kamala Sastry', age: '62', gender: 'Female', idProof: 'Aadhaar Card', idNumber: '8888 7777 6666' }
 ];
 const CONTACT = { email: 'who@example.com', city: 'Hyderabad', state: 'Telangana', country: 'India', pincode: '500068', gothram: 'Kashyapa' };
 const WANT_CONTACT = { gothram: 'Kashyapa', pilgrimEmail: 'who@example.com', pilgrimCity: 'Hyderabad', pilgrimState: 'Telangana',

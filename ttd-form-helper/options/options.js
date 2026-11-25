@@ -460,6 +460,105 @@ async function renderSetsScreen(main) {
 }
 
 // ----------------------------------------------------------- Tabs/Prefs ----
+// On-page ⚡ button and toast. content/autofill.js reads these same keys and
+// follows changes live, so an open TTD tab moves or hides the button at once.
+const ONPAGE_FAB_POSITIONS = [
+  ["bottom-right", "opt_onpage_pos_bottom_right"],
+  ["bottom-left", "opt_onpage_pos_bottom_left"],
+  ["top-right", "opt_onpage_pos_top_right"],
+  ["top-left", "opt_onpage_pos_top_left"],
+  ["free", "opt_onpage_pos_free"],
+  ["hidden", "opt_onpage_pos_hidden"],
+];
+
+async function buildOnPageCard() {
+  const card = document.createElement("div");
+  card.className = "opt-card";
+  card.innerHTML = `<h2>${t("opt_onpage_title")}</h2><p class="opt-subtitle" style="margin-bottom:10px;">${t("opt_onpage_subtitle")}</p>`;
+  const stored = await storageGet(["fabPosition", "toastMode", "allowPaste"]);
+  const state = {
+    fabPosition: stored.fabPosition || "bottom-right",
+    toastMode: stored.toastMode || "show",
+    allowPaste: stored.allowPaste !== false,
+  };
+
+  const note = document.createElement("p");
+  note.className = "opt-subtitle";
+  note.style.margin = "8px 0 0";
+  note.textContent = t("opt_onpage_hidden_note");
+
+  const choiceRow = (labelKey, options, key, after) => {
+    const label = document.createElement("div");
+    label.className = "opt-onpage-label";
+    label.textContent = t(labelKey);
+    const row = document.createElement("div");
+    row.className = "opt-theme-row";
+    row.setAttribute("role", "group");
+    row.setAttribute("aria-label", t(labelKey));
+    options.forEach(([value, textKey]) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "opt-choice-btn" + (state[key] === value ? " active" : "");
+      btn.setAttribute("aria-pressed", String(state[key] === value));
+      btn.textContent = t(textKey);
+      btn.addEventListener("click", async () => {
+        state[key] = value;
+        await storageSet({ [key]: value });
+        row.querySelectorAll(".opt-choice-btn").forEach((b) => {
+          b.classList.toggle("active", b === btn);
+          b.setAttribute("aria-pressed", String(b === btn));
+        });
+        if (after) after();
+      });
+      row.appendChild(btn);
+    });
+    card.appendChild(label);
+    card.appendChild(row);
+  };
+
+  const syncNote = () => {
+    note.hidden = state.fabPosition !== "hidden";
+  };
+  choiceRow("opt_onpage_fab_label", ONPAGE_FAB_POSITIONS, "fabPosition", syncNote);
+  card.appendChild(note);
+  syncNote();
+  choiceRow(
+    "opt_onpage_toast_label",
+    [["show", "opt_onpage_toast_show"], ["hidden", "opt_onpage_toast_hidden"]],
+    "toastMode"
+  );
+
+  const pasteLabel = document.createElement("label");
+  pasteLabel.className = "checkbox-label";
+  pasteLabel.style.marginTop = "14px";
+  const pasteCheck = document.createElement("input");
+  pasteCheck.type = "checkbox";
+  pasteCheck.checked = state.allowPaste;
+  pasteCheck.addEventListener("change", () => storageSet({ allowPaste: pasteCheck.checked }));
+  pasteLabel.appendChild(pasteCheck);
+  pasteLabel.appendChild(document.createTextNode(t("opt_onpage_paste_label")));
+  card.appendChild(pasteLabel);
+
+  const reset = document.createElement("button");
+  reset.type = "button";
+  reset.className = "btn-secondary btn-sm";
+  reset.style.marginTop = "12px";
+  reset.textContent = t("opt_onpage_reset");
+  reset.addEventListener("click", async () => {
+    const next = { fabFreePos: null, toastFreePos: null };
+    if (state.fabPosition === "free") next.fabPosition = "bottom-right";
+    await storageSet(next);
+    showToast(t("opt_onpage_reset_done"), "success");
+    if (next.fabPosition) {
+      state.fabPosition = next.fabPosition;
+      const main = document.getElementById("opt-main");
+      if (main && activeScreen === "tabs") switchScreen("tabs");
+    }
+  });
+  card.appendChild(reset);
+  return card;
+}
+
 async function renderTabsScreen(main) {
   const screen = document.createElement("div");
   screen.className = "opt-screen";
@@ -508,6 +607,8 @@ async function renderTabsScreen(main) {
   });
   langCard.appendChild(langRow);
   screen.appendChild(langCard);
+
+  screen.appendChild(await buildOnPageCard());
 
   // Tab order/visibility
   const tabsCard = document.createElement("div");
