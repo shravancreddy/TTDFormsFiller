@@ -300,9 +300,10 @@
     }
     return v;
   };
-  window.addEventListener(
-    "paste",
-    (e) => {
+  // paste-guard.js (document_start, same isolated world) calls this from its
+  // own capture listener, which runs ahead of the site's; without it, listen
+  // here instead.
+  const onPaste = (e) => {
       if (!uiPrefs.allowPaste) return;
       const el = e.target;
       const isInput = el instanceof HTMLInputElement;
@@ -333,9 +334,9 @@
         if (el.maxLength > 0) next = next.slice(0, el.maxLength);
         setControlledValue(el, next);
       }
-    },
-    true
-  );
+  };
+  globalThis.__ttdfhOnPaste = onPaste;
+  if (!globalThis.__ttdfhPasteGuard) window.addEventListener("paste", onPaste, true);
 
   // ---- Self-QC: track every field a fill touches, then mark filled (green) vs
   // blank/failed (red) once the run finishes, with a small on-page summary. ----

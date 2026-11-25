@@ -66,6 +66,13 @@ function App() {
     f('idNumber', 'number', { maxLength: 12 }), f('mobile', 'number', { maxLength: 10 }));
 }
 ReactDOM.createRoot(document.getElementById('root')).render(e(App));
+// TTD-style blockers, registered as early as the page can.
+window.__blocked = [];
+const block = ev => { const t = ev.target; if (t && t.tagName === 'INPUT') { window.__blocked.push(ev.type); ev.preventDefault(); } };
+document.addEventListener('keydown', ev => { if ((ev.ctrlKey || ev.metaKey) && /^[vcx]$/i.test(ev.key)) block(ev); }, true);
+document.addEventListener('contextmenu', block, true);
+document.addEventListener('copy', block, true);
+document.addEventListener('paste', block, true);
 </script></body></html>`;
 
 const PILGRIMS = [{ id: 'a', name: 'Ramaiah Sastry', age: '66', gender: 'Male', idProof: 'Aadhaar Card', idNumber: '999988887777' }];
@@ -192,11 +199,33 @@ const PILGRIMS = [{ id: 'a', name: 'Ramaiah Sastry', age: '66', gender: 'Male', 
     ok(s.mobile === '9876543210', '"+91 98765 43210" pastes as the 10-digit mobile', s.mobile);
     ok(s.age === '62', 'stray spaces around an age are dropped', s.age);
 
+    G('Real Ctrl+V and right-click on a page that blocks them');
+    await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: 'https://ttdevasthanams.ap.gov.in' });
+    const clip = text => page.evaluate(t => navigator.clipboard.writeText(t), text);
+    await page.evaluate(() => { const i = document.querySelector('input[name="mobile"]'); i.focus(); i.select(); window.__blocked = []; });
+    await clip('+91 91234 56789\r\n');
+    await page.keyboard.press('Control+V');
+    await page.waitForTimeout(200);
+    ok((await page.evaluate(() => window.__s.mobile)) === '9123456789', 'Ctrl+V pastes from Notepad although the page swallows Ctrl+V on keydown', await page.evaluate(() => [window.__s.mobile, window.__blocked]));
+    await page.evaluate(() => { window.__blocked = []; document.querySelector('input[name="mobile"]').select(); });
+    await page.keyboard.press('Control+C');
+    ok(!(await page.evaluate(() => window.__blocked.length)), 'Ctrl+C / copy in a field is not blocked', await page.evaluate(() => window.__blocked));
+    const cm = await page.evaluate(() => {
+      const i = document.querySelector('input[name="age"]');
+      const ev = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
+      i.dispatchEvent(ev);
+      return ev.defaultPrevented;
+    });
+    ok(!cm, 'the right-click menu (with Paste) is not cancelled on a field');
+
     await setStore({ allowPaste: false });
     await page.waitForTimeout(100);
     await paste('name', 'Other Name');
     await page.waitForTimeout(100);
     ok((await page.evaluate(() => window.__s.name)) === 'Kamala Sastry', 'with paste help off, the page\'s own paste handling is left alone');
+    await page.evaluate(() => { window.__blocked = []; document.querySelector('input[name="age"]').focus(); });
+    await page.keyboard.press('Control+V');
+    ok((await page.evaluate(() => window.__blocked)).includes('keydown'), 'with paste help off, the page\'s Ctrl+V block is left alone too');
   }
 
   await ctx.close();
