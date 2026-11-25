@@ -345,7 +345,20 @@ Hard errors block the Fill; softer notes are shown but let you continue.
 
 ## Version history
 
-### 1.4.9 — current
+### 1.4.10 — current
+
+- **Copy and paste work on the TTD site itself.** 1.4.9 tidied a paste once it
+  happened, but TTD's pages often stop it earlier: they swallow Ctrl+V (and
+  Shift+Insert) before the browser pastes, disable the right-click menu, and
+  block copy and select-all. A small guard now loads before the site's own
+  scripts and keeps those keys, the right-click menu, copy/cut and text
+  selection working in TTD's text fields, so names, ages, Aadhaar and mobile
+  numbers copied from Notepad, WhatsApp or Excel paste straight in (still
+  tidied for each field). OTP boxes, read-only fields and the helper's own
+  controls are left alone; Settings → "Help pasting into TTD's fields" turns
+  it off.
+
+### 1.4.9
 
 - **Aadhaar fills again on Arjitha Seva, Sri Srinivasa Divyanugraha Homam
   included.** These pages list the Photo ID option as plain "Aadhaar". The fill
